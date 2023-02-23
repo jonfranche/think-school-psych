@@ -6,8 +6,8 @@ import "./MainNavigation.css";
 
 const MainNavigation = () => {
   return (
-    <MainHeader className="main-header">
-      <h1>
+    <MainHeader>
+      <h1 className="main-header__title">
         <Link to="/">Think School Psych</Link>
       </h1>
       <nav>

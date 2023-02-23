@@ -16,6 +16,8 @@ import YourStories from "./pages/YourStories";
 import About from "./pages/About";
 import MainNavigation from "./shared/components/Navigation/MainNavigation";
 
+import './App.css';
+
 const App = () => {
   return (
     <Router>

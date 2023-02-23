@@ -1,5 +1,12 @@
 .main-header {
+    background-color:#cee8f0;
+    color: #000;
     text-align: center;
     display: flex;
     flex-direction: column;
+}
+
+.main-header__title a {
+    text-decoration: none;
+    color: #000;
 }
