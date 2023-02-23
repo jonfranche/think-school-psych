@@ -9,25 +9,25 @@ const NavLinks = () => {
                 <NavLink to="/" exact>Home</NavLink>
             </li>
             <li>
-                <NavLink>General Resources</NavLink>
+                <NavLink to="/resources">General Resources</NavLink>
             </li>
             <li>
-                <NavLink>Jobs/Internships</NavLink>
+                <NavLink to="/jobsandinternships">Jobs/Internships</NavLink>
             </li>
             <li>
-                <NavLink>Mental Health</NavLink>
+                <NavLink to="/mentalhealth">Mental Health</NavLink>
             </li>
             <li>
-                <NavLink>Behavioral Interventions</NavLink>
+                <NavLink to="/behavioralinterventions">Behavioral Interventions</NavLink>
             </li>
             <li>
-                <NavLink>Your Stories</NavLink>
+                <NavLink to="/stories">Your Stories</NavLink>
             </li>
             <li>
-                <NavLink>About/Contact</NavLink>
+                <NavLink to="/about">About/Contact</NavLink>
             </li>
             <li>
-                <NavLink>FAQs</NavLink>
+                <NavLink to="/FAQs">FAQs</NavLink>
             </li>
         </ul>
     )
