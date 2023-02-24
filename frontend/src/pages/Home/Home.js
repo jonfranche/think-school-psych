@@ -1,6 +1,6 @@
 import React from "react";
 
-import children from "../static/images/children.png"
+import children from "../../static/images/children.png"
 import "./Home.css";
 
 const Home = () => {

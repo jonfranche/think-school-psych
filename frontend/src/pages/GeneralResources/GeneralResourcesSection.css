@@ -1,0 +1,16 @@
+.general-resources-section {
+    width: 80%;
+    text-align: left;
+    margin: 0;
+    padding: 0;
+}
+
+.general-resources-section h3 {
+    text-decoration: underline;
+}
+
+.general-resources-section-items {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}

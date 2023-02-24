@@ -1,0 +1,5 @@
+.general-resources-item {
+    display: flex;
+    flex-direction: column;
+    padding: 0em 2em 0em 0em; 
+}

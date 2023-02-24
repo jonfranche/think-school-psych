@@ -5,15 +5,15 @@ import {
   Redirect,
   Routes,
 } from "react-router-dom";
-import BehavioralInterventions from "./pages/BehavioralInterventions";
-import FAQs from "./pages/FAQs";
-import GeneralResources from "./pages/GeneralResources";
-import Home from "./pages/Home";
-import JobsAndInternships from "./pages/JobsAndInternships";
-import Login from "./pages/Login";
-import MentalHealth from "./pages/MentalHealth";
-import YourStories from "./pages/YourStories";
-import About from "./pages/About";
+import BehavioralInterventions from "./pages/BehavioralInterventions/BehavioralInterventions";
+import FAQs from "./pages/FAQs/FAQs";
+import GeneralResources from "./pages/GeneralResources/GeneralResources";
+import Home from "./pages/Home/Home";
+import JobsAndInternships from "./pages/JobsAndInternships/JobsAndInternships";
+import Login from "./pages/Login/Login";
+import MentalHealth from "./pages/MentalHealth/MentalHealth";
+import YourStories from "./pages/YourStories/YourStories";
+import About from "./pages/About/About";
 import MainNavigation from "./shared/components/Navigation/MainNavigation";
 
 import './App.css';
