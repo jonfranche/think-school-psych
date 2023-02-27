@@ -7,6 +7,7 @@
 }
 
 .main-header__title a {
+    text-shadow: 4px 3px 3px #fff;
     text-decoration: none;
     color: #000;
 }

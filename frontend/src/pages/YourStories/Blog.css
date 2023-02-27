@@ -9,9 +9,14 @@
     text-align: left;
 }
 
+.your-stories-blog-header h3 {
+    margin: 0.25em 0em;
+}
+
 .your-stories-blog-header-sub-title {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: space-between;
 }
 
