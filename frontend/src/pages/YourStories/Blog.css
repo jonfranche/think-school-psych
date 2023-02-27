@@ -1,0 +1,40 @@
+.your-stories-blog {
+    margin: 1em;
+    padding: 1em;
+    background-color: #E8F0CE;
+    border-radius: 25px;
+}
+
+.your-stories-blog-header {
+    text-align: left;
+}
+
+.your-stories-blog-header-sub-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.your-stories-blog-body {
+    text-align: left;
+}
+
+.your-stories-blog-footer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.your-stories-blog-footer button {
+    background-color: #F0D6CE;
+    color: inherit;
+    border-radius: 25px;
+    font-family: inherit;
+    border: none;
+}
+
+.your-stories-blog-footer button:hover {
+    color: #fff;
+    text-shadow: 1px 1px 1px #000;
+    background-color: #CEE8F0;
+} 

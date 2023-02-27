@@ -1,0 +1,10 @@
+.your-stories {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.your-stories-blogs {
+    width: 75%;
+}
