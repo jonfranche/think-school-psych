@@ -17,6 +17,7 @@ import About from "./pages/About/About";
 import MainNavigation from "./shared/components/Navigation/MainNavigation";
 
 import './App.css';
+import FullBlog from "./pages/YourStories/FullBlog";
 
 const App = () => {
   return (
@@ -29,6 +30,7 @@ const App = () => {
           <Route path="/mentalhealth" element={<MentalHealth />} />
           <Route path="/behavioralinterventions" element={<BehavioralInterventions />} />
           <Route path="/stories" element={<YourStories />} />
+          <Route path="/stories/:id" exact element={<FullBlog />} />
           <Route path="/about" element={<About />} />
           <Route path="/FAQs" element={<FAQs />} />
           <Route path="/login" element={<Login />} />

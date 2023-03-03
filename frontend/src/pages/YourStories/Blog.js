@@ -1,14 +1,27 @@
 import React from "react";
 
+import { Link } from "react-router-dom";
+
 import "./Blog.css";
 
-import { DUMMY_USERS } from "../../DummyData";
+import { DUMMY_BLOGS, DUMMY_USERS } from "../../DummyData";
 
 const Blog = (props) => {
+
   const getAuthor = () => {
     const author = DUMMY_USERS.filter((user) => user.id === props.userId);
     return author[0].name;
   };
+
+  const limitBlog = () => {
+    if (props.text.length > 1000) {
+      console.log("LimitBlog called");
+      return props.text.slice(0, 1000) + "...";
+    }
+    return props.text;
+  }
+
+  console.log(props.id);
 
   return (
     <div className="your-stories-blog">
@@ -20,11 +33,11 @@ const Blog = (props) => {
         </div>
       </div>
       <div className="your-stories-blog-body">
-        <p>{props.text}</p>
+        <p>{limitBlog()}</p>
       </div>
       <div className="your-stories-blog-footer">
         <span>{props.commentsIds.length + " Comments"}</span>
-        <button>Expand</button>
+        {props.text.length > 1000 && <Link to={`${props.id}`} relative="path" className="your-stories-blog-footer__link">View Full Story {props.id}</Link>}
       </div>
     </div>
   );

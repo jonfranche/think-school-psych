@@ -30,7 +30,9 @@
     justify-content: space-between;
 }
 
-.your-stories-blog-footer button {
+.your-stories-blog-footer__link {
+    padding: 0.25em 0.5em;
+    text-decoration: none;
     background-color: #F0D6CE;
     color: inherit;
     border-radius: 25px;
@@ -38,7 +40,7 @@
     border: none;
 }
 
-.your-stories-blog-footer button:hover {
+.your-stories-blog-footer__link:hover {
     color: #fff;
     text-shadow: 1px 1px 1px #000;
     background-color: #CEE8F0;
