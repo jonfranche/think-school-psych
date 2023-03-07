@@ -1,0 +1,16 @@
+.comment {
+    background-color: #D6E4A7;
+    border-radius: 25px;
+    margin: 1em 0em;
+    padding: 1em 1em;
+}
+
+.comment-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.comment p {
+    text-align: left;
+}

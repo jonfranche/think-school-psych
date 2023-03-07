@@ -9,3 +9,9 @@
 .home-image {
     max-width: 500px;
 }
+
+@media (max-width: 768px) {
+    .home-image {
+        max-width: 300px;
+    }
+}

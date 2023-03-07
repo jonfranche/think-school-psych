@@ -32,9 +32,18 @@ const FullBlog = () => {
       <div className="full-blog-body">
         <p>{blogData.text}</p>
       </div>
-      <div className="comments">
-        <span>{blogData.commentsIds.length + " Comments"}</span>
-        {blogData.commentsIds.map((comment) => <Comment key={comment} id={comment}/>)}
+      <div className="full-blog-footer">
+        <span>
+          {blogData.commentsIds.length + " Comments"}
+        </span>
+        <button className="full-blog-footer__add-comment">
+          Add Comment
+        </button>
+      </div>
+      <div className="comments" id="comment-section">
+        {blogData.commentsIds.map((comment) => (
+          <Comment key={comment} id={comment} />
+        ))}
       </div>
     </div>
   );

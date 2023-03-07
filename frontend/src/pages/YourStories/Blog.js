@@ -7,7 +7,6 @@ import "./Blog.css";
 import { DUMMY_BLOGS, DUMMY_USERS } from "../../DummyData";
 
 const Blog = (props) => {
-
   const getAuthor = () => {
     const author = DUMMY_USERS.filter((user) => user.id === props.userId);
     return author[0].name;
@@ -19,7 +18,7 @@ const Blog = (props) => {
       return props.text.slice(0, 1000) + "...";
     }
     return props.text;
-  }
+  };
 
   console.log(props.id);
 
@@ -36,8 +35,22 @@ const Blog = (props) => {
         <p>{limitBlog()}</p>
       </div>
       <div className="your-stories-blog-footer">
-        <span>{props.commentsIds.length + " Comments"}</span>
-        {props.text.length > 1000 && <Link to={`${props.id}`} relative="path" className="your-stories-blog-footer__link">View Full Story {props.id}</Link>}
+        <Link
+          to={`${props.id}#comment-section`}
+          relative="path"
+          className="your-stories-blog-footer__link"
+        >
+          {props.commentsIds.length + " Comments"}
+        </Link>
+        {props.text.length > 1000 && (
+          <Link
+            to={`${props.id}`}
+            relative="path"
+            className="your-stories-blog-footer__link"
+          >
+            View Full Story
+          </Link>
+        )}
       </div>
     </div>
   );

@@ -11,3 +11,13 @@
     text-decoration: none;
     color: #000;
 }
+
+@media (max-width: 768px) {
+    .main-header h1 {
+        margin: 0.10em;
+    }
+
+    nav {
+        display: none;
+    }
+}

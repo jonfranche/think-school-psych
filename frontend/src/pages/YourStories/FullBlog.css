@@ -2,8 +2,8 @@
     background-color: #E8F0CE;
     border-radius: 25px;
     max-width: 80%;
-    margin: 2em 2em;
-    padding: 2em;
+    margin: 1em;
+    padding: 1em;
 }
 
 .full-blog-header-sub-title {
@@ -17,4 +17,40 @@
 .full-blog-body {
     text-align: left;
     text-indent: 4em;
+}
+
+.full-blog-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.full-blog-footer__add-comment {
+    padding: 0.25em 0.75em;
+    text-decoration: none;
+    background-color: #F0D6CE;
+    color: inherit;
+    border-radius: 25px;
+    font-family: inherit;
+    border: none;
+    font-size: 15px;
+}
+
+.full-blog-footer__add-comment:hover {
+    color: #fff;
+    text-shadow: 1px 1px 1px #000;
+    background-color: #CEE8F0;
+}
+
+.comments-head {
+    text-align: left;
+}
+
+@media (max-width: 768px) {
+    .full-blog {
+        max-width: 100%;
+        margin: 0.75em;
+        padding: 1em;
+        border-radius: 25px;
+    }
 }
