@@ -42,6 +42,13 @@ const Blog = (props) => {
         >
           {props.commentsIds.length + " Comments"}
         </Link>
+        <Link
+          to={`edit/${props.id}`}
+          relative="path"
+          className="your-stories-blog-footer__link"
+        >
+          Edit Story
+        </Link>
         {props.text.length > 1000 && (
           <Link
             to={`${props.id}`}

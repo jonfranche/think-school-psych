@@ -15,9 +15,9 @@ import MentalHealth from "./pages/MentalHealth/MentalHealth";
 import YourStories from "./pages/YourStories/YourStories";
 import About from "./pages/About/About";
 import MainNavigation from "./shared/components/Navigation/MainNavigation";
-
 import './App.css';
 import FullBlog from "./pages/YourStories/FullBlog";
+import EditBlog from "./pages/YourStories/EditBlog";
 
 const App = () => {
   return (
@@ -31,6 +31,7 @@ const App = () => {
           <Route path="/behavioralinterventions" element={<BehavioralInterventions />} />
           <Route path="/stories" element={<YourStories />} />
           <Route path="/stories/:id" exact element={<FullBlog />} />
+          <Route path="/stories/edit/:id" exact element={<EditBlog />} />
           <Route path="/about" element={<About />} />
           <Route path="/FAQs" element={<FAQs />} />
           <Route path="/login" element={<Login />} />
