@@ -1,15 +1,17 @@
 import React, { useEffect } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 import Comment from "./Comment";
 import { DUMMY_BLOGS, DUMMY_USERS } from "../../DummyData";
 
 import "./FullBlog.css";
 
-const FullBlog = () => {
+const FullBlog = (props) => {
   let { id } = useParams();
+  // convert id param to be a number
+  id = Number(id);
 
-  const blogData = DUMMY_BLOGS.find((blog) => blog.id == id);
+  const blogData = DUMMY_BLOGS.find((blog) => blog.id === id);
   console.log(blogData);
   useEffect(() => {
     console.log(`/stories/${id}`);
@@ -36,6 +38,13 @@ const FullBlog = () => {
         <span>
           {blogData.commentsIds.length + " Comments"}
         </span>
+        <Link
+          to={`../edit/${id}`}
+          relative="path"
+          className="your-stories-blog-footer__link"
+        >
+          Edit Story
+        </Link>
         <button className="full-blog-footer__add-comment">
           Add Comment
         </button>

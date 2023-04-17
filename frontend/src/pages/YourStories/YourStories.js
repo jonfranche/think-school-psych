@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 import Blog from "./Blog";
 
@@ -11,6 +12,9 @@ const YourStories = () => {
     <React.Fragment>
       <div className="your-stories">
         <h2>Your Stories</h2>
+        <Link className="your-stories-share-button" to="new" path="relative">
+          Share Your Story
+        </Link>
         <div className="your-stories-blogs">
           {DUMMY_BLOGS.map((blog) => (
             <Blog

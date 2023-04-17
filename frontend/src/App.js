@@ -17,6 +17,7 @@ import About from "./pages/About/About";
 import MainNavigation from "./shared/components/Navigation/MainNavigation";
 import './App.css';
 import FullBlog from "./pages/YourStories/FullBlog";
+import NewBlog from "./pages/YourStories/NewBlog";
 import EditBlog from "./pages/YourStories/EditBlog";
 
 const App = () => {
@@ -30,6 +31,7 @@ const App = () => {
           <Route path="/mentalhealth" element={<MentalHealth />} />
           <Route path="/behavioralinterventions" element={<BehavioralInterventions />} />
           <Route path="/stories" element={<YourStories />} />
+          <Route path="/stories/new" exact element={<NewBlog/>} />
           <Route path="/stories/:id" exact element={<FullBlog />} />
           <Route path="/stories/edit/:id" exact element={<EditBlog />} />
           <Route path="/about" element={<About />} />
