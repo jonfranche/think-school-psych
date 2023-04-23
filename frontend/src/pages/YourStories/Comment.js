@@ -6,8 +6,6 @@ import "./Comment.css";
 const Comment = (props) => {
   const commentData = DUMMY_COMMENTS.find((comment) => comment.id === props.id);
   const userData = DUMMY_USERS.find((user) => user.id === commentData.userId);
-  console.log(`props.id = ${props.id}`);
-  console.log(commentData);
 
   return (
     <div className="comment">

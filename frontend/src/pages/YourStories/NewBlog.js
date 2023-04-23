@@ -1,42 +1,40 @@
-import React, { useReducer } from "react";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
+import { DUMMY_BLOGS } from "../../DummyData";
 import "./NewBlog.css";
 
-// const reducer = (state, action) => {
-//   if (action.type === "create-blog") {
-//     return {
-
-//     }
-//   }
-// }
-
 const NewBlog = () => {
-  // const [state, dispatch] = useReducer(reducer, {
-  //   id: 0,
-  //   date: "",
-  //   userId: 1,
-  //   commentsIds: [],
-  //   title: "",
-  //   text: ""
-  // })
+  const navigate = useNavigate();
 
   const submitHandler = (event) => {
     event.preventDefault();
-    // dispatch({type: "create-blog", title: event.target.});
     const form = event.target;
     const formData = new FormData(form);
     const formJson = Object.fromEntries(formData.entries());
-    console.log(formJson);
-  }
+
+    const newBlog = {
+      id: Math.floor(Math.random() * 10000),
+      date: new Date(),
+      userId: 1,
+      commentsIds: [],
+      title: formJson.blogTitle,
+      text: formJson.blogText,
+    };
+
+    DUMMY_BLOGS.push(newBlog);
+    console.log(DUMMY_BLOGS);
+    navigate("/stories");
+  };
 
   return (
     <div className="new-blog">
       <h2>New Story</h2>
       <form className="new-blog-form" onSubmit={submitHandler}>
-        <label htmlFor="blog-title">Title: </label>
-        <input name="blog-title" type="text" />
-        <label htmlFor="blog-text">Story: </label>
-        <textarea name="blog-text"></textarea>
+        <label htmlFor="blogTitle">Title: </label>
+        <input name="blogTitle" type="text" />
+        <label htmlFor="blogText">Story: </label>
+        <textarea name="blogText"></textarea>
         <button type="submit">Share</button>
       </form>
     </div>

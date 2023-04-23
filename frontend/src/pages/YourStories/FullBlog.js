@@ -1,25 +1,31 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
 import Comment from "./Comment";
+import NewComment from "./NewComment";
 import { DUMMY_BLOGS, DUMMY_USERS } from "../../DummyData";
 
 import "./FullBlog.css";
 
 const FullBlog = (props) => {
+  const [showNewComment, setShowNewComment] = useState(false);
   let { id } = useParams();
   // convert id param to be a number
   id = Number(id);
 
   const blogData = DUMMY_BLOGS.find((blog) => blog.id === id);
-  console.log(blogData);
+  // console.log(blogData);
   useEffect(() => {
-    console.log(`/stories/${id}`);
+    // console.log(`/stories/${id}`);
   }, [id]);
 
   const getAuthor = () => {
     const author = DUMMY_USERS.filter((user) => user.id === blogData.userId);
     return author[0].name;
+  };
+
+  const addCommentButtonHandler = () => {
+    setShowNewComment(!showNewComment);
   };
 
   return (
@@ -35,9 +41,7 @@ const FullBlog = (props) => {
         <p>{blogData.text}</p>
       </div>
       <div className="full-blog-footer">
-        <span>
-          {blogData.commentsIds.length + " Comments"}
-        </span>
+        <span>{blogData.commentsIds.length + " Comments"}</span>
         <Link
           to={`../edit/${id}`}
           relative="path"
@@ -45,11 +49,24 @@ const FullBlog = (props) => {
         >
           Edit Story
         </Link>
-        <button className="full-blog-footer__add-comment">
-          Add Comment
-        </button>
+        {!showNewComment && (
+          <button
+            className="full-blog-footer__add-comment"
+            onClick={addCommentButtonHandler}
+          >
+            Add Comment
+          </button>
+        )}
       </div>
       <div className="comments" id="comment-section">
+        {showNewComment && (
+          <NewComment
+            visible={showNewComment}
+            setVisible={addCommentButtonHandler}
+            blogId={id}
+            userId={1}
+          />
+        )}
         {blogData.commentsIds.map((comment) => (
           <Comment key={comment} id={comment} />
         ))}
