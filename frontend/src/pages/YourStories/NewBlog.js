@@ -30,11 +30,11 @@ const NewBlog = () => {
   return (
     <div className="new-blog">
       <h2>New Story</h2>
-      <form className="new-blog-form" onSubmit={submitHandler}>
+      <form className="blog-form" onSubmit={submitHandler}>
         <label htmlFor="blogTitle">Title: </label>
-        <input name="blogTitle" type="text" />
+        <input className="blog-title-input" name="blogTitle" type="text" />
         <label htmlFor="blogText">Story: </label>
-        <textarea name="blogText"></textarea>
+        <textarea className="blog-text-input" name="blogText"></textarea>
         <button type="submit">Share</button>
       </form>
     </div>

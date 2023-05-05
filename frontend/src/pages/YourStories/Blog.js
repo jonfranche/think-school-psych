@@ -46,6 +46,7 @@ const Blog = (props) => {
           to={`edit/${props.id}`}
           relative="path"
           className="your-stories-blog-footer__link"
+          state={{ title: props.title, text: props.text }}
         >
           Edit Story
         </Link>

@@ -1,13 +1,56 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto+Slab&display=swap');
 .new-blog {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    background-color: #E8F0CE;
+    border-radius: 25px;
+    width: 80%;
+    max-width: 80%;
+    margin: 1em;
+    padding: 1em;
 }
 
-.new-blog-form {
+.blog-form {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 100%;
+}
+
+.blog-title-input {
+    font-family: 'Roboto Slab', 'Times New Roman', Times, serif;
+    border-radius: 20px;
+    border: 2px solid #fff;
+    padding: 0.25em 0.75em;
+    margin: 0.5em 0em;
+}
+
+.blog-text-input {
+    font-family: 'Roboto Slab', 'Times New Roman', Times, serif;
+    border-radius: 20px;
+    border: 2px solid #fff;
+    padding: 1em;
+    resize: none;
+    width: 90%;
+    margin: 0.5em 0em;
+}
+
+.blog-form button {
+    padding: 0.25em 0.75em;
+    text-decoration: none;
+    background-color: #F0D6CE;
+    color: inherit;
+    border-radius: 25px;
+    font-family: inherit;
+    border: none;
+    font-size: 15px;
+}
+
+.blog-form button:hover {
+    color: #fff;
+    text-shadow: 1px 1px 1px #000;
+    background-color: #CEE8F0;
 }

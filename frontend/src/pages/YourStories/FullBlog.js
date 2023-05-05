@@ -46,6 +46,7 @@ const FullBlog = (props) => {
           to={`../edit/${id}`}
           relative="path"
           className="your-stories-blog-footer__link"
+          state={{ title: blogData.title, text: blogData.text }}
         >
           Edit Story
         </Link>
