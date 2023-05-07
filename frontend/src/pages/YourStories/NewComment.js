@@ -1,6 +1,7 @@
 import React from "react";
 
 import { DUMMY_COMMENTS, DUMMY_BLOGS } from "../../DummyData";
+import "./NewComment.css";
 
 const NewComment = (props) => {
   const addCommentToBlog = (commentId) => {
@@ -34,11 +35,13 @@ const NewComment = (props) => {
   };
 
   return (
-    <form onSubmit={submitHandler}>
-      <label htmlFor="commentText">New Comment: </label>
-      <textarea name="commentText"></textarea>
-      <button onClick={cancelButtonHandler}>Cancel</button>
-      <button type="submit">Submit</button>
+    <form className="new-comment-form" onSubmit={submitHandler}>
+      <label className="new-comment-label" htmlFor="commentText">New Comment: </label>
+      <textarea className="new-comment-text" name="commentText"></textarea>
+      <div>
+        <button className="new-comment-button__cancel" onClick={cancelButtonHandler}>Cancel</button>
+        <button className="new-comment-button__submit" type="submit">Submit</button>
+      </div>
     </form>
   );
 };

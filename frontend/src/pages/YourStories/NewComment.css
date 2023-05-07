@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto+Slab&display=swap');
+.new-comment-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.new-comment-label {
+    margin: 0.25em 0.25em;
+}
+
+.new-comment-text {
+    font-family: 'Roboto Slab', 'Times New Roman', Times, serif;
+    resize: none;
+    width: 100em;
+    max-width: 85%;
+    height: 10em;
+    max-height: 20%;
+    margin: 0.25em 0.25em;
+    border-radius: 20px;
+    padding: 1em;
+}
+
+.new-comment-button__cancel {
+    padding: 0.25em 0.75em;
+    text-decoration: none;
+    background-color: #F99;
+    color: inherit;
+    border-radius: 25px;
+    font-family: inherit;
+    border: none;
+    font-size: 15px;
+    margin: 0.25em 0.25em;
+}
+
+.new-comment-button__cancel:hover {
+    color: #fff;
+    text-shadow: 1px 1px 1px #000;
+}
+
+.new-comment-button__submit {
+    padding: 0.25em 0.75em;
+    text-decoration: none;
+    background-color: #CEE8F0;
+    color: inherit;
+    border-radius: 25px;
+    font-family: inherit;
+    border: none;
+    font-size: 15px;
+    margin: 0.25em 0.25em;
+}
+
+.new-comment-button__submit:hover {
+    color: #fff;
+    text-shadow: 1px 1px 1px #000;
+}
