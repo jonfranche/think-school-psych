@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import "./Blog.css";
 
-import { DUMMY_BLOGS, DUMMY_USERS } from "../../DummyData";
+import { DUMMY_BLOGS, DUMMY_USERS } from "../../../DummyData";
 
 const Blog = (props) => {
   const getAuthor = () => {

@@ -14,3 +14,8 @@
 .comment p {
     text-align: left;
 }
+
+.comment-form {
+    display: flex;
+    flex-direction: column;
+}

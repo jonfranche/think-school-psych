@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
-import Comment from "./Comment";
-import NewComment from "./NewComment";
+import Comment from "./components/Comment";
+import NewComment from "./components/NewComment";
 import { DUMMY_BLOGS, DUMMY_USERS } from "../../DummyData";
 
 import "./FullBlog.css";

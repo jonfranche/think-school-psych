@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import Blog from "./Blog";
+import Blog from "./components/Blog";
 
 import "./YourStories.css";
 

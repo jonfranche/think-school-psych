@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 
 import { DUMMY_BLOGS, DUMMY_USERS } from "../../DummyData";
 
 import "./EditBlog.css";
 
 const EditBlog = () => {
+  const navigate = useNavigate();
   let { id } = useParams();
   let { state } = useLocation();
   // convert id param to be a number
@@ -17,23 +18,48 @@ const EditBlog = () => {
     console.log(`/stories/${id}`);
   }, [id]);
 
+  const deleteButtonHandler = () => {
+    // TODO: add a modal to confirm deletion
+    const indexOfEditedBlog = DUMMY_BLOGS.findIndex((blog) => blog.id === id);
+    DUMMY_BLOGS.splice(indexOfEditedBlog, 1);
+    console.log(DUMMY_BLOGS);
+    navigate("/stories");
+  };
+
   const submitHandler = (event) => {
     event.preventDefault();
     // dispatch({type: "create-blog", title: event.target.});
     const form = event.target;
     const formData = new FormData(form);
     const formJson = Object.fromEntries(formData.entries());
-    console.log(formJson);
-  }
+
+    const indexOfEditedBlog = DUMMY_BLOGS.findIndex((blog) => blog.id === id);
+
+    DUMMY_BLOGS[indexOfEditedBlog].title = formJson.blogTitle;
+    DUMMY_BLOGS[indexOfEditedBlog].text = formJson.blogText;
+    navigate(`/stories/${id}`);
+  };
 
   return (
     <div className="new-blog">
       <h2>Editing Story: {state.title}</h2>
+      <button className="blog-delete-button" onClick={deleteButtonHandler}>
+        Delete Story
+      </button>
       <form className="blog-form" onSubmit={submitHandler}>
         <label htmlFor="blog-title">Title: </label>
-        <input className="blog-title-input" name="blog-title" type="text" defaultValue={state.title}/>
+        <input
+          className="blog-title-input"
+          name="blogTitle"
+          type="text"
+          defaultValue={state.title}
+        />
         <label htmlFor="blog-text">Story: </label>
-        <textarea className="blog-text-input" name="blog-text" defaultValue={state.text}></textarea>
+        <textarea
+          className="blog-text-input"
+          name="blogText"
+          defaultValue={state.text}
+        ></textarea>
         <button type="submit">Share</button>
       </form>
     </div>

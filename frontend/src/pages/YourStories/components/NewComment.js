@@ -1,6 +1,6 @@
 import React from "react";
 
-import { DUMMY_COMMENTS, DUMMY_BLOGS } from "../../DummyData";
+import { DUMMY_COMMENTS, DUMMY_BLOGS } from "../../../DummyData";
 import "./NewComment.css";
 
 const NewComment = (props) => {
