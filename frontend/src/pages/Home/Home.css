@@ -10,8 +10,19 @@
     max-width: 500px;
 }
 
+.home-items {
+    margin: 1em;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
 @media (max-width: 768px) {
     .home-image {
         max-width: 300px;
+    }
+
+    .home-items {
+        display: flex;
+        flex-direction: column;
     }
 }
