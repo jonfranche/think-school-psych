@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 
-import { DUMMY_COMMENTS, DUMMY_USERS } from "../../../DummyData";
+import { DUMMY_BLOGS, DUMMY_COMMENTS, DUMMY_USERS } from "../../../DummyData";
 import "./Comment.css";
 
 const Comment = (props) => {
   const [editMode, setEditMode] = useState(false);
   const commentData = DUMMY_COMMENTS.find((comment) => comment.id === props.id);
+  const commentDataIndex = DUMMY_COMMENTS.findIndex(
+    (comment) => comment.id === props.id
+  );
   const userData = DUMMY_USERS.find((user) => user.id === commentData.userId);
 
   const setEditModeHandler = () => {
@@ -15,9 +18,11 @@ const Comment = (props) => {
   const submitHandler = (e) => {
     e.preventDefault();
     setEditMode(false);
-    // TODO: Complete submission, maybe use useState to update
-    // TODO: Update CSS for edit comment form
-  }
+    const form = e.target;
+    const formData = new FormData(form);
+    const formJson = Object.fromEntries(formData.entries());
+    DUMMY_COMMENTS[commentDataIndex].text = formJson.commentText;
+  };
 
   return (
     <div className="comment">
@@ -30,14 +35,22 @@ const Comment = (props) => {
       {!editMode && (
         <div className="comment-body">
           <p>{commentData.text}</p>
-          <button onClick={setEditModeHandler}>Edit Comment</button>
+          <button className="comment-edit-button" onClick={setEditModeHandler}>
+            Edit Comment
+          </button>
         </div>
       )}
       {editMode && (
         <form className="comment-form" onSubmit={submitHandler}>
-          <button>Delete Comment</button>
-          <textarea defaultValue={commentData.text}></textarea>
-          <button type="submit">Submit</button>
+          <button className="comment-form__delete">Cancel</button>
+          <textarea
+            name="commentText"
+            className="comment-form__input"
+            defaultValue={commentData.text}
+          ></textarea>
+          <button className="comment-form__submit" type="submit">
+            Submit
+          </button>
         </form>
       )}
     </div>

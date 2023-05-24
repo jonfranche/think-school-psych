@@ -7,6 +7,10 @@ import "./NewBlog.css";
 const NewBlog = () => {
   const navigate = useNavigate();
 
+  const cancelButtonHandler = () => {
+    navigate("/stories");
+  }
+
   const submitHandler = (event) => {
     event.preventDefault();
     const form = event.target;
@@ -30,6 +34,9 @@ const NewBlog = () => {
   return (
     <div className="new-blog">
       <h2>New Story</h2>
+      <button className="blog-delete-button" onClick={cancelButtonHandler}>
+          Cancel
+        </button>
       <form className="blog-form" onSubmit={submitHandler}>
         <label htmlFor="blogTitle">Title: </label>
         <input className="blog-title-input" name="blogTitle" type="text" />

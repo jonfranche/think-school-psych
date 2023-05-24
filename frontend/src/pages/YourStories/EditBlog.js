@@ -18,6 +18,10 @@ const EditBlog = () => {
     console.log(`/stories/${id}`);
   }, [id]);
 
+  const cancelButtonHandler = () => {
+    navigate(`/stories/${id}`)
+  }
+
   const deleteButtonHandler = () => {
     // TODO: add a modal to confirm deletion
     const indexOfEditedBlog = DUMMY_BLOGS.findIndex((blog) => blog.id === id);
@@ -28,7 +32,6 @@ const EditBlog = () => {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    // dispatch({type: "create-blog", title: event.target.});
     const form = event.target;
     const formData = new FormData(form);
     const formJson = Object.fromEntries(formData.entries());
@@ -43,9 +46,15 @@ const EditBlog = () => {
   return (
     <div className="new-blog">
       <h2>Editing Story: {state.title}</h2>
-      <button className="blog-delete-button" onClick={deleteButtonHandler}>
-        Delete Story
-      </button>
+      <div>
+        <button className="blog-delete-button" onClick={cancelButtonHandler}>
+          Cancel Edit
+        </button>
+        <button className="blog-delete-button" onClick={deleteButtonHandler}>
+          Delete Story
+        </button>
+      </div>
+
       <form className="blog-form" onSubmit={submitHandler}>
         <label htmlFor="blog-title">Title: </label>
         <input
