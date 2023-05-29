@@ -12,8 +12,19 @@ const Comment = (props) => {
   const userData = DUMMY_USERS.find((user) => user.id === commentData.userId);
 
   const setEditModeHandler = () => {
+    if (editMode) {
+      setEditMode(false);
+      return
+    }
     setEditMode(true);
   };
+
+  // const deleteCommentHandler = () => {
+  //   DUMMY_COMMENTS.splice(commentDataIndex, 1);
+  //   let blogIndex = DUMMY_BLOGS.findIndex(blog => blog.id === props.blogId);
+  //   let commentIndexInBlog = DUMMY_BLOGS[blogIndex].commentsIds.findIndex(i => i === commentData.id);
+  //   DUMMY_BLOGS[blogIndex].commentsIds.splice(commentIndexInBlog , 1);
+  // }
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -42,7 +53,10 @@ const Comment = (props) => {
       )}
       {editMode && (
         <form className="comment-form" onSubmit={submitHandler}>
-          <button className="comment-form__delete">Cancel</button>
+          <div className="comment-form__header">
+            <button className="comment-form__delete" onClick={setEditModeHandler}>Cancel</button>
+            {/* <button className="comment-form__delete" onClick={deleteCommentHandler}>Delete</button> */}
+          </div>
           <textarea
             name="commentText"
             className="comment-form__input"

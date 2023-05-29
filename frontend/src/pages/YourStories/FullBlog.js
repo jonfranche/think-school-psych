@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
+import Button from "../../shared/components/UIElements/Button";
 import Comment from "./components/Comment";
 import NewComment from "./components/NewComment";
 import { DUMMY_BLOGS, DUMMY_USERS } from "../../DummyData";
@@ -42,14 +43,13 @@ const FullBlog = (props) => {
       </div>
       <div className="full-blog-footer">
         <span>{blogData.commentsIds.length + " Comments"}</span>
-        <Link
-          to={`../edit/${id}`}
-          relative="path"
-          className="your-stories-blog-footer__link"
+        <Button
+          link={true}
+          to={`../stories/edit/${id}`}
           state={{ title: blogData.title, text: blogData.text }}
         >
           Edit Story
-        </Link>
+        </Button>
         {!showNewComment && (
           <button
             className="full-blog-footer__add-comment"
@@ -69,7 +69,7 @@ const FullBlog = (props) => {
           />
         )}
         {blogData.commentsIds.map((comment) => (
-          <Comment key={comment} id={comment} />
+          <Comment key={comment} id={comment} blogId={blogData.id}/>
         ))}
       </div>
     </div>

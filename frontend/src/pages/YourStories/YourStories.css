@@ -9,23 +9,6 @@
     width: 75%;
 }
 
-.your-stories-share-button {
-    padding: 0.25em 0.75em;
-    text-decoration: none;
-    background-color: #F0D6CE;
-    color: inherit;
-    border-radius: 25px;
-    font-family: inherit;
-    border: none;
-    font-size: 15px;
-}
-
-.your-stories-share-button:hover {
-    color: #fff;
-    text-shadow: 1px 1px 1px #000;
-    background-color: #CEE8F0;
-}
-
 @media (max-width: 768px) {
     .your-stories-blogs {
         width: 100%;

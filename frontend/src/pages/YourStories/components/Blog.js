@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Link } from "react-router-dom";
+import Button from "../../../shared/components/UIElements/Button";
 
 import "./Blog.css";
 
@@ -35,29 +35,20 @@ const Blog = (props) => {
         <p>{limitBlog()}</p>
       </div>
       <div className="your-stories-blog-footer">
-        <Link
-          to={`${props.id}#comment-section`}
-          relative="path"
-          className="your-stories-blog-footer__link"
-        >
+        <Button link={true} to={`${props.id}#comment-section`}>
           {props.commentsIds.length + " Comments"}
-        </Link>
-        <Link
+        </Button>
+        <Button
+          link={true}
           to={`edit/${props.id}`}
-          relative="path"
-          className="your-stories-blog-footer__link"
           state={{ title: props.title, text: props.text }}
         >
           Edit Story
-        </Link>
+        </Button>
         {props.text.length > 1000 && (
-          <Link
-            to={`${props.id}`}
-            relative="path"
-            className="your-stories-blog-footer__link"
-          >
+          <Button link={true} to={`${props.id}`} >
             View Full Story
-          </Link>
+          </Button>
         )}
       </div>
     </div>

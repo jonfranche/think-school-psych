@@ -87,6 +87,16 @@ const NavLinks = () => {
           FAQs
         </NavLink>
       </li>
+      <li>
+        <NavLink
+          to="/login"
+          className={({ isActive }) =>
+            isActive ? activeClassName : inActiveClassName
+          }
+        >
+          Login
+        </NavLink>
+      </li>
     </ul>
   );
 };

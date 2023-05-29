@@ -10,7 +10,6 @@ import FAQs from "./pages/FAQs/FAQs";
 import GeneralResources from "./pages/GeneralResources/GeneralResources";
 import Home from "./pages/Home/Home";
 import JobsAndInternships from "./pages/JobsAndInternships/JobsAndInternships";
-import Login from "./pages/Login/Login";
 import MentalHealth from "./pages/MentalHealth/MentalHealth";
 import YourStories from "./pages/YourStories/YourStories";
 import About from "./pages/About/About";
@@ -19,6 +18,7 @@ import './App.css';
 import FullBlog from "./pages/YourStories/FullBlog";
 import NewBlog from "./pages/YourStories/NewBlog";
 import EditBlog from "./pages/YourStories/EditBlog";
+import Auth from "./pages/Auth/Auth";
 
 const App = () => {
   return (
@@ -36,7 +36,7 @@ const App = () => {
           <Route path="/stories/edit/:id" exact element={<EditBlog />} />
           <Route path="/about" element={<About />} />
           <Route path="/FAQs" element={<FAQs />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<Auth />} />
           <Route path="/" exact element={<Home />}/>
         </Routes>
       </main>

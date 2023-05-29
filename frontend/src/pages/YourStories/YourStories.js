@@ -1,7 +1,7 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
 import Blog from "./components/Blog";
+import Button from "../../shared/components/UIElements/Button";
 
 import "./YourStories.css";
 
@@ -12,9 +12,7 @@ const YourStories = () => {
     <React.Fragment>
       <div className="your-stories">
         <h2>Your Stories</h2>
-        <Link className="your-stories-share-button" to="new" path="relative">
-          Share Your Story
-        </Link>
+        <Button link={true} to="new">Share Your Story</Button>
         <div className="your-stories-blogs">
           {DUMMY_BLOGS.map((blog) => (
             <Blog

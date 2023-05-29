@@ -1,6 +1,6 @@
 import React from "react";
 
-import GeneralResourcesSection from "./GeneralResourcesSection";
+import GeneralResourcesSection from "./components/GeneralResourcesSection";
 
 import "./GeneralResources.css";
 
