@@ -25,7 +25,18 @@ const Button = (props) => {
     );
   }
 
-  return <button>{props.children}</button>;
+  return (
+    <button
+      className={`button button--${props.size || "default"} ${
+        props.danger && "button--danger"
+      } ${props.submit && "button--submit"}`}
+      type={props.type}
+      onClick={props.onClick}
+      disabled={props.disabled}
+    >
+      {props.children}
+    </button>
+  );
 };
 
 export default Button;

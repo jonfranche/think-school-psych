@@ -1,0 +1,21 @@
+.input-text {
+    font-family: 'Roboto Slab', 'Times New Roman', Times, serif;
+    border-radius: 20px;
+    border: 2px solid #fff;
+    padding: 0.25em 0.75em;
+    margin: 0.5em 0em;
+    width: 200px;
+    max-width: 80%;
+}
+
+.input-text--comment {
+    font-family: 'Roboto Slab', 'Times New Roman', Times, serif;
+    resize: none;
+    width: 100em;
+    max-width: 85%;
+    height: 10em;
+    max-height: 20%;
+    margin: 0.25em 0.25em;
+    border-radius: 20px;
+    padding: 1em;
+}
