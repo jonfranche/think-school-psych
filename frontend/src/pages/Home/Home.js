@@ -41,6 +41,7 @@ const Home = () => {
       <div className="home-items">
         {items.map((item) => (
           <HomeItem
+            key={item.title}
             title={item.title}
             description={item.description}
             link={item.link}
