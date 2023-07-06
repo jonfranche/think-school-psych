@@ -1,44 +1,58 @@
 import React, { useState, useContext } from "react";
 
+import { useForm, FormProvider } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../shared/context/auth-context";
 import Input from "../../shared/components/Input/Input";
 import Button from "../../shared/components/UIElements/Button";
+import {
+  email_validation,
+  password_validation,
+} from "../../util/inputValidation";
 
 import "./Auth.css";
 
 const Auth = (props) => {
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
-  const [isLoginMode, setIsLoginMode] = useState(true);
+  const methods = useForm();
+  // const [isLoginMode, setIsLoginMode] = useState(true);
 
-  const submitHandler = (e) => {
+  const submitHandler = (data, e) => {
     e.preventDefault();
+    console.log(data);
     const form = e.target;
     const formData = new FormData(form);
     const formJson = Object.fromEntries(formData.entries());
     console.log(formJson);
+    methods.reset();
     auth.login();
-    navigate("/");
+    // add success message here
+    setTimeout(function () {
+      // function code goes here
+      navigate("/");
+    }, 1000);
   };
 
   return (
     <div className="auth-container">
       <h2>Login</h2>
-      <form className="login-form" onSubmit={submitHandler}>
-        <div className="login-form__inputs">
-          <Input label="Email" type="email" htmlFor="email" name="email" />
-          <Input
-            label="Password"
-            type="password"
-            htmlFor="password"
-            name="password"
-          /> 
-        </div>
-        <Button submit={true} type="submit">
-          Submit
-        </Button>
-      </form>
+      <FormProvider {...methods}>
+        <form
+          className="login-form"
+          noValidate
+          autoComplete="off"
+          onSubmit={methods.handleSubmit(submitHandler)}
+        >
+          <div className="login-form__inputs">
+            <Input {...email_validation} />
+            <Input {...password_validation} />
+          </div>
+          <Button submit={true} type="submit">
+            Submit
+          </Button>
+        </form>
+      </FormProvider>
     </div>
   );
 };

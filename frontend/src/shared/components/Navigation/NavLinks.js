@@ -94,7 +94,7 @@ const NavLinks = () => {
             isActive ? activeClassName : inActiveClassName
           }
         >
-          Login
+          Login / Sign Up
         </NavLink>
       </li>
     </ul>

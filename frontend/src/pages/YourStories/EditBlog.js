@@ -1,11 +1,18 @@
 import React, { useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useForm, FormProvider } from "react-hook-form";
 
 import { DUMMY_BLOGS, DUMMY_USERS } from "../../DummyData";
+import {
+  blog_title_validation,
+  blog_text_validation,
+} from "../../util/inputValidation";
 
 import "./EditBlog.css";
+import Input from "../../shared/components/Input/Input";
 
 const EditBlog = () => {
+  const methods = useForm();
   const navigate = useNavigate();
   let { id } = useParams();
   let { state } = useLocation();
@@ -19,8 +26,8 @@ const EditBlog = () => {
   }, [id]);
 
   const cancelButtonHandler = () => {
-    navigate(`/stories/${id}`)
-  }
+    navigate(`/stories/${id}`);
+  };
 
   const deleteButtonHandler = () => {
     // TODO: add a modal to confirm deletion
@@ -54,23 +61,29 @@ const EditBlog = () => {
           Delete Story
         </button>
       </div>
-
-      <form className="blog-form" onSubmit={submitHandler}>
-        <label htmlFor="blog-title">Title: </label>
-        <input
-          className="blog-title-input"
-          name="blogTitle"
-          type="text"
-          defaultValue={state.title}
-        />
-        <label htmlFor="blog-text">Story: </label>
-        <textarea
-          className="blog-text-input"
-          name="blogText"
-          defaultValue={state.text}
-        ></textarea>
-        <button type="submit">Share</button>
-      </form>
+      <FormProvider {...methods}>
+        <form
+          className="blog-form"
+          onSubmit={methods.handleSubmit(submitHandler)}
+        >
+          <Input {...blog_title_validation} defaultValue={state.title}/>
+          <Input {...blog_text_validation} defaultValue={state.text}/>
+          {/* <label htmlFor="blog-title">Title: </label>
+          <input
+            className="blog-title-input"
+            name="blogTitle"
+            type="text"
+            defaultValue={state.title}
+          />
+          <label htmlFor="blog-text">Story: </label>
+          <textarea
+            className="blog-text-input"
+            name="blogText"
+            defaultValue={state.text}
+          ></textarea> */}
+          <button type="submit">Share</button>
+        </form>
+      </FormProvider>
     </div>
   );
 };

@@ -19,3 +19,30 @@
     border-radius: 20px;
     padding: 1em;
 }
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.input-story {
+    font-family: 'Roboto Slab', 'Times New Roman', Times, serif;
+    border-radius: 20px;
+    border: 2px solid #fff;
+    padding: 1em;
+    resize: none;
+    width: 90%;
+    height: 20em;
+    max-height: 70%;
+    margin: 0.5em 0em;
+}
+
+.input-error {
+    margin: 2px 0px;
+    font-size: 13px;
+    color: #F55;
+}
