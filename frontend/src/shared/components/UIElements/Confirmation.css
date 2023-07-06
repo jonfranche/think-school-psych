@@ -1,0 +1,14 @@
+.confirmation-modal {
+    display: flex;
+    flex-direction: column;
+    border-radius: 20px;
+    background-color: #fff;
+    padding: 0.5rem;
+}
+
+.confirmation-modal__buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+}

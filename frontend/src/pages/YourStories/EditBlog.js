@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useForm, FormProvider } from "react-hook-form";
+import { useModal } from "react-hooks-use-modal";
 
 import { DUMMY_BLOGS, DUMMY_USERS } from "../../DummyData";
 import {
@@ -10,8 +11,22 @@ import {
 
 import "./EditBlog.css";
 import Input from "../../shared/components/Input/Input";
+import Confirmation from "../../shared/components/UIElements/Confirmation";
 
 const EditBlog = () => {
+  // const [Modal, open, close, isOpen] = useModal("root", {
+  //   preventScroll: true,
+  //   focusTrapOptions: {
+  //     clickOutsideDeactivates: false,
+  //   },
+  // });
+  const [Modal, open, close, isOpen] = useModal("root", {
+    preventScroll: true,
+    focusTrapOptions: {
+      clickOutsideDeactivates: false,
+    },
+  });
+
   const methods = useForm();
   const navigate = useNavigate();
   let { id } = useParams();
@@ -30,7 +45,10 @@ const EditBlog = () => {
   };
 
   const deleteButtonHandler = () => {
-    // TODO: add a modal to confirm deletion
+    open();
+  };
+
+  const deleteStory = () => {
     const indexOfEditedBlog = DUMMY_BLOGS.findIndex((blog) => blog.id === id);
     DUMMY_BLOGS.splice(indexOfEditedBlog, 1);
     console.log(DUMMY_BLOGS);
@@ -61,13 +79,20 @@ const EditBlog = () => {
           Delete Story
         </button>
       </div>
+      <Modal>
+        <Confirmation
+          message="Are you sure you want to delete this story?"
+          yesButtonHandler={deleteStory}
+          noButtonHandler={close}
+        />
+      </Modal>
       <FormProvider {...methods}>
         <form
           className="blog-form"
           onSubmit={methods.handleSubmit(submitHandler)}
         >
-          <Input {...blog_title_validation} defaultValue={state.title}/>
-          <Input {...blog_text_validation} defaultValue={state.text}/>
+          <Input {...blog_title_validation} defaultValue={state.title} />
+          <Input {...blog_text_validation} defaultValue={state.text} />
           {/* <label htmlFor="blog-title">Title: </label>
           <input
             className="blog-title-input"
