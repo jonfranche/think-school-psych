@@ -1,9 +1,16 @@
 import React from "react";
+import { useForm, FormProvider } from "react-hook-form";
 
+import Input from "../../../shared/components/Input/Input";
+import Button from "../../../shared/components/UIElements/Button";
+
+import { comment_validation } from "../../../util/inputValidation";
 import { DUMMY_COMMENTS, DUMMY_BLOGS } from "../../../DummyData";
 import "./NewComment.css";
 
 const NewComment = (props) => {
+  const methods = useForm();
+
   const addCommentToBlog = (commentId) => {
     const blogIndex = DUMMY_BLOGS.findIndex(blog => blog.id === props.blogId);
     DUMMY_BLOGS[blogIndex].commentsIds.push(commentId);
@@ -14,7 +21,7 @@ const NewComment = (props) => {
     props.setVisible();
   };
 
-  const submitHandler = (e) => {
+  const submitHandler = (data, e) => {
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
@@ -35,14 +42,15 @@ const NewComment = (props) => {
   };
 
   return (
-    <form className="new-comment-form" onSubmit={submitHandler}>
-      <label className="new-comment-label" htmlFor="commentText">New Comment: </label>
-      <textarea className="new-comment-text" name="commentText"></textarea>
-      <div>
-        <button className="new-comment-button__cancel" onClick={cancelButtonHandler}>Cancel</button>
-        <button className="new-comment-button__submit" type="submit">Submit</button>
-      </div>
-    </form>
+    <FormProvider {...methods}>
+      <form className="new-comment-form" onSubmit={methods.handleSubmit(submitHandler)}>
+        <Input {...comment_validation} />
+        <div className="new-comment-buttons">
+          <Button danger={true} onClick={cancelButtonHandler}>Cancel</Button>
+          <Button type="submit" submit={true}>Submit</Button>
+        </div>
+      </form>
+    </FormProvider>
   );
 };
 

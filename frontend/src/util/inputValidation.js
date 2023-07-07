@@ -37,7 +37,7 @@ const email_validation = {
 
 const comment_validation = {
   name: "comment",
-  label: "comment",
+  label: "New Comment",
   type: "textarea",
   id: "comment-input",
   placeholder: "",
@@ -47,8 +47,26 @@ const comment_validation = {
       message: "Text for the comment is required",
     },
     maxLength: {
-      value: 500,
-      message: "Your comment is over the 500 character limit.",
+      value: 2000,
+      message: "Your comment is over the 2000 character limit.",
+    },
+  },
+};
+
+const edit_comment_validation = {
+  name: "comment",
+  label: "Edit Comment",
+  type: "textarea",
+  id: "comment-input",
+  placeholder: "",
+  validation: {
+    required: {
+      value: true,
+      message: "Text for the comment is required",
+    },
+    maxLength: {
+      value: 2000,
+      message: "Your comment is over the 2000 character limit.",
     },
   },
 };
@@ -93,6 +111,7 @@ export {
   password_validation,
   email_validation,
   comment_validation,
+  edit_comment_validation,
   blog_title_validation,
   blog_text_validation
 }

@@ -1,9 +1,14 @@
 import React, { useState } from "react";
+import { useForm, FormProvider } from "react-hook-form";
 
+import Input from "../../../shared/components/Input/Input";
+import { edit_comment_validation } from "../../../util/inputValidation";
 import { DUMMY_BLOGS, DUMMY_COMMENTS, DUMMY_USERS } from "../../../DummyData";
 import "./Comment.css";
+import Button from "../../../shared/components/UIElements/Button";
 
 const Comment = (props) => {
+  const methods = useForm();
   const [editMode, setEditMode] = useState(false);
   const commentData = DUMMY_COMMENTS.find((comment) => comment.id === props.id);
   const commentDataIndex = DUMMY_COMMENTS.findIndex(
@@ -14,19 +19,21 @@ const Comment = (props) => {
   const setEditModeHandler = () => {
     if (editMode) {
       setEditMode(false);
-      return
+      return;
     }
     setEditMode(true);
   };
 
-  // const deleteCommentHandler = () => {
-  //   DUMMY_COMMENTS.splice(commentDataIndex, 1);
-  //   let blogIndex = DUMMY_BLOGS.findIndex(blog => blog.id === props.blogId);
-  //   let commentIndexInBlog = DUMMY_BLOGS[blogIndex].commentsIds.findIndex(i => i === commentData.id);
-  //   DUMMY_BLOGS[blogIndex].commentsIds.splice(commentIndexInBlog , 1);
-  // }
+  const deleteCommentHandler = () => {
+    DUMMY_COMMENTS.splice(commentDataIndex, 1);
+    let blogIndex = DUMMY_BLOGS.findIndex((blog) => blog.id === props.blogId);
+    let commentIndexInBlog = DUMMY_BLOGS[blogIndex].commentsIds.findIndex(
+      (i) => i === commentData.id
+    );
+    DUMMY_BLOGS[blogIndex].commentsIds.splice(commentIndexInBlog, 1);
+  };
 
-  const submitHandler = (e) => {
+  const submitHandler = (data, e) => {
     e.preventDefault();
     setEditMode(false);
     const form = e.target;
@@ -46,26 +53,29 @@ const Comment = (props) => {
       {!editMode && (
         <div className="comment-body">
           <p>{commentData.text}</p>
-          <button className="comment-edit-button" onClick={setEditModeHandler}>
-            Edit Comment
-          </button>
+          <Button onClick={setEditModeHandler}>Edit Comment</Button>
         </div>
       )}
       {editMode && (
-        <form className="comment-form" onSubmit={submitHandler}>
-          <div className="comment-form__header">
-            <button className="comment-form__delete" onClick={setEditModeHandler}>Cancel</button>
-            {/* <button className="comment-form__delete" onClick={deleteCommentHandler}>Delete</button> */}
-          </div>
-          <textarea
-            name="commentText"
-            className="comment-form__input"
-            defaultValue={commentData.text}
-          ></textarea>
-          <button className="comment-form__submit" type="submit">
-            Submit
-          </button>
-        </form>
+        <FormProvider {...methods}>
+          <form
+            className="comment-form"
+            onSubmit={methods.handleSubmit(submitHandler)}
+          >
+            <div className="comment-form__header">
+              <Button danger={true} onClick={setEditModeHandler}>
+                Cancel
+              </Button>
+              <Button danger={true} onclick={deleteCommentHandler}>
+                Delete
+              </Button>
+            </div>
+            <Input {...edit_comment_validation} />
+            <Button type="submit" submit={true}>
+              Submit
+            </Button>
+          </form>
+        </FormProvider>
       )}
     </div>
   );

@@ -12,34 +12,20 @@
     padding: 1em;
 }
 
+.new-blog-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    width: 250px;
+}
+
 .blog-form {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 100%;
-}
-
-.blog-title-input {
-    font-family: 'Roboto Slab', 'Times New Roman', Times, serif;
-    border-radius: 20px;
-    border: 2px solid #fff;
-    padding: 0.25em 0.75em;
-    margin: 0.5em 0em;
-    width: 350px;
-    max-width: 80%;
-}
-
-.blog-text-input {
-    font-family: 'Roboto Slab', 'Times New Roman', Times, serif;
-    border-radius: 20px;
-    border: 2px solid #fff;
-    padding: 1em;
-    resize: none;
-    width: 90%;
-    height: 20em;
-    max-height: 70%;
-    margin: 0.5em 0em;
 }
 
 .blog-form button {

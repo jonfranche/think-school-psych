@@ -3,6 +3,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm, FormProvider } from "react-hook-form";
 import Input from "../../shared/components/Input/Input";
+import Button from "../../shared/components/UIElements/Button";
 
 import {
   blog_text_validation,
@@ -49,11 +50,7 @@ const NewBlog = () => {
         <form className="blog-form" onSubmit={methods.handleSubmit(submitHandler)}>
           <Input {...blog_title_validation} className="blog-title-input" />
           <Input {...blog_text_validation} className="blog-text-input" />
-          {/* <label htmlFor="blogTitle">Title: </label>
-          <input className="blog-title-input" name="blogTitle" type="text" />
-          <label htmlFor="blogText">Story: </label>
-          <textarea className="blog-text-input" name="blogText"></textarea> */}
-          <button type="submit">Share</button>
+          <Button type="submit" submit={true}>Share</Button>
         </form>
       </FormProvider>
     </div>

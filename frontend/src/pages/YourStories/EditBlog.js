@@ -11,6 +11,7 @@ import {
 
 import "./EditBlog.css";
 import Input from "../../shared/components/Input/Input";
+import Button from "../../shared/components/UIElements/Button";
 import Confirmation from "../../shared/components/UIElements/Confirmation";
 
 const EditBlog = () => {
@@ -55,7 +56,7 @@ const EditBlog = () => {
     navigate("/stories");
   };
 
-  const submitHandler = (event) => {
+  const submitHandler = (data, event) => {
     event.preventDefault();
     const form = event.target;
     const formData = new FormData(form);
@@ -71,13 +72,13 @@ const EditBlog = () => {
   return (
     <div className="new-blog">
       <h2>Editing Story: {state.title}</h2>
-      <div>
-        <button className="blog-delete-button" onClick={cancelButtonHandler}>
+      <div className="new-blog-header">
+        <Button danger={true} onClick={cancelButtonHandler}>
           Cancel Edit
-        </button>
-        <button className="blog-delete-button" onClick={deleteButtonHandler}>
+        </Button>
+        <Button danger={true} onClick={deleteButtonHandler}>
           Delete Story
-        </button>
+        </Button>
       </div>
       <Modal>
         <Confirmation
@@ -93,20 +94,9 @@ const EditBlog = () => {
         >
           <Input {...blog_title_validation} defaultValue={state.title} />
           <Input {...blog_text_validation} defaultValue={state.text} />
-          {/* <label htmlFor="blog-title">Title: </label>
-          <input
-            className="blog-title-input"
-            name="blogTitle"
-            type="text"
-            defaultValue={state.title}
-          />
-          <label htmlFor="blog-text">Story: </label>
-          <textarea
-            className="blog-text-input"
-            name="blogText"
-            defaultValue={state.text}
-          ></textarea> */}
-          <button type="submit">Share</button>
+          <Button submit={true} type="submit">
+            Share
+          </Button>
         </form>
       </FormProvider>
     </div>
