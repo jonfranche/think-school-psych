@@ -21,7 +21,7 @@ const EditBlog = () => {
   //     clickOutsideDeactivates: false,
   //   },
   // });
-  const [Modal, open, close, isOpen] = useModal("root", {
+  const [Modal, open, close] = useModal("root", {
     preventScroll: true,
     focusTrapOptions: {
       clickOutsideDeactivates: false,
@@ -66,6 +66,7 @@ const EditBlog = () => {
 
     DUMMY_BLOGS[indexOfEditedBlog].title = formJson.blogTitle;
     DUMMY_BLOGS[indexOfEditedBlog].text = formJson.blogText;
+    methods.reset();
     navigate(`/stories/${id}`);
   };
 
