@@ -19,6 +19,7 @@ import FullBlog from "./pages/YourStories/FullBlog";
 import NewBlog from "./pages/YourStories/NewBlog";
 import EditBlog from "./pages/YourStories/EditBlog";
 import Auth from "./pages/Auth/Auth";
+import Signup from "./pages/Auth/Signup";
 
 const App = () => {
   return (
@@ -37,6 +38,7 @@ const App = () => {
           <Route path="/about" element={<About />} />
           <Route path="/FAQs" element={<FAQs />} />
           <Route path="/login" element={<Auth />} />
+          <Route path="/signup" element={<Signup />} />
           <Route path="/" exact element={<Home />}/>
         </Routes>
       </main>

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 
 import { useForm, FormProvider } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +16,6 @@ const Auth = (props) => {
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
   const methods = useForm();
-  // const [isLoginMode, setIsLoginMode] = useState(true);
 
   const submitHandler = (data, e) => {
     e.preventDefault();
@@ -53,6 +52,7 @@ const Auth = (props) => {
           </Button>
         </form>
       </FormProvider>
+      <Button link={true} to="/signup" className="signup-button">Create A New Account</Button> 
     </div>
   );
 };

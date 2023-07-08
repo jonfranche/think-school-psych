@@ -13,6 +13,15 @@ const password_validation = {
       value: 8,
       message: "Your password must be atleast 8 characters",
     },
+    maxLength: {
+      value: 32,
+      message: "Your password is too long. (32 characters)",
+    },
+    pattern: {
+      value:
+        /^(?=[^a-z]*[a-z])(?=[^A-Z]*[A-Z])(?=\D*\d)(?=[^!@#$%^&*]*[!@#$%^&*])[A-Za-z0-9!#%]{8,32}$/,
+      message: "Your password does not match the rules below",
+    },
   },
 };
 
@@ -31,6 +40,20 @@ const email_validation = {
       value:
         /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
       message: "Not a valid email",
+    },
+  },
+};
+
+const username_validation = {
+  name: "username",
+  label: "Username",
+  type: "text",
+  id: "username",
+  placeholder: "Create a username",
+  validation: {
+    required: {
+      value: true,
+      message: "A username is required",
     },
   },
 };
@@ -102,16 +125,17 @@ const blog_text_validation = {
     },
     minLength: {
       value: 250,
-      message: "Your story is too short (250 characters minimum)."
-    }
-  }
-}
+      message: "Your story is too short (250 characters minimum).",
+    },
+  },
+};
 
 export {
   password_validation,
   email_validation,
+  username_validation,
   comment_validation,
   edit_comment_validation,
   blog_title_validation,
-  blog_text_validation
-}
+  blog_text_validation,
+};

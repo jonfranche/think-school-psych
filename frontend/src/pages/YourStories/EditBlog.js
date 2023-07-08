@@ -15,12 +15,6 @@ import Button from "../../shared/components/UIElements/Button";
 import Confirmation from "../../shared/components/UIElements/Confirmation";
 
 const EditBlog = () => {
-  // const [Modal, open, close, isOpen] = useModal("root", {
-  //   preventScroll: true,
-  //   focusTrapOptions: {
-  //     clickOutsideDeactivates: false,
-  //   },
-  // });
   const [Modal, open, close] = useModal("root", {
     preventScroll: true,
     focusTrapOptions: {

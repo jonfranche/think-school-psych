@@ -19,6 +19,7 @@
 }
 
 .link-button {
+  margin: 1em;
   padding: 0.25em 0.75em;
   text-decoration: none;
   background-color: #f0d6ce;
