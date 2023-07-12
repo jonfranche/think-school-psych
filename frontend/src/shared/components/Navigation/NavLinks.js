@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import { NavLink } from "react-router-dom";
+import { AuthContext } from "../../context/auth-context";
+import Button from "../UIElements/Button";
 import "./NavLinks.css";
 
 const links = [
@@ -34,14 +36,11 @@ const links = [
   {
     title: "FAQs",
     route: "/FAQs",
-  },
-  {
-    title: "Login / Signup",
-    route: "/login",
-  },
+  }
 ];
 
 const NavLinks = () => {
+  const auth = useContext(AuthContext);
   let activeClassName = "nav-links-item__active";
   let inActiveClassName = "nav-links-item";
   return (
@@ -58,6 +57,23 @@ const NavLinks = () => {
           </NavLink>
         </li>
       ))}
+      {auth.isLoggedIn && (
+        <li>
+          <Button onClick={auth.logout}>Logout</Button>
+        </li>
+      )}
+      {!auth.isLoggedIn && (
+        <li>
+          <NavLink
+            to="/login"
+            className={({ isActive }) =>
+              isActive ? activeClassName : inActiveClassName
+            }
+          >
+            Login / Signup
+          </NavLink>
+        </li>
+      )}
     </ul>
   );
 };
