@@ -15,7 +15,7 @@ type story struct {
 	Date time.Time `json:"date"`
 	UserID string `json:"userID"`
 	Text string `json:"text"`
-	CommentIDs []int `json:"commentIDs"`
+	CommentIDs []string `json:"commentIDs"`
 }
 
 type user struct {
@@ -35,12 +35,16 @@ type comment struct {
 	Text string `json:"text"`
 }
 
+type errorMessage struct {
+	Message string `json:"message"`
+}
+
 var stories = []story {
 	{
 		ID: "1", 
 		Date: time.Date(2022, 6, 12, 0, 0, 0, 0, time.Local), 
 		UserID: "1", 
-		CommentIDs: []int{1, 2, 3}, 
+		CommentIDs: []string{"1", "2", "3"}, 
 		Title: "Lorem Ipsum Dolor", 
 		Text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
 	},
@@ -48,7 +52,7 @@ var stories = []story {
 		ID: "2", 
 		Date: time.Date(2022, 11, 3, 0, 0, 0, 0, time.Local), 
 		UserID: "1", 
-		CommentIDs: []int{4, 5}, 
+		CommentIDs: []string{"4", "5"}, 
 		Title: "Dummy Blog Title", 
 		Text: "This is placeholder text to test the blog functionality. This blog was made by user 1. It has 2 comments.",
 	},
@@ -127,20 +131,33 @@ func getStories(c *gin.Context) {
 
 func postStory(c *gin.Context) {
 	var newStory story
-	storyID := uuid.NewString()
 
 	if err := c.BindJSON(&newStory); err != nil {
+		var newError errorMessage
+		newError.Message = "Something went wrong. Could not post your story."
+		c.IndentedJSON(http.StatusBadRequest, newError)
 		return
 	}
 
 	newStory.Date = time.Now()
-	newStory.ID = storyID
+	newStory.ID = uuid.NewString()
+	newStory.CommentIDs = []string{}
 	fmt.Println(newStory)
 	stories = append(stories, newStory)
 	c.IndentedJSON(http.StatusCreated, newStory)
 }
 
 // TODO: create route for UPDATE /stories/edit/:id
+
+func updateStory(c *gin.Context) {
+	// use for loop to update the story whose ID matches the Param
+	c.Params.ByName("id")
+	for _, val := range stories {
+		if val.ID == c.Params.ByName("id") {
+			
+		}
+	}
+}
 
 // TODO: create route for DELETE /stories/edit/:id
 
