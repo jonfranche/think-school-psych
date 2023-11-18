@@ -124,23 +124,24 @@ func main() {
 	r.POST("/api/stories/new", postStory)
 	r.PATCH("/api/stories/edit/:id", updateStory)
 	r.DELETE("/api/stories/edit/:id", deleteStory)
+	r.GET("/api/stories/:id", getStoryByID)
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
 
 func IDNotFound(c *gin.Context) {
 	var newError message
 	newError.Message = fmt.Sprintf("Could not find story with ID: %v", c.Params.ByName("id"))
-	c.IndentedJSON(http.StatusNotFound, newError)
+	c.JSON(http.StatusNotFound, newError)
 }
 
 func successMessage(c *gin.Context, msg string) {
 	var newMsg message
 	newMsg.Message = msg
-	c.IndentedJSON(http.StatusOK, newMsg)
+	c.JSON(http.StatusOK, newMsg)
 }
 
 func getStories(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, stories)
+	c.JSON(http.StatusOK, stories)
 }
 
 func postStory(c *gin.Context) {
@@ -149,7 +150,7 @@ func postStory(c *gin.Context) {
 	if err := c.BindJSON(&newStory); err != nil {
 		var newError message
 		newError.Message = "Something went wrong. Could not post your story."
-		c.IndentedJSON(http.StatusBadRequest, newError)
+		c.JSON(http.StatusInternalServerError, newError)
 		return
 	}
 
@@ -158,7 +159,7 @@ func postStory(c *gin.Context) {
 	newStory.CommentIDs = []string{}
 	fmt.Println(newStory)
 	stories = append(stories, newStory)
-	c.IndentedJSON(http.StatusCreated, newStory)
+	c.JSON(http.StatusCreated, newStory)
 }
 
 func updateStory(c *gin.Context) {
@@ -168,19 +169,16 @@ func updateStory(c *gin.Context) {
 			if err := c.BindJSON(&val); err != nil {
 				var newError message
 				newError.Message = "Something went wrong. Could not post your story."
-				c.IndentedJSON(http.StatusBadRequest, newError)
+				c.JSON(http.StatusInternalServerError, newError)
 				return
 			}
 
 			stories[idx] = val
-			c.IndentedJSON(http.StatusOK, val)
+			c.JSON(http.StatusOK, val)
 			return
 		}
 	}
 
-	// var newError errorMessage
-	// newError.Message = fmt.Sprintf("Could not find story with ID: %v", c.Params.ByName("id"))
-	// c.IndentedJSON(http.StatusNotFound, newError)
 	IDNotFound(c)
 }
 
@@ -212,6 +210,17 @@ func deleteStory(c *gin.Context) {
 }
 
 // TODO: create route for GET /stories/:id
+func getStoryByID(c *gin.Context) {
+	// TODO: add comments to the return
+	for _, val := range stories {
+		if val.ID == c.Params.ByName("id") {
+			c.JSON(http.StatusOK, val)
+			return
+		}
+	}
+
+	IDNotFound(c)
+}
 
 // TODO: create route for POST /stories/:id to create a new Comment
 
