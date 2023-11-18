@@ -116,7 +116,6 @@ var comments = []comment {
 }
 
 func main() {
-	fmt.Println("Hello World")
 	fmt.Println(users)
 	fmt.Println(comments)
 	r := gin.Default()
@@ -125,12 +124,15 @@ func main() {
 	r.PATCH("/api/stories/edit/:id", updateStory)
 	r.DELETE("/api/stories/edit/:id", deleteStory)
 	r.GET("/api/stories/:id", getStoryByID)
+	r.GET("/api/comments/:id", getCommentByID)
+	r.POST("/api/comments/", postComment)
+	r.PATCH("/api/comments/:id", updateComment)
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
 
-func IDNotFound(c *gin.Context) {
+func IDNotFound(c *gin.Context, dataType string) {
 	var newError message
-	newError.Message = fmt.Sprintf("Could not find story with ID: %v", c.Params.ByName("id"))
+	newError.Message = fmt.Sprintf("Could not find %v with ID: %v", dataType, c.Params.ByName("id"))
 	c.JSON(http.StatusNotFound, newError)
 }
 
@@ -145,6 +147,7 @@ func getStories(c *gin.Context) {
 }
 
 func postStory(c *gin.Context) {
+	// TODO: add authorization
 	var newStory story
 
 	if err := c.BindJSON(&newStory); err != nil {
@@ -179,7 +182,7 @@ func updateStory(c *gin.Context) {
 		}
 	}
 
-	IDNotFound(c)
+	IDNotFound(c, "story")
 }
 
 func deleteStory(c *gin.Context) {
@@ -206,10 +209,9 @@ func deleteStory(c *gin.Context) {
 		}
 	}
 
-	IDNotFound(c)
+	IDNotFound(c, "story")
 }
 
-// TODO: create route for GET /stories/:id
 func getStoryByID(c *gin.Context) {
 	// TODO: add comments to the return
 	for _, val := range stories {
@@ -219,13 +221,65 @@ func getStoryByID(c *gin.Context) {
 		}
 	}
 
-	IDNotFound(c)
+	IDNotFound(c, "story")
 }
 
-// TODO: create route for POST /stories/:id to create a new Comment
+func getCommentByID(c *gin.Context) {
+	for _, val := range comments {
+		if val.ID == c.Params.ByName("id") {
+			c.JSON(http.StatusOK, val)
+			return
+		}
+	}
 
-// TODO: create route for PATCH /stories/:id/comment?:id
+	IDNotFound(c, "comment")
+}
 
+func postComment(c *gin.Context) {
+	// TODO: add authorization
+	var newComment comment
+
+	if err := c.BindJSON(&newComment); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"messsage": "Something went wrong. Could not post your comment."})
+		return
+	}
+
+	newComment.Date = time.Now()
+	newComment.ID = uuid.NewString()
+	fmt.Println(newComment)
+	comments = append(comments, newComment)
+
+	// bind new comment to the story
+	for idx, val := range stories {
+		if val.ID == newComment.BlogID {
+			val.CommentIDs = append(val.CommentIDs, newComment.ID)
+			stories[idx] = val
+			c.JSON(http.StatusCreated, newComment)
+			return
+		}
+	}
+
+	c.JSON(http.StatusInternalServerError, 
+		gin.H{"messsage": "Something went wrong. Could not find the Story that you are commenting on."})
+}
+
+func updateComment(c *gin.Context) {
+	// TODO: add authorization
+	for idx, val := range comments {
+		if val.ID == c.Params.ByName("id") {
+			if err := c.BindJSON(&val); err != nil {
+				c.JSON(http.StatusBadRequest, 
+					gin.H{"message": "Something went wrong. Could not edit your comment"})
+				return
+			}
+			comments[idx] = val
+			c.JSON(http.StatusOK, val)
+			return
+		}
+	}
+
+	IDNotFound(c, "comment")
+}
 // TODO: create route for DELETE /stories/:id/comment?:id
 
 // TODO: create route for POST /login

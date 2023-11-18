@@ -15,6 +15,7 @@ const Comment = (props) => {
   const methods = useForm();
   const [editMode, setEditMode] = useState(false);
   const commentData = DUMMY_COMMENTS.find((comment) => comment.id === props.id);
+  // TODO: create a function to fetch comment data from backend
   const commentDataIndex = DUMMY_COMMENTS.findIndex(
     (comment) => comment.id === props.id
   );
