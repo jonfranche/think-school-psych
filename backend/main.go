@@ -35,7 +35,7 @@ type comment struct {
 	Text string `json:"text"`
 }
 
-type errorMessage struct {
+type message struct {
 	Message string `json:"message"`
 }
 
@@ -122,7 +122,21 @@ func main() {
 	r := gin.Default()
 	r.GET("/api/stories", getStories)
 	r.POST("/api/stories/new", postStory)
+	r.PATCH("/api/stories/edit/:id", updateStory)
+	r.DELETE("/api/stories/edit/:id", deleteStory)
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+}
+
+func IDNotFound(c *gin.Context) {
+	var newError message
+	newError.Message = fmt.Sprintf("Could not find story with ID: %v", c.Params.ByName("id"))
+	c.IndentedJSON(http.StatusNotFound, newError)
+}
+
+func successMessage(c *gin.Context, msg string) {
+	var newMsg message
+	newMsg.Message = msg
+	c.IndentedJSON(http.StatusOK, newMsg)
 }
 
 func getStories(c *gin.Context) {
@@ -133,7 +147,7 @@ func postStory(c *gin.Context) {
 	var newStory story
 
 	if err := c.BindJSON(&newStory); err != nil {
-		var newError errorMessage
+		var newError message
 		newError.Message = "Something went wrong. Could not post your story."
 		c.IndentedJSON(http.StatusBadRequest, newError)
 		return
@@ -147,25 +161,61 @@ func postStory(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, newStory)
 }
 
-// TODO: create route for UPDATE /stories/edit/:id
-
 func updateStory(c *gin.Context) {
-	// use for loop to update the story whose ID matches the Param
-	c.Params.ByName("id")
-	for _, val := range stories {
+	// TODO: Add Authentication
+	for idx, val := range stories {
 		if val.ID == c.Params.ByName("id") {
-			
+			if err := c.BindJSON(&val); err != nil {
+				var newError message
+				newError.Message = "Something went wrong. Could not post your story."
+				c.IndentedJSON(http.StatusBadRequest, newError)
+				return
+			}
+
+			stories[idx] = val
+			c.IndentedJSON(http.StatusOK, val)
+			return
 		}
 	}
+
+	// var newError errorMessage
+	// newError.Message = fmt.Sprintf("Could not find story with ID: %v", c.Params.ByName("id"))
+	// c.IndentedJSON(http.StatusNotFound, newError)
+	IDNotFound(c)
 }
 
-// TODO: create route for DELETE /stories/edit/:id
+func deleteStory(c *gin.Context) {
+	// TODO: Add Authetication
+	for idx, val := range stories {
+		if val.ID == c.Params.ByName("id") {
+			if idx == 0 {
+				stories = stories[1:]
+				successMessage(c, "Successfully deleted story")
+				return
+			}
+			if idx != len(stories)-1 {
+				newSlice := make([]story, 0)
+				newSlice = append(newSlice, stories[:idx]...)
+				stories = append(newSlice, stories[idx+1:]...)
+				successMessage(c, "Successfully deleted story")
+				return
+			}
+			if idx == len(stories)-1 {
+				stories = stories[:idx]
+				successMessage(c, "Successfully deleted story")
+				return
+			}
+		}
+	}
+
+	IDNotFound(c)
+}
 
 // TODO: create route for GET /stories/:id
 
 // TODO: create route for POST /stories/:id to create a new Comment
 
-// TODO: create route for UPDATE /stories/:id/comment?:id
+// TODO: create route for PATCH /stories/:id/comment?:id
 
 // TODO: create route for DELETE /stories/:id/comment?:id
 

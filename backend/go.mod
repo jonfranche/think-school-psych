@@ -1,6 +1,6 @@
-module github.com/jonfranche/think-school-pscyh
+module github.com/jonfranche/think-school-psych
 
-go 1.21.1
+go 1.21.4
 
 require (
 	github.com/bytedance/sonic v1.9.1 // indirect
