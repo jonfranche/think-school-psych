@@ -1,4 +1,4 @@
-module github.com/jonfranche/think-school-psych
+module github.com/jonfranche/thinkschoolpsych/backend
 
 go 1.21.4
 
