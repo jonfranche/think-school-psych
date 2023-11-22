@@ -20,5 +20,6 @@ func main() {
 	r.GET("/api/comments/:id", controllers.GetCommentByID)
 	r.POST("/api/comments/", controllers.PostComment)
 	r.PATCH("/api/comments/:id", controllers.UpdateComment)
+	r.DELETE("/api/comments/:id", controllers.DeleteComment)
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }

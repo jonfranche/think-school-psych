@@ -167,8 +167,29 @@ func UpdateComment(c *gin.Context) {
 
 	IDNotFound(c, "comment")
 }
-// TODO: create route for DELETE /stories/:id/comment?:id
 
+// TODO: create route for DELETE /stories/:id/comment?:id
+func DeleteComment(c *gin.Context) {
+	// TODO: add authorization
+	for idx, val := range comments {
+		if val.ID == c.Params.ByName("id") {
+			if idx == 0 {
+				comments = comments[1:]
+				SuccessMessage(c, "Successfully deleted comment")
+			} else if idx != len(comments)-1 {
+				newSlice := make([]models.Comment, 0)
+				newSlice = append(newSlice, comments[:idx]...)
+				comments = append(newSlice, comments[idx+1:]...)
+				SuccessMessage(c, "Successfully deleted story")
+			} else if idx == len(comments)-1 {
+				comments = comments[:idx]
+				SuccessMessage(c, "Successfully deleted story")
+			}
+		}
+	}
+
+	c.JSON(http.StatusInternalServerError, gin.H{"message": "Something went wrong. Unable to delete comment. Please try again later."})
+}
 // TODO: create route for POST /login
 
 // TODO: create route for POST /signup
