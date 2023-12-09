@@ -17,7 +17,6 @@ type User struct {
 	Name string `json:"name"`
 	Email string `json:"email"`
 	Password string `json:"password"`
-	IsAdmin bool `json:"isAdmin"`
 }
 
 type Comment struct {
@@ -54,7 +53,6 @@ var Users = []User {
 		Name: "fakeuser1",
 		Email: "fakeuser1@test.com",
 		Password: "password123",
-		IsAdmin: true,
 	},
 	{
 		ID: "2",
@@ -62,7 +60,6 @@ var Users = []User {
 		Name: "testuser2",
 		Email: "testuser2@test.com",
 		Password: "password123",
-		IsAdmin: false,
 	},
 }
 
