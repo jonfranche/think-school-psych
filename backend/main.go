@@ -2,9 +2,9 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
 )
 
 var (
@@ -20,12 +20,18 @@ func init() {
 	if err != nil {
 		log.Fatal(".env file couldn't be loaded")
 	}
+
+	dbName = os.Getenv("APP_DB_NAME")
+	dbHost = os.Getenv("APP_DB_HOST")
+	dbPort = os.Getenv("APP_DB_PORT")
+	dbUser = os.Getenv("APP_DB_USER")
+	dbPassword = os.Getenv("APP_DB_PASSWORD")
 }
 
 func main() {
 	a := App {}
 	a.Initialize(dbUser, dbPassword, dbPort, dbHost, dbName)
-	a.Run(":8080")
+	a.Run(":8010")
 	// Set up Server
 	// r := gin.Default()
 	// r.GET("/api/stories", controllers.GetStories)
