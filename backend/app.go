@@ -2,11 +2,11 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
-	"encoding/json"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -40,15 +40,18 @@ func (a *App) getStory(w http.ResponseWriter, r *http.Request) {
 	// extract the id from the URL
 	vars := mux.Vars(r)
 	// convert url param to a string and assign it to "id"
-	id, err := strconv.Atoi(vars["id"])
-	if err != nil {
-		respondWithError(w, http.StatusBadRequest, "Invalid story ID")
-	}
+	// TODO: Uncomment following statement and find out why nil is causing an error
+	// id, err := vars["id"]
+	// if err != nil {
+	// 	respondWithError(w, http.StatusBadRequest, "Invalid story ID")
+	// }
+
+	id := vars["id"]
 
 	// call the getStory method in models to retrieve the row in the products
 	// table that matches the id in the URL
 	s := story{ID: id}
-	if err := s.getProduct(a.DB); err != nil {
+	if err := s.getStory(a.DB); err != nil {
 		switch err {
 		case sql.ErrNoRows:
 			respondWithError(w, http.StatusNotFound, "Story not found")
@@ -99,13 +102,69 @@ func (a *App) createStory(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	// call the createProduct method in models to insert the data into database
-	if err := s.updateProduct(a.DB); err != nil {
+	if err := s.createStory(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	// send a response that creation operation was successful
 	respondWithJSON(w, http.StatusOK, s)
+}
+
+func (a *App) updateStory(w http.ResponseWriter, r *http.Request) {
+	// extract the id from the URL
+	vars := mux.Vars(r)
+	// TODO: Uncomment following statement and find out why nil is causing an error
+	// id, err := vars["id"]
+	// if err != nil {
+	// 	respondWithError(w, http.StatusBadRequest, "Invalid story ID")
+	// }
+
+	id := vars["id"]
+
+	// convert the JSON data received from the request to a story struct
+	var s story
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&s); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	defer r.Body.Close()
+	s.ID = id
+
+	// call the updateStory in models to make changes to the row in story
+	// table that matches the id from the URL
+	if err := s.updateStory(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	// send a response that creation operation was successful
+	respondWithJSON(w, http.StatusOK, s)
+}
+
+func (a *App) deleteStory(w http.ResponseWriter, r *http.Request) {
+	// extract the id from the URL
+	vars := mux.Vars(r)
+	// TODO: Uncomment following statement and find out why nil is causing an error
+	// id, err := vars["id"]
+	// if err != nil {
+	// 	respondWithError(w, http.StatusBadRequest, "Invalid story ID")
+	// }
+
+	id := vars["id"]
+
+	// call the deleteStory method in models to delete the row in the story
+	// table that matches the id from the URL
+	s := story{ID: id}
+	if err := s.deleteStory(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	// send a response that creation operation was successful
+	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
 }
 
 func (a *App) initializeRoutes() {
@@ -123,7 +182,10 @@ func (a *App) initializeRoutes() {
 	// r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 	a.Router.HandleFunc("/api/stories", a.getStories).Methods("GET")
 	a.Router.HandleFunc("/api/stories/new", a.createStory).Methods("POST")
-	a.Router.HandleFunc("/api/stories/{id:[0-9]+}", a.getStories).Methods("GET")
+	// TODO: look up gorilla documentation for using strings for ID in url
+	a.Router.HandleFunc("/api/stories/{id:[0-9]+}", a.getStory).Methods("GET")
+	a.Router.HandleFunc("/api/stories/{id:[0-9]+}", a.updateStory).Methods("PATCH")
+	a.Router.HandleFunc("/api/stories/{id:[0-9]+}", a.deleteStory).Methods("DELETE")
 }
 
 func respondWithError(w http.ResponseWriter, code int, message string) {
