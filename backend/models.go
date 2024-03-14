@@ -14,15 +14,15 @@ type story struct {
 	Text string `json:"text"`
 }
 
-type User struct {
+type user struct {
 	ID string `json:"id"`
 	JoinDate time.Time `json:"joinDate"`
-	Name string `json:"name"`
+	Username string `json:"username"`
 	Email string `json:"email"`
 	Password string `json:"password"`
 }
 
-type Comment struct {
+type comment struct {
 	ID string `json:"id"`
 	Date time.Time `json:"date"`
 	UserID string `json:"userID"`
