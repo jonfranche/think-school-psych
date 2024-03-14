@@ -21,11 +21,11 @@ func init() {
 		log.Fatal(".env file couldn't be loaded")
 	}
 
-	dbName = os.Getenv("APP_DB_NAME")
-	dbHost = os.Getenv("APP_DB_HOST")
-	dbPort = os.Getenv("APP_DB_PORT")
-	dbUser = os.Getenv("APP_DB_USER")
-	dbPassword = os.Getenv("APP_DB_PASSWORD")
+	dbName = os.Getenv("POSTGRES_NAME")
+	dbHost = os.Getenv("DB_HOST")
+	dbPort = os.Getenv("DB_PORT")
+	dbUser = os.Getenv("POSTGRES_USER")
+	dbPassword = os.Getenv("POSTGRES_PASSWORD")
 }
 
 func main() {
