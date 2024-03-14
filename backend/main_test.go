@@ -1,14 +1,14 @@
 package main_test
 
 import (
-	"encoding/json"
+	// "encoding/json"
 	"log"
 	"os"
-	"testing"
-	"strconv"
-	"bytes"
-	"net/http"
-	"net/http/httptest"
+	// "testing"
+	// "strconv"
+	// "bytes"
+	// "net/http"
+	// "net/http/httptest"
 
 	"github.com/joho/godotenv"
 	"github.com/jonfranche/thinkschoolpsych/backend"
@@ -29,4 +29,10 @@ func init() {
 	if err != nil {
 		log.Fatal(".env file couldn't be loaded")
 	}
+
+	dbName = os.Getenv("POSTGRES_DB")
+	dbHost = os.Getenv("DB_HOST")
+	dbPort = os.Getenv("DB_PORT")
+	dbUser = os.Getenv("POSTGRES_USER")
+	dbPassword = os.Getenv("POSTGRES_PASSWORD")
 }

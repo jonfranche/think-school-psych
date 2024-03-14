@@ -16,12 +16,12 @@ var (
 )
 
 func init() {
-	err := godotenv.Load("../env/backend.env")
+	err := godotenv.Load("../env/postgres.env")
 	if err != nil {
 		log.Fatal(".env file couldn't be loaded")
 	}
 
-	dbName = os.Getenv("POSTGRES_NAME")
+	dbName = os.Getenv("POSTGRES_DB")
 	dbHost = os.Getenv("DB_HOST")
 	dbPort = os.Getenv("DB_PORT")
 	dbUser = os.Getenv("POSTGRES_USER")

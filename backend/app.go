@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -18,6 +19,7 @@ type App struct {
 }
 
 func(a *App) Initialize(user, password, port, host, dbname string) {
+	fmt.Println("Initializing Server on port: " + port + "...")
 	connectionString :=
 		fmt.Sprintf("user=%s password=%s port=%s host=%s dbname=%s sslmode=disable", user, password, port, host, dbname)
 
@@ -28,8 +30,10 @@ func(a *App) Initialize(user, password, port, host, dbname string) {
 		log.Fatal(err)
 	}
 
+	fmt.Println("Connected to database")
 	a.Router = mux.NewRouter()
 	a.initializeRoutes()
+	fmt.Println("Initialization successful!")
 }
 
 func (a *App) Run(addr string) {
@@ -61,6 +65,8 @@ func (a *App) getStory(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// convert the stored userID from pk to uuid
+	s.getUserUUIDByID(a.DB)
 	// send a response that creation operation was successful
 	respondWithJSON(w, http.StatusOK, s)
 }
@@ -90,6 +96,16 @@ func (a *App) getStories(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, stories)
 }
 
+func (a *App) getUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := getUsers(a.DB)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, users)
+}
+
 func (a *App) createStory(w http.ResponseWriter, r *http.Request) {
 	// convert the JSON data recceived fro the request to a story struct
 	var s story
@@ -101,6 +117,8 @@ func (a *App) createStory(w http.ResponseWriter, r *http.Request) {
 	// the defer keyword executes subsequent statement once the method is complete
 	defer r.Body.Close()
 
+	s.Date = time.Now()
+
 	// call the createProduct method in models to insert the data into database
 	if err := s.createStory(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
@@ -109,6 +127,27 @@ func (a *App) createStory(w http.ResponseWriter, r *http.Request) {
 
 	// send a response that creation operation was successful
 	respondWithJSON(w, http.StatusOK, s)
+}
+
+func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
+	var u user
+	
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&u); err != nil {
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	defer r.Body.Close()
+
+	u.JoinDate = time.Now()
+
+	if err := u.createUser(a.DB); err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, u)
 }
 
 func (a *App) updateStory(w http.ResponseWriter, r *http.Request) {
@@ -168,24 +207,13 @@ func (a *App) deleteStory(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) initializeRoutes() {
-	// Set up Server
-	// r := gin.Default()
-	// r.GET("/api/stories", controllers.GetStories)
-	// r.POST("/api/stories/new", controllers.PostStory)
-	// r.PATCH("/api/stories/edit/:id", controllers.UpdateStory)
-	// r.DELETE("/api/stories/edit/:id", controllers.DeleteStory)
-	// r.GET("/api/stories/:id", controllers.GetStoryByID)
-	// r.GET("/api/comments/:id", controllers.GetCommentByID)
-	// r.POST("/api/comments/", controllers.PostComment)
-	// r.PATCH("/api/comments/:id", controllers.UpdateComment)
-	// r.DELETE("/api/comments/:id", controllers.DeleteComment)
-	// r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	a.Router.HandleFunc("/api/signup", a.createUser).Methods("POST")
 	a.Router.HandleFunc("/api/stories", a.getStories).Methods("GET")
 	a.Router.HandleFunc("/api/stories/new", a.createStory).Methods("POST")
-	// TODO: look up gorilla documentation for using strings for ID in url
-	a.Router.HandleFunc("/api/stories/{id:[0-9]+}", a.getStory).Methods("GET")
-	a.Router.HandleFunc("/api/stories/{id:[0-9]+}", a.updateStory).Methods("PATCH")
-	a.Router.HandleFunc("/api/stories/{id:[0-9]+}", a.deleteStory).Methods("DELETE")
+	a.Router.HandleFunc("/api/stories/{id}", a.getStory).Methods("GET")
+	a.Router.HandleFunc("/api/stories/{id}", a.updateStory).Methods("PATCH")
+	a.Router.HandleFunc("/api/stories/{id}", a.deleteStory).Methods("DELETE")
+	a.Router.HandleFunc("/api/users", a.getUsers).Methods("GET")
 }
 
 func respondWithError(w http.ResponseWriter, code int, message string) {

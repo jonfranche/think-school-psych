@@ -22,15 +22,14 @@ type user struct {
 	Password string `json:"password"`
 }
 
-type comment struct {
-	ID string `json:"id"`
-	Date time.Time `json:"date"`
-	UserID string `json:"userID"`
-	BlogID string `json:"blogID"`
-	Text string `json:"text"`
-}
+// type comment struct {
+// 	ID string `json:"id"`
+// 	Date time.Time `json:"date"`
+// 	UserID string `json:"userID"`
+// 	BlogID string `json:"blogID"`
+// 	Text string `json:"text"`
+// }
 
-// TODO: change ID to UUID
 func (s *story) getStory(db *sql.DB) error {
 	return db.QueryRow("SELECT title, date, userID, text FROM stories WHERE id=$1", 
 		s.ID).Scan(&s.Title, &s.Date, &s.UserID, &s.Text)
@@ -79,12 +78,50 @@ func getStories(db *sql.DB, start, count int) ([]story, error) {
 		if err := rows.Scan(&s.ID, &s.Title, &s.Date, &s.UserID, &s.Text); err != nil {
 			return nil, err
 		}
+		db.QueryRow("SELECT id FROM users WHERE pk=$1", s.UserID).Scan(&s.UserID)
 		stories = append(stories, s)
 	}
 
 	return stories, nil
 }
 
+func (u *user) createUser(db *sql.DB) error {
+	err := db.QueryRow(
+		"INSERT INTO users(username, joindate, email, password) VALUES ($1, $2, $3, $4) RETURNING id",
+		u.Username, u.JoinDate, u.Email, u.Password).Scan(&u.ID)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *story) getUserUUIDByID(db *sql.DB) error {
+	return db.QueryRow("SELECT id FROM users WHERE pk=$1", s.UserID).Scan(&s.UserID)
+}
+
+func getUsers(db *sql.DB) ([]user, error) {
+	rows, err := db.Query("SELECT username FROM users")
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	users := []user{}
+
+	for rows.Next() {
+		var u user
+		if err := rows.Scan(&u.Username); err != nil {
+			return nil, err
+		}
+		users = append(users, u)
+	}
+
+	return users, nil
+}
 // var Stories = []Story {
 // 	{
 // 		ID: "1", 
