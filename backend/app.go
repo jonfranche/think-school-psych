@@ -43,13 +43,6 @@ func (a *App) Run(addr string) {
 func (a *App) getStory(w http.ResponseWriter, r *http.Request) {
 	// extract the id from the URL
 	vars := mux.Vars(r)
-	// convert url param to a string and assign it to "id"
-	// TODO: Uncomment following statement and find out why nil is causing an error
-	// id, err := vars["id"]
-	// if err != nil {
-	// 	respondWithError(w, http.StatusBadRequest, "Invalid story ID")
-	// }
-
 	id := vars["id"]
 
 	// call the getStory method in models to retrieve the row in the products
@@ -161,12 +154,6 @@ func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
 func (a *App) updateStory(w http.ResponseWriter, r *http.Request) {
 	// extract the id from the URL
 	vars := mux.Vars(r)
-	// TODO: Uncomment following statement and find out why nil is causing an error
-	// id, err := vars["id"]
-	// if err != nil {
-	// 	respondWithError(w, http.StatusBadRequest, "Invalid story ID")
-	// }
-
 	id := vars["id"]
 
 	// convert the JSON data received from the request to a story struct
@@ -194,12 +181,6 @@ func (a *App) updateStory(w http.ResponseWriter, r *http.Request) {
 func (a *App) deleteStory(w http.ResponseWriter, r *http.Request) {
 	// extract the id from the URL
 	vars := mux.Vars(r)
-	// TODO: Uncomment following statement and find out why nil is causing an error
-	// id, err := vars["id"]
-	// if err != nil {
-	// 	respondWithError(w, http.StatusBadRequest, "Invalid story ID")
-	// }
-
 	id := vars["id"]
 
 	// call the deleteStory method in models to delete the row in the story
@@ -235,6 +216,3 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.WriteHeader(code)
 	w.Write(response)
 }
-
-
-

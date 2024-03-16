@@ -8,7 +8,6 @@ import (
 	"github.com/google/uuid"
 )
 
-// TODO: change ID to UUID
 type story struct {
 	ID string `json:"id"`
 	Title string `json:"title"`
