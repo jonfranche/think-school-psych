@@ -19,7 +19,7 @@ type App struct {
 }
 
 func(a *App) Initialize(user, password, port, host, dbname string) {
-	fmt.Println("Initializing Server on port: " + port + "...")
+	fmt.Println("Connecting Database on port: " + port + "...")
 	connectionString :=
 		fmt.Sprintf("user=%s password=%s port=%s host=%s dbname=%s sslmode=disable", user, password, port, host, dbname)
 
