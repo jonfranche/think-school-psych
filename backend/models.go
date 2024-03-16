@@ -3,6 +3,9 @@ package main
 import (
 	"database/sql"
 	"time"
+	"log"
+
+	"github.com/google/uuid"
 )
 
 // TODO: change ID to UUID
@@ -97,8 +100,16 @@ func (u *user) createUser(db *sql.DB) error {
 	return nil
 }
 
-func (s *story) getUserUUIDByID(db *sql.DB) error {
+func (s *story) getUserUuidById(db *sql.DB) error {
 	return db.QueryRow("SELECT id FROM users WHERE pk=$1", s.UserID).Scan(&s.UserID)
+}
+
+func (u *user) getUserIdByUuid(db *sql.DB) error {
+	id, err := uuid.Parse(u.ID)
+	if err != nil {
+		log.Fatal("Error occurred when creating UUID from bytes")
+	}
+	return db.QueryRow("SELECT pk FROM users WHERE id=$1", id).Scan(&u.ID)
 }
 
 func getUsers(db *sql.DB) ([]user, error) {

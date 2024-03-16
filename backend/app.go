@@ -66,7 +66,7 @@ func (a *App) getStory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// convert the stored userID from pk to uuid
-	s.getUserUUIDByID(a.DB)
+	s.getUserUuidById(a.DB)
 	// send a response that creation operation was successful
 	respondWithJSON(w, http.StatusOK, s)
 }
@@ -109,6 +109,9 @@ func (a *App) getUsers(w http.ResponseWriter, r *http.Request) {
 func (a *App) createStory(w http.ResponseWriter, r *http.Request) {
 	// convert the JSON data recceived fro the request to a story struct
 	var s story
+	var u user
+	// delete this once authentication is implemented
+	u.ID = "25a2d3e5-1d7b-4384-b6e3-fa3629b528f1"
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&s); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
@@ -117,16 +120,21 @@ func (a *App) createStory(w http.ResponseWriter, r *http.Request) {
 	// the defer keyword executes subsequent statement once the method is complete
 	defer r.Body.Close()
 
-	s.Date = time.Now()
+	u.getUserIdByUuid(a.DB)
 
-	// call the createProduct method in models to insert the data into database
+	var id string = u.ID
+
+	s.Date = time.Now()
+	s.UserID = id
+
+	// call the createStory method in models to insert the data into database
 	if err := s.createStory(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	// send a response that creation operation was successful
-	respondWithJSON(w, http.StatusOK, s)
+	respondWithJSON(w, http.StatusCreated, s)
 }
 
 func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
