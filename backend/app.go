@@ -6,16 +6,31 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+)
+
+var (
+	testUserID string
 )
 
 type App struct {
 	Router *mux.Router
 	DB *sql.DB
+}
+
+func init() {
+	err := godotenv.Load("../env/backend.env")
+	if err != nil {
+		log.Fatal(".env file couldn't be loaded")
+	}
+
+	testUserID = os.Getenv("TEST_USER_ID")
 }
 
 func(a *App) Initialize(user, password, port, host, dbname string) {
@@ -104,7 +119,7 @@ func (a *App) createStory(w http.ResponseWriter, r *http.Request) {
 	var s story
 	var u user
 	// delete this once authentication is implemented
-	u.ID = "25a2d3e5-1d7b-4384-b6e3-fa3629b528f1"
+	u.ID = testUserID
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&s); err != nil {
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
@@ -216,3 +231,5 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.WriteHeader(code)
 	w.Write(response)
 }
+
+// TODO: create functions to write to console of any activity

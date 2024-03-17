@@ -2,8 +2,8 @@ package main
 
 import (
 	"database/sql"
-	"time"
 	"log"
+	"time"
 
 	"github.com/google/uuid"
 )
