@@ -31,8 +31,5 @@ func init() {
 func main() {
 	a := App {}
 	a.Initialize(dbUser, dbPassword, dbPort, dbHost, dbName)
-
-	// TODO: enable CORS
-
 	a.Run(":8010")
 }

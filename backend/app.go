@@ -13,6 +13,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
+	"github.com/rs/cors"
 	_ "github.com/lib/pq"
 )
 
@@ -53,7 +54,8 @@ func(a *App) Initialize(user, password, port, host, dbname string) {
 }
 
 func (a *App) Run(addr string) {
-	log.Fatal(http.ListenAndServe(":8010", a.Router))
+	handler := cors.Default().Handler(a.Router)
+	log.Fatal(http.ListenAndServe(":8010", handler))
 }
 
 func (a *App) getStory(w http.ResponseWriter, r *http.Request) {

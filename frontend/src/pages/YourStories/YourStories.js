@@ -8,47 +8,51 @@ import "./YourStories.css";
 // import { DUMMY_BLOGS } from "../../DummyData";
 
 const YourStories = () => {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     const getData = () => {
-      return fetch('http://127.0.0.1:8010/api/stories')
+      return fetch("/api/stories", {"method": "GET"})
         .then((response) => {
-          console.log(response);
           const respData = response.json();
           return respData;
         })
         .then((response) => {
           setData(response);
-          console.log(data);
         })
         .catch((err) => {
-          console.log(err)
+          console.log(err);
         });
     };
 
-    setData(null);
     setTimeout(() => {
       getData();
+      setLoading(true);
     }, 1000);
-  }, [])
+  }, []);
 
   return (
     <React.Fragment>
       <div className="your-stories">
         <h2>Your Stories</h2>
-        <Button link={true} to="new">Share Your Story</Button>
-        <div className="your-stories-blogs">
-          {/* {data.map((blog) => (
-            <Blog
-              key={blog.id}
-              id={blog.id}
-              date={blog.date}
-              userId={blog.userId}
-              title={blog.title}
-              text={blog.text}
-            />
-          ))} */}
-        </div>
+        <Button link={true} to="new">
+          Share Your Story
+        </Button>
+        {!loading && <h4>Loading...</h4>}
+        {loading && (
+          <div className="your-stories-blogs">
+            {data.map((blog) => (
+              <Blog
+                key={blog.id}
+                id={blog.id}
+                date={blog.date}
+                userId={blog.userId}
+                title={blog.title}
+                text={blog.text}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </React.Fragment>
   );
