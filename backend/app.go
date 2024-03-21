@@ -13,8 +13,8 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-	"github.com/rs/cors"
 	_ "github.com/lib/pq"
+	"github.com/rs/cors"
 )
 
 var (
@@ -133,7 +133,7 @@ func (a *App) createStory(w http.ResponseWriter, r *http.Request) {
 	// convert the JSON data recceived fro the request to a story struct
 	var s story
 	var u user
-	// delete this once authentication is implemented
+	// TODO: delete this once authentication is implemented
 	u.ID = testUserID
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&s); err != nil {
