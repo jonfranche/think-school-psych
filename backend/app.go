@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -10,11 +11,12 @@ import (
 	"strconv"
 	"time"
 
+	"firebase.google.com/go/v4"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-	"github.com/rs/cors"
 	_ "github.com/lib/pq"
+	"github.com/rs/cors"
 )
 
 var (
@@ -51,6 +53,12 @@ func(a *App) Initialize(user, password, port, host, dbname string) {
 	a.Router = mux.NewRouter()
 	a.initializeRoutes()
 	log.Println("Initialization successful!")
+	
+	// initialize firebase
+	fb, err := firebase.NewApp(context.Background(), nil)
+	if err != nil {
+		log.Fatalf("error initializing firebase: %v\n", err)
+	}
 }
 
 func (a *App) Run(addr string) {

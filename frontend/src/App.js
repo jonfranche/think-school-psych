@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+
 import BehavioralInterventions from "./pages/BehavioralInterventions/BehavioralInterventions";
 import FAQs from "./pages/FAQs/FAQs";
 import GeneralResources from "./pages/GeneralResources/GeneralResources";
@@ -9,13 +10,13 @@ import MentalHealth from "./pages/MentalHealth/MentalHealth";
 import YourStories from "./pages/YourStories/YourStories";
 import About from "./pages/About/About";
 import MainNavigation from "./shared/components/Navigation/MainNavigation";
-import "./App.css";
 import FullBlog from "./pages/YourStories/FullBlog";
 import NewBlog from "./pages/YourStories/NewBlog";
 import EditBlog from "./pages/YourStories/EditBlog";
 import Auth from "./pages/Auth/Auth";
 import Signup from "./pages/Auth/Signup";
 import { AuthContext } from "./shared/context/auth-context";
+import "./App.css";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
