@@ -11,7 +11,7 @@ import (
 	"strconv"
 	"time"
 
-	"firebase.google.com/go/v4"
+	firebase "firebase.google.com/go/v4"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
@@ -26,6 +26,7 @@ var (
 type App struct {
 	Router *mux.Router
 	DB *sql.DB
+	FB *firebase.App
 }
 
 func init() {
