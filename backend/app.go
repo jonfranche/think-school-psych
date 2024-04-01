@@ -17,6 +17,7 @@ import (
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/rs/cors"
+	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/api/option"
 )
 
@@ -196,6 +197,16 @@ func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
 	u.JoinDate = time.Now()
 
 	// TODO: add hashing password
+	pwStr := []byte(u.Password)
+
+	pw, err := bcrypt.GenerateFromPassword(pwStr, 12)
+	if err != nil {
+		log.Printf("HTTP Status: %d. Error encrypting password", 500)
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+	}
+
+	log.Print(string(pw))
+	u.Password = string(pw)
 
 	if err := u.createUser(a.DB); err != nil {
 		log.Printf("HTTP Status: %d. Error occurred when creating user", 500)
