@@ -89,8 +89,8 @@ func getStories(db *sql.DB, start, count int) ([]story, error) {
 
 func (u *user) createUser(db *sql.DB) error {
 	err := db.QueryRow(
-		"INSERT INTO users(username, joindate, email, password) VALUES ($1, $2, $3, $4) RETURNING id",
-		u.Username, u.JoinDate, u.Email, u.Password).Scan(&u.ID)
+		"INSERT INTO users(id, username, joindate, email, password) VALUES ($1, $2, $3, $4, $5) RETURNING id",
+		u.ID, u.Username, u.JoinDate, u.Email, u.Password).Scan(&u.ID)
 
 	if err != nil {
 		return err

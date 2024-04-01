@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -10,11 +11,13 @@ import (
 	"strconv"
 	"time"
 
+	firebase "firebase.google.com/go/v4"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
-	"github.com/rs/cors"
 	_ "github.com/lib/pq"
+	"github.com/rs/cors"
+	"google.golang.org/api/option"
 )
 
 var (
@@ -24,6 +27,7 @@ var (
 type App struct {
 	Router *mux.Router
 	DB *sql.DB
+	FB *firebase.App
 }
 
 func init() {
@@ -51,6 +55,17 @@ func(a *App) Initialize(user, password, port, host, dbname string) {
 	a.Router = mux.NewRouter()
 	a.initializeRoutes()
 	log.Println("Initialization successful!")
+
+	// import firebase service account
+	opt := option.WithCredentialsFile("../env/service-account.json")
+
+	// create new firebase instance
+	fb, err := firebase.NewApp(context.Background(), nil, opt)
+	if err != nil {
+		log.Fatalf("error initializing firebase: %v\n", err)
+	}
+
+	a.FB = fb
 }
 
 func (a *App) Run(addr string) {
@@ -177,8 +192,10 @@ func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	defer r.Body.Close()
-
+	u.ID = uuid.NewString()
 	u.JoinDate = time.Now()
+
+	// TODO: add hashing password
 
 	if err := u.createUser(a.DB); err != nil {
 		log.Printf("HTTP Status: %d. Error occurred when creating user", 500)
@@ -186,8 +203,19 @@ func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO: uncomment next line after uuid is implemented in backend
-	// log.Println("Created User with ID: " + u.ID)
+	client, err := a.FB.Auth(context.Background())
+	if err != nil {
+		log.Fatalf("error getting Auth client: %v\n", err)
+	}
+
+	token, err := client.CustomToken(context.Background(), u.ID)
+	if err != nil {
+		log.Fatalf("error minting custom token: %v\n", err)
+	}
+
+	log.Printf("Got custom token: %v\n", token)
+
+	log.Println("Created User with ID: " + u.ID)
 	respondWithJSON(w, http.StatusOK, u)
 	log.Printf("HTTP Status: %d. Successfully created user", 201)
 }
