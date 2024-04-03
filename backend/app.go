@@ -196,7 +196,6 @@ func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
 	u.ID = uuid.NewString()
 	u.JoinDate = time.Now()
 
-	// TODO: add hashing password
 	pwStr := []byte(u.Password)
 
 	pw, err := bcrypt.GenerateFromPassword(pwStr, 12)
@@ -214,21 +213,55 @@ func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client, err := a.FB.Auth(context.Background())
-	if err != nil {
-		log.Fatalf("error getting Auth client: %v\n", err)
+	// create jwt
+	token := assignToken(u.ID, a)
+
+	payload := map[string]string{"id": u.ID, "email": u.Email, "token": token}
+	respondWithJSON(w, http.StatusOK, payload)
+	log.Printf("HTTP Status: %d. Successfully created user with email: %s. ID assigned: %s", 201, u.Email, u.ID)
+}
+
+func (a *App) loginUser(w http.ResponseWriter, r *http.Request) {
+	var u user
+	
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&u); err != nil {
+		log.Printf("Http Status: %d. Error logging in user with invalid request payload", 400)
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
 	}
 
-	token, err := client.CustomToken(context.Background(), u.ID)
-	if err != nil {
-		log.Fatalf("error minting custom token: %v\n", err)
+	defer r.Body.Close()
+
+	// find user in db
+	var existingUser user;
+	existingUser.Email = u.Email
+	if err := existingUser.getUserPasswordByEmail(a.DB); err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			log.Printf("HTTP Status: %d. Invalid email, could not log user in.", 404)
+			respondWithError(w, http.StatusNotFound, "User not found")
+		default:
+			log.Printf("HTTP Status: %d. Error occurred when retrieving user", 500)
+			respondWithError(w, http.StatusInternalServerError, err.Error())
+		}
+		return
 	}
 
-	log.Printf("Got custom token: %v\n", token)
+	// compare password with hashed password
+	if err := bcrypt.CompareHashAndPassword([]byte(existingUser.Password), []byte(u.Password)); err != nil {
+		log.Printf("HTTP Status: %d. Invalid password, could not log user in.", 403)
+		respondWithError(w, http.StatusForbidden, "Invalid credentials, could not log you in.")
+		return
+	}
 
-	log.Println("Created User with ID: " + u.ID)
-	respondWithJSON(w, http.StatusOK, u)
-	log.Printf("HTTP Status: %d. Successfully created user", 201)
+	// create new token
+	token := assignToken(existingUser.ID, a)
+
+	// respond with json of uid, email, token
+	payload := map[string]string{"id": existingUser.ID, "email": existingUser.Email, "token": token}
+	respondWithJSON(w, http.StatusOK, payload)
+	log.Printf("HTTP Status: %d User has signed in.\nEmail: %s, ID: %s", 200, existingUser.Email, existingUser.ID)
 }
 
 func (a *App) updateStory(w http.ResponseWriter, r *http.Request) {
@@ -291,6 +324,7 @@ func (a *App) deleteStory(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) initializeRoutes() {
+	a.Router.HandleFunc("/api/login", a.loginUser).Methods("POST")
 	a.Router.HandleFunc("/api/signup", a.createUser).Methods("POST")
 	a.Router.HandleFunc("/api/stories", a.getStories).Methods("GET")
 	a.Router.HandleFunc("/api/stories/new", a.createStory).Methods("POST")
@@ -321,6 +355,20 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
 	w.Write(response)
+}
+
+func assignToken(uid string, a *App) string {
+	client, err := a.FB.Auth(context.Background())
+	if err != nil {
+		log.Fatalf("error getting Auth client: %v\n", err)
+	}
+
+	token, err := client.CustomToken(context.Background(), uid)
+	if err != nil {
+		log.Fatalf("error minting custom token: %v\n", err)
+	}
+
+	return token
 }
 
 // TODO: create functions to write to console of any activity

@@ -103,6 +103,10 @@ func (s *story) getUserUuidById(db *sql.DB) error {
 	return db.QueryRow("SELECT id FROM users WHERE pk=$1", s.UserID).Scan(&s.UserID)
 }
 
+func (u *user) getUserPasswordByEmail(db *sql.DB) error {
+	return db.QueryRow("SELECT id, password FROM users WHERE email=$1", u.Email).Scan(&u.ID, &u.Password)
+}
+
 func (u *user) getUserIdByUuid(db *sql.DB) error {
 	id, err := uuid.Parse(u.ID)
 	if err != nil {
