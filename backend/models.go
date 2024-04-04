@@ -28,7 +28,7 @@ type comment struct {
 	ID string `json:"id"`
 	Date time.Time `json:"date"`
 	UserID string `json:"userID"`
-	BlogID string `json:"blogID"`
+	StoryID string `json:"storyID"`
 	Text string `json:"text"`
 }
 
@@ -140,26 +140,58 @@ func getUsers(db *sql.DB) ([]user, error) {
 func (c *comment) createComment(db *sql.DB) error {
 	// get user id
 	var upk int
-	err := db.QueryRow("SELECT pk FROM users WHERE id=$1", c.UserID).Scan(upk); if err != nil {
+	err := db.QueryRow("SELECT pk FROM users WHERE id=$1", c.UserID).Scan(&upk); if err != nil {
 		return err
 	}
 
 	// get story id
 	var spk int
-	err = db.QueryRow("SELECT pk FROM stories WHERE id=$1", c.BlogID).Scan(spk); if err != nil {
+	err = db.QueryRow("SELECT pk FROM stories WHERE id=$1", c.StoryID).Scan(&spk); if err != nil {
 		return err
 	}
 
 	// store comment
 	err = db.QueryRow(
-		"INSERT INTO comments(date, userpk, storypk, text) VALUES ($1, $2, $3, $4) RETURNING id",
-		c.Date, upk, spk, c.Text).Scan(&c.ID)
+		"INSERT INTO comments(id, date, userpk, storypk, text) VALUES ($1, $2, $3, $4, $5) RETURNING id",
+		c.ID, c.Date, upk, spk, c.Text).Scan(&c.ID)
 
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func getCommentsByStoryId(db *sql.DB, storyId string) ([]comment, error) {
+	// TODO: FIX query
+	rows, err := db.Query(
+		"SELECT comments.id, comments.date, comments.text, users.id, stories.id " + 
+		"FROM comments " +
+		"RIGHT JOIN users ON comments.userpk = users.pk " +
+		"RIGHT JOIN stories ON comments.storypk = $1", storyId)
+
+	// rows, err := db.Query(
+	// 	"SELECT comments.id, comments.date, comments.text, users.id, stories.id " + 
+	// 	"FROM comments " +
+	// 	"RIGHT JOIN users ON comments.userpk = users.id " +
+	// 	"RIGHT JOIN stories ON comments.storypk = stories.id")
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+	
+	comments := []comment{}
+
+	for rows.Next() {
+		var c comment
+		if err := rows.Scan(&c.ID, &c.Date, &c.Text, &c.UserID, &c.StoryID); err != nil {
+			return nil, err
+		}
+		comments = append(comments, c)
+	}
+
+	return comments, nil
 }
 
 // var Stories = []Story {

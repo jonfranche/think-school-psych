@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"time"
 
@@ -21,10 +20,6 @@ import (
 	"google.golang.org/api/option"
 )
 
-var (
-	testUserID string
-)
-
 type App struct {
 	Router *mux.Router
 	DB *sql.DB
@@ -36,8 +31,6 @@ func init() {
 	if err != nil {
 		log.Fatal(".env file couldn't be loaded")
 	}
-
-	testUserID = os.Getenv("TEST_USER_ID")
 }
 
 func(a *App) Initialize(user, password, port, host, dbname string) {
@@ -146,11 +139,13 @@ func (a *App) getUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) createStory(w http.ResponseWriter, r *http.Request) {
-	// convert the JSON data recceived fro the request to a story struct
-	var s story
 	var u user
-	// TODO: delete this once authentication is implemented
-	u.ID = testUserID
+	var s story
+
+	// extract the id from the URL
+	u.ID = mux.Vars(r)["userId"]
+
+	// convert the JSON data recceived fro the request to a story struct
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&s); err != nil {
 		log.Printf("HTTP Status: %d. Error occurred when creating story", 400)
@@ -344,7 +339,6 @@ func (a *App) createComment(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 	
-	c.BlogID = storyId
 	c.ID = uuid.NewString()
 	c.Date = time.Now()
 
@@ -356,19 +350,34 @@ func (a *App) createComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// send response that creation operation was successful
-	respondWithJSON(w, http.StatusCreated, c)
+	respondWithJSON(w, http.StatusCreated, c.ID)
 	log.Printf("HTTP Status: %d. Successfully created comment", 201)
+}
+
+func (a *App) getComments(w http.ResponseWriter, r *http.Request) {
+	storyId := mux.Vars(r)["id"]
+
+	comments, err := getCommentsByStoryId(a.DB, storyId)
+	if err != nil {
+		log.Printf("HTTP State: %d. Error occurred when retrieving comments", 500)
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, comments)
+	log.Printf("HTTP Status: %d. Successfully retrieved comments", 200)
 }
  
 func (a *App) initializeRoutes() {
+	a.Router.HandleFunc("/api/stories/{id}/comments", a.getComments).Methods("GET")
 	a.Router.HandleFunc("/api/stories/{id}/comment", a.createComment).Methods("POST")
 	a.Router.HandleFunc("/api/login", a.loginUser).Methods("POST")
 	a.Router.HandleFunc("/api/signup", a.createUser).Methods("POST")
-	a.Router.HandleFunc("/api/stories", a.getStories).Methods("GET")
-	a.Router.HandleFunc("/api/stories/new", a.createStory).Methods("POST")
+	a.Router.HandleFunc("/api/stories/new/{userId}", a.createStory).Methods("POST")
 	a.Router.HandleFunc("/api/stories/{id}", a.getStory).Methods("GET")
 	a.Router.HandleFunc("/api/stories/{id}", a.updateStory).Methods("PATCH")
 	a.Router.HandleFunc("/api/stories/{id}", a.deleteStory).Methods("DELETE")
+	a.Router.HandleFunc("/api/stories", a.getStories).Methods("GET")
 	a.Router.HandleFunc("/api/users", a.getUsers).Methods("GET")
 }
 

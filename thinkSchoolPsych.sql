@@ -22,5 +22,5 @@ CREATE TABLE comments(
     userpk INT NOT NULL,
     storypk INT NOT NULL,
     date DATE NOT NULL,
-    text TEXT NOT NULL,
-)
+    text TEXT NOT NULL
+);
