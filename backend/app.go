@@ -323,7 +323,45 @@ func (a *App) deleteStory(w http.ResponseWriter, r *http.Request) {
 	log.Printf("HTTP Status: %d. Successfully deleted story with ID: %s", 20, s.ID)
 }
 
+func (a *App) createComment(w http.ResponseWriter, r *http.Request) {
+	var c comment
+	// get story id from url
+	vars := mux.Vars(r)
+	storyId := vars["id"]
+
+	// validate that id is a uuid
+	if (!validateUUID(storyId, w)) {
+		return
+	}
+
+	// extract userID and text from json
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&c); err != nil {
+		log.Printf("HTTP Status: %d. Error occurred when creating comment", 400)
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	defer r.Body.Close()
+	
+	c.BlogID = storyId
+	c.ID = uuid.NewString()
+	c.Date = time.Now()
+
+	// call createComment method in models to insert the data into db
+	if err := c.createComment(a.DB); err != nil {
+		log.Printf("HTTP Status: %d. Error creating comment", 500)
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	// send response that creation operation was successful
+	respondWithJSON(w, http.StatusCreated, c)
+	log.Printf("HTTP Status: %d. Successfully created comment", 201)
+}
+ 
 func (a *App) initializeRoutes() {
+	a.Router.HandleFunc("/api/stories/{id}/comment", a.createComment).Methods("POST")
 	a.Router.HandleFunc("/api/login", a.loginUser).Methods("POST")
 	a.Router.HandleFunc("/api/signup", a.createUser).Methods("POST")
 	a.Router.HandleFunc("/api/stories", a.getStories).Methods("GET")
@@ -370,5 +408,3 @@ func assignToken(uid string, a *App) string {
 
 	return token
 }
-
-// TODO: create functions to write to console of any activity

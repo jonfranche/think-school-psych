@@ -24,13 +24,13 @@ type user struct {
 	Password string `json:"password"`
 }
 
-// type comment struct {
-// 	ID string `json:"id"`
-// 	Date time.Time `json:"date"`
-// 	UserID string `json:"userID"`
-// 	BlogID string `json:"blogID"`
-// 	Text string `json:"text"`
-// }
+type comment struct {
+	ID string `json:"id"`
+	Date time.Time `json:"date"`
+	UserID string `json:"userID"`
+	BlogID string `json:"blogID"`
+	Text string `json:"text"`
+}
 
 func (s *story) getStory(db *sql.DB) error {
 	return db.QueryRow("SELECT title, date, userID, text FROM stories WHERE id=$1", 
@@ -136,6 +136,32 @@ func getUsers(db *sql.DB) ([]user, error) {
 
 	return users, nil
 }
+
+func (c *comment) createComment(db *sql.DB) error {
+	// get user id
+	var upk int
+	err := db.QueryRow("SELECT pk FROM users WHERE id=$1", c.UserID).Scan(upk); if err != nil {
+		return err
+	}
+
+	// get story id
+	var spk int
+	err = db.QueryRow("SELECT pk FROM stories WHERE id=$1", c.BlogID).Scan(spk); if err != nil {
+		return err
+	}
+
+	// store comment
+	err = db.QueryRow(
+		"INSERT INTO comments(date, userpk, storypk, text) VALUES ($1, $2, $3, $4) RETURNING id",
+		c.Date, upk, spk, c.Text).Scan(&c.ID)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // var Stories = []Story {
 // 	{
 // 		ID: "1", 
