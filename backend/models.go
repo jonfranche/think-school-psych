@@ -163,18 +163,15 @@ func (c *comment) createComment(db *sql.DB) error {
 }
 
 func getCommentsByStoryId(db *sql.DB, storyId string) ([]comment, error) {
-	// TODO: FIX query
+	var storyPk int
+	db.QueryRow("SELECT pk FROM stories WHERE id=$1", storyId).Scan(&storyPk)
+
 	rows, err := db.Query(
 		"SELECT comments.id, comments.date, comments.text, users.id, stories.id " + 
 		"FROM comments " +
-		"RIGHT JOIN users ON comments.userpk = users.pk " +
-		"RIGHT JOIN stories ON comments.storypk = $1", storyId)
+		"JOIN users ON comments.userpk = users.pk " +
+		"JOIN stories ON comments.storypk = $1", storyPk)
 
-	// rows, err := db.Query(
-	// 	"SELECT comments.id, comments.date, comments.text, users.id, stories.id " + 
-	// 	"FROM comments " +
-	// 	"RIGHT JOIN users ON comments.userpk = users.id " +
-	// 	"RIGHT JOIN stories ON comments.storypk = stories.id")
 	if err != nil {
 		return nil, err
 	}
