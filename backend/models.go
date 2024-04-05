@@ -167,7 +167,7 @@ func getCommentsByStoryId(db *sql.DB, storyId string) ([]comment, error) {
 	db.QueryRow("SELECT pk FROM stories WHERE id=$1", storyId).Scan(&storyPk)
 
 	rows, err := db.Query(
-		"SELECT comments.id, comments.date, comments.text, users.id, stories.id " + 
+		"SELECT comments.id, comments.date, comments.text, users.username, stories.id " + 
 		"FROM comments " +
 		"JOIN users ON comments.userpk = users.pk " +
 		"JOIN stories ON comments.storypk = $1", storyPk)
