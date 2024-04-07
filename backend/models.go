@@ -170,7 +170,7 @@ func getCommentsByStoryId(db *sql.DB, storyId string) ([]comment, error) {
 		"SELECT comments.id, comments.date, comments.text, users.username, stories.id " + 
 		"FROM comments " +
 		"JOIN users ON comments.userpk = users.pk " +
-		"JOIN stories ON comments.storypk = $1", storyPk)
+		"JOIN stories ON comments.storypk = $1 ORDER BY comments.date DESC", storyPk)
 
 	if err != nil {
 		return nil, err
