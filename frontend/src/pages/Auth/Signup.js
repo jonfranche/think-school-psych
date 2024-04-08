@@ -5,8 +5,6 @@ import { AuthContext } from "../../shared/context/auth-context";
 
 import Input from "../../shared/components/Input/Input";
 import Button from "../../shared/components/UIElements/Button";
-
-import { DUMMY_USERS } from "../../DummyData";
 import "./Auth.css";
 
 import {
@@ -20,23 +18,29 @@ const Signup = () => {
   const methods = useForm();
   const auth = useContext(AuthContext);
 
-  const submitHandler = (data, e) => {
+  const submitHandler = async (data, e) => {
     e.preventDefault();
+    try {
+      const newUser = {
+        username: data.username,
+        email: data.email,
+        password: data.password,
+      };
 
-    const newUser = {
-      id: Math.floor(Math.random() * 10000),
-      joinDate: new Date(),
-      name: data.username,
-      email: data.email,
-      password: data.password,
-      isAdmin: false,
-    };
-
-    DUMMY_USERS.push(newUser);
-    console.log(DUMMY_USERS);
-    methods.reset();
-    auth.login();
-    navigate("/");
+      const responseData = await fetch("http://localhost:8010/api/signup", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newUser),
+      });
+      methods.reset();
+      auth.login(responseData.userId, responseData.token);
+      navigate("/");
+    } catch (err) {
+      // TODO: add error handling for this function
+    }
   };
 
   return (

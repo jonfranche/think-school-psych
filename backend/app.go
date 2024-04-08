@@ -184,6 +184,7 @@ func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
 	if err := decoder.Decode(&u); err != nil {
 		log.Printf("HTTP Status: %d. Error creating user with invalid request payload", 400)
 		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		log.Print(err.Error())
 		return
 	}
 

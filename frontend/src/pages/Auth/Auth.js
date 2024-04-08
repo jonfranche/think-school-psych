@@ -17,15 +17,21 @@ const Auth = (props) => {
   const auth = useContext(AuthContext);
   const methods = useForm();
 
-  const submitHandler = (data, e) => {
+  const submitHandler = async (data, e) => {
     e.preventDefault();
-    console.log(data);
     const form = e.target;
     const formData = new FormData(form);
     const formJson = Object.fromEntries(formData.entries());
-    console.log(formJson);
+    const responseData = await fetch("http://localhost:8010/api/login",{
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formJson),
+    })
     methods.reset();
-    auth.login();
+    auth.login(responseData.userId, responseData.token);
     // add success message here
     setTimeout(function () {
       // function code goes here
