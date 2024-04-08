@@ -209,7 +209,11 @@ func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// create jwt
-	token := assignToken(u.ID, a)
+	token, err := assignToken(u.ID, a)
+	if err != nil {
+		log.Printf("HTTP Status: %d. Error assigning JWT", 500)
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+	}
 
 	payload := map[string]string{"id": u.ID, "email": u.Email, "token": token}
 	respondWithJSON(w, http.StatusOK, payload)
@@ -251,7 +255,11 @@ func (a *App) loginUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// create new token
-	token := assignToken(existingUser.ID, a)
+	token, err := assignToken(existingUser.ID, a); 
+	if err != nil {
+		log.Printf("HTTP Status: %d. Error assigning JWT", 500)
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+	}
 
 	// respond with json of uid, email, token
 	payload := map[string]string{"id": existingUser.ID, "email": existingUser.Email, "token": token}
@@ -369,16 +377,21 @@ func (a *App) getComments(w http.ResponseWriter, r *http.Request) {
 }
  
 func (a *App) initializeRoutes() {
-	a.Router.HandleFunc("/api/stories/{id}/comments", a.getComments).Methods("GET")
-	a.Router.HandleFunc("/api/stories/{id}/comment", a.createComment).Methods("POST")
-	a.Router.HandleFunc("/api/login", a.loginUser).Methods("POST")
 	a.Router.HandleFunc("/api/signup", a.createUser).Methods("POST")
-	a.Router.HandleFunc("/api/stories/new/{userId}", a.createStory).Methods("POST")
+	a.Router.HandleFunc("/api/login", a.loginUser).Methods("POST")
 	a.Router.HandleFunc("/api/stories/{id}", a.getStory).Methods("GET")
-	a.Router.HandleFunc("/api/stories/{id}", a.updateStory).Methods("PATCH")
-	a.Router.HandleFunc("/api/stories/{id}", a.deleteStory).Methods("DELETE")
 	a.Router.HandleFunc("/api/stories", a.getStories).Methods("GET")
-	a.Router.HandleFunc("/api/users", a.getUsers).Methods("GET")
+	a.Router.HandleFunc("/api/stories/{id}/comments", a.getComments).Methods("GET")
+
+	privateRouter := a.Router.PathPrefix("/").Subrouter()
+
+	// TODO: call auth middleware here
+	
+	privateRouter.HandleFunc("/api/stories/{id}/comment", a.createComment).Methods("POST")
+	privateRouter.HandleFunc("/api/stories/new/{userId}", a.createStory).Methods("POST")
+	privateRouter.HandleFunc("/api/stories/{id}", a.updateStory).Methods("PATCH")
+	privateRouter.HandleFunc("/api/stories/{id}", a.deleteStory).Methods("DELETE")
+	privateRouter.HandleFunc("/api/users", a.getUsers).Methods("GET")
 }
 
 func validateUUID(id string, w http.ResponseWriter) bool {
@@ -404,16 +417,35 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.Write(response)
 }
 
-func assignToken(uid string, a *App) string {
+func assignToken(uid string, a *App) (string, error) {
 	client, err := a.FB.Auth(context.Background())
 	if err != nil {
-		log.Fatalf("error getting Auth client: %v\n", err)
+		log.Printf("error getting Auth client: %v\n", err)
+		return "", err
 	}
 
 	token, err := client.CustomToken(context.Background(), uid)
 	if err != nil {
-		log.Fatalf("error minting custom token: %v\n", err)
+		log.Printf("error minting custom token: %v\n", err)
+		return "", err
 	}
 
-	return token
+	return token, nil
+}
+
+func verifyToken(tokenId string, a *App) (string, error) {
+	client, err := a.FB.Auth(context.Background())
+	if err != nil {
+		log.Printf("error getting Auth client %v\n", err)
+		return "", err
+	}
+
+	token, err := client.VerifyIDTokenAndCheckRevoked(context.Background(), tokenId)
+	if err != nil {
+		log.Printf("error verifying ID %v\n", err)
+		return "", err
+	}
+
+	// return decoded uid
+	return token.UID, nil
 }
