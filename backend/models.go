@@ -64,7 +64,7 @@ func (s *story) createStory(db *sql.DB) error {
 
 func getStories(db *sql.DB, start, count int) ([]story, error) {
 	rows, err := db.Query(
-		"SELECT id, title, date, userID, text FROM stories LIMIT $1 OFFSET $2",
+		"SELECT id, title, date, userID, text FROM stories ORDER BY date DESC LIMIT $1 OFFSET $2",
 		count, start)
 
 	if err != nil {
