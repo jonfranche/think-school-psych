@@ -39,7 +39,7 @@ const Blog = (props) => {
           Edit Story
         </Button>
         {props.text.length > 1000 && (
-          <Button link={true} to={`${props.id}`} >
+          <Button link={true} to={`id/${props.id}`} >
             View Full Story
           </Button>
         )}

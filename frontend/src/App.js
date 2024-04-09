@@ -36,7 +36,7 @@ const App = () => {
         <Route path="/stories" element={<YourStories />} />
         <Route path="/stories/new" exact element={<NewBlog />} />
         <Route path="/stories/edit/:id" exact element={<EditBlog />} />
-        <Route path="/stories?id=:id" exact element={<FullBlog />} />
+        <Route path="/stories/id/:id" exact element={<FullBlog />} />
         <Route path="/about" element={<About />} />
         <Route path="/FAQs" element={<FAQs />} />
         <Route path="/" exact element={<Home />} />
@@ -53,7 +53,7 @@ const App = () => {
           element={<BehavioralInterventions />}
         />
         <Route path="/stories" element={<YourStories />} />
-        <Route path="/stories?id=:id" exact element={<FullBlog />} />
+        <Route path="/stories/id/:id" exact element={<FullBlog />} />
         <Route path="/about" element={<About />} />
         <Route path="/FAQs" element={<FAQs />} />
         <Route path="/login" element={<Auth />} />
