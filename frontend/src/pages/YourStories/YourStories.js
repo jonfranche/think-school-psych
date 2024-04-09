@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 
 import Blog from "./components/Blog";
+import { AuthContext } from "../../shared/context/auth-context";
 import Button from "../../shared/components/UIElements/Button";
 
 import "./YourStories.css";
@@ -10,9 +11,11 @@ import "./YourStories.css";
 const YourStories = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const auth = useContext(AuthContext);
+
   useEffect(() => {
     const getData = () => {
-      return fetch("/api/stories", {"method": "GET"})
+      return fetch("/api/stories", { method: "GET" })
         .then((response) => {
           const respData = response.json();
           return respData;
@@ -35,9 +38,11 @@ const YourStories = () => {
     <React.Fragment>
       <div className="your-stories">
         <h2>Your Stories</h2>
-        <Button link={true} to="new">
-          Share Your Story
-        </Button>
+        {auth.isLoggedIn && (
+          <Button link={true} to="new">
+            Share Your Story
+          </Button>
+        )}
         {!loading && <h4>Loading...</h4>}
         {loading && (
           <div className="your-stories-blogs">

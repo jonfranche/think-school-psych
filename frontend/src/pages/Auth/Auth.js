@@ -3,6 +3,7 @@ import React, { useContext } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../shared/context/auth-context";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 import Input from "../../shared/components/Input/Input";
 import Button from "../../shared/components/UIElements/Button";
 import {
@@ -15,28 +16,32 @@ import "./Auth.css";
 const Auth = (props) => {
   const navigate = useNavigate();
   const auth = useContext(AuthContext);
+  const { sendRequest } = useHttpClient();
   const methods = useForm();
 
   const submitHandler = async (data, e) => {
     e.preventDefault();
-    const form = e.target;
-    const formData = new FormData(form);
-    const formJson = Object.fromEntries(formData.entries());
-    const responseData = await fetch("http://localhost:8010/api/login",{
-      method: "POST",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formJson),
-    })
-    methods.reset();
-    auth.login(responseData.userId, responseData.token);
-    // add success message here
-    setTimeout(function () {
-      // function code goes here
-      navigate("/");
-    }, 1000);
+    try {
+      const form = e.target;
+      const formData = new FormData(form);
+      const formJson = Object.fromEntries(formData.entries());
+
+      const responseData = await sendRequest(
+        "http://localhost:8010/api/login",
+        "POST",
+        JSON.stringify(formJson),
+        {
+          "Content-Type": "application/json",
+        }
+      );
+      methods.reset();
+      auth.login(responseData.id, responseData.token);
+      // add success message here
+      setTimeout(function () {
+        // function code goes here
+        navigate("/");
+      }, 1000);
+    } catch (err) {}
   };
 
   return (
@@ -58,7 +63,9 @@ const Auth = (props) => {
           </Button>
         </form>
       </FormProvider>
-      <Button link={true} to="/signup" className="signup-button">Create A New Account</Button> 
+      <Button link={true} to="/signup" className="signup-button">
+        Create A New Account
+      </Button>
     </div>
   );
 };

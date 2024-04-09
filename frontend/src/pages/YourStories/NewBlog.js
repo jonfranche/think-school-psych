@@ -1,43 +1,55 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { useForm, FormProvider } from "react-hook-form";
 import Input from "../../shared/components/Input/Input";
 import Button from "../../shared/components/UIElements/Button";
+import { AuthContext } from "../../shared/context/auth-context";
 
 import {
   blog_text_validation,
   blog_title_validation,
 } from "../../util/inputValidation";
-import { DUMMY_BLOGS } from "../../DummyData";
 import "./NewBlog.css";
 
 const NewBlog = () => {
   const methods = useForm();
   const navigate = useNavigate();
+  const auth = useContext(AuthContext);
 
   const cancelButtonHandler = () => {
     navigate("/stories");
   };
 
-  const submitHandler = (data, event) => {
+  const submitHandler = async (data, event) => {
     event.preventDefault();
     const form = event.target;
     const formData = new FormData(form);
     const formJson = Object.fromEntries(formData.entries());
 
     const newBlog = {
-      id: Math.floor(Math.random() * 10000),
-      date: new Date(),
-      userId: 1,
-      commentsIds: [],
       title: formJson.blogTitle,
       text: formJson.blogText,
     };
 
-    DUMMY_BLOGS.push(newBlog);
-    console.log(DUMMY_BLOGS);
-    navigate("/stories");
+    let reqData = JSON.stringify(newBlog);
+
+    console.log(auth.userId)
+    console.log(reqData);
+
+    const resData = await fetch(`/api/stories/new/${auth.userId}`, {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer" + auth.token
+      },
+      body: reqData
+    })
+
+    console.log(resData)
+
+    setTimeout(function () {
+      navigate("/stories");
+    }, 1000)
   };
 
   return (

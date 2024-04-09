@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import BehavioralInterventions from "./pages/BehavioralInterventions/BehavioralInterventions";
 import FAQs from "./pages/FAQs/FAQs";
@@ -16,21 +16,14 @@ import EditBlog from "./pages/YourStories/EditBlog";
 import Auth from "./pages/Auth/Auth";
 import Signup from "./pages/Auth/Signup";
 import { AuthContext } from "./shared/context/auth-context";
+import { useAuth } from "./shared/hooks/auth-hook";
 
 const App = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  const login = useCallback(() => {
-    setIsLoggedIn(true);
-  }, []);
-
-  const logout = useCallback(() => {
-    setIsLoggedIn(false);
-  }, []);
+  const { token, login, logout, userId } = useAuth();
 
   let routes;
 
-  if (isLoggedIn) {
+  if (token) {
     routes = (
       <Routes>
         <Route path="/resources" element={<GeneralResources />} />
@@ -42,8 +35,8 @@ const App = () => {
         />
         <Route path="/stories" element={<YourStories />} />
         <Route path="/stories/new" exact element={<NewBlog />} />
-        <Route path="/stories/:id" exact element={<FullBlog />} />
         <Route path="/stories/edit/:id" exact element={<EditBlog />} />
+        <Route path="/stories?id=:id" exact element={<FullBlog />} />
         <Route path="/about" element={<About />} />
         <Route path="/FAQs" element={<FAQs />} />
         <Route path="/" exact element={<Home />} />
@@ -60,8 +53,7 @@ const App = () => {
           element={<BehavioralInterventions />}
         />
         <Route path="/stories" element={<YourStories />} />
-        <Route path="/stories/new" exact element={<NewBlog />} />
-        <Route path="/stories/:id" exact element={<FullBlog />} />
+        <Route path="/stories?id=:id" exact element={<FullBlog />} />
         <Route path="/about" element={<About />} />
         <Route path="/FAQs" element={<FAQs />} />
         <Route path="/login" element={<Auth />} />
@@ -73,7 +65,13 @@ const App = () => {
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn: isLoggedIn, login: login, logout: logout }}
+      value={{
+        isLoggedIn: !!token,
+        token: token,
+        userId: userId,
+        login: login,
+        logout: logout,
+      }}
     >
       <Router>
         <MainNavigation />
