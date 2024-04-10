@@ -93,7 +93,7 @@ func (a *App) getStory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// convert the stored userID from pk to uuid
-	s.getUserUuidById(a.DB)
+	// s.getUserUuidById(a.DB)
 	// send a response that creation operation was successful
 	respondWithJSON(w, http.StatusOK, s)
 	log.Printf("HTTP Status: %d. Successfully retrieved story", 200)

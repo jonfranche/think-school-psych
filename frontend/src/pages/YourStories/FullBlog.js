@@ -35,13 +35,6 @@ const FullBlog = (props) => {
     }, 1000);
   }, []);
 
-  const getAuthor = () => {
-    // TODO: add username to response json
-    return "Author";
-    // const author = DUMMY_USERS.filter((user) => user.id === blogData.userId);
-    // return author[0].name;
-  };
-
   const addCommentButtonHandler = () => {
     setShowNewComment(!showNewComment);
   };
@@ -56,7 +49,7 @@ const FullBlog = (props) => {
           <div className="full-blog-header">
             <h3>{blogData.title}</h3>
             <div className="full-blog-header-sub-title">
-              <span>{"by " + getAuthor()}</span>
+              <span>{"by " + blogData.userID}</span>
               <span>{" " + new Date(blogData.date).toLocaleDateString()}</span>
             </div>
           </div>
