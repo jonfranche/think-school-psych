@@ -6,8 +6,6 @@ import Button from "../../shared/components/UIElements/Button";
 
 import "./YourStories.css";
 
-// import { DUMMY_BLOGS } from "../../DummyData";
-
 const YourStories = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -21,6 +19,7 @@ const YourStories = () => {
           return respData;
         })
         .then((response) => {
+          console.log(response)
           setData(response);
         })
         .catch((err) => {
@@ -51,7 +50,7 @@ const YourStories = () => {
                 key={blog.id}
                 id={blog.id}
                 date={blog.date}
-                userId={blog.userId}
+                userID={blog.userID}
                 title={blog.title}
                 text={blog.text}
               />

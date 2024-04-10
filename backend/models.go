@@ -80,7 +80,7 @@ func getStories(db *sql.DB, start, count int) ([]story, error) {
 		if err := rows.Scan(&s.ID, &s.Title, &s.Date, &s.UserID, &s.Text); err != nil {
 			return nil, err
 		}
-		db.QueryRow("SELECT id FROM users WHERE pk=$1", s.UserID).Scan(&s.UserID)
+		db.QueryRow("SELECT username FROM users WHERE pk=$1", s.UserID).Scan(&s.UserID)
 		stories = append(stories, s)
 	}
 

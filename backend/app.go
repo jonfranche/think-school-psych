@@ -308,6 +308,8 @@ func (a *App) deleteStory(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
+	// TODO: add authorization
+
 	// validate that id is a uuid
 	if (!validateUUID(id, w)) {
 		return

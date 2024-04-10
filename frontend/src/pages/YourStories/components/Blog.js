@@ -13,13 +13,13 @@ const Blog = (props) => {
   };
 
   let date = new Date(props.date).toLocaleDateString()
-
+  console.log(props.userID);
   return (
     <div className="your-stories-blog">
       <div className="your-stories-blog-header">
         <h3>{props.title}</h3>
         <div className="your-stories-blog-header-sub-title">
-          <span>{"by " + props.userId}</span>
+          <span>{"by " + props.userID}</span>
           <span>{" " + date}</span>
         </div>
       </div>
