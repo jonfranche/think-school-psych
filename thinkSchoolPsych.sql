@@ -9,7 +9,7 @@ CREATE TABLE stories(
 
 CREATE TABLE users(
     pk BIGSERIAL NOT NULL PRIMARY KEY,
-    id uuid NOT NULL,
+    id VARCHAR(30) NOT NULL,
     username VARCHAR(30) NOT NULL UNIQUE,
     joindate DATE NOT NULL,
     email VARCHAR(50) NOT NULL UNIQUE,

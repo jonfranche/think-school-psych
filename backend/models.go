@@ -2,10 +2,7 @@ package main
 
 import (
 	"database/sql"
-	"log"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type story struct {
@@ -21,7 +18,6 @@ type user struct {
 	JoinDate time.Time `json:"joinDate"`
 	Username string `json:"username"`
 	Email string `json:"email"`
-	Password string `json:"password"`
 }
 
 type comment struct {
@@ -89,8 +85,8 @@ func getStories(db *sql.DB, start, count int) ([]story, error) {
 
 func (u *user) createUser(db *sql.DB) error {
 	err := db.QueryRow(
-		"INSERT INTO users(id, username, joindate, email, password) VALUES ($1, $2, $3, $4, $5) RETURNING id",
-		u.ID, u.Username, u.JoinDate, u.Email, u.Password).Scan(&u.ID)
+		"INSERT INTO users(id, username, joindate, email) VALUES ($1, $2, $3, $4) RETURNING id",
+		u.ID, u.Username, u.JoinDate, u.Email).Scan(&u.ID)
 
 	if err != nil {
 		return err
@@ -99,20 +95,16 @@ func (u *user) createUser(db *sql.DB) error {
 	return nil
 }
 
-func (s *story) getUserUuidById(db *sql.DB) error {
-	return db.QueryRow("SELECT id FROM users WHERE pk=$1", s.UserID).Scan(&s.UserID)
-}
+// func (s *story) getUserUidById(db *sql.DB) error {
+// 	return db.QueryRow("SELECT id FROM users WHERE pk=$1", s.UserID).Scan(&s.UserID)
+// }
 
-func (u *user) getUserPasswordByEmail(db *sql.DB) error {
-	return db.QueryRow("SELECT id, password FROM users WHERE email=$1", u.Email).Scan(&u.ID, &u.Password)
-}
+// func (u *user) getUserPasswordByEmail(db *sql.DB) error {
+// 	return db.QueryRow("SELECT id, password FROM users WHERE email=$1", u.Email).Scan(&u.ID, &u.Password)
+// }
 
-func (u *user) getUserIdByUuid(db *sql.DB) error {
-	id, err := uuid.Parse(u.ID)
-	if err != nil {
-		log.Fatal("Error occurred when creating UUID from bytes")
-	}
-	return db.QueryRow("SELECT pk FROM users WHERE id=$1", id).Scan(&u.ID)
+func (u *user) getUserIdByUid(db *sql.DB) error {
+	return db.QueryRow("SELECT pk FROM users WHERE id=$1", u.ID).Scan(&u.ID)
 }
 
 func getUsers(db *sql.DB) ([]user, error) {

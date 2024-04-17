@@ -26,15 +26,15 @@ const Signup = () => {
         email: data.email,
         password: data.password,
       };
-      console.log("Submitted");
 
-      createUserWithEmailAndPassword(
+      const user = await createUserWithEmailAndPassword(
         firebaseAuth,
         newUser.email,
         newUser.password
       )
         .then((userCredential) => {
-          navigate("/");
+          const user = userCredential.user;
+          return user;
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -42,7 +42,24 @@ const Signup = () => {
           console.log(`${errorCode} + ${errorMessage}`);
         });
 
+      const reqData = {
+        username: newUser.username,
+        id: user.uid,
+        email: user.email
+      }
+
+      // TODO: Create error handling 
+      const responseData = await fetch("http://localhost:8010/api/signup", {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(reqData)
+      })
+
       methods.reset();
+      navigate("/");
     } catch (err) {
       // TODO: add error handling for this function
       console.log(err);
