@@ -3,7 +3,8 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useForm, FormProvider } from "react-hook-form";
 import { useModal } from "react-hooks-use-modal";
 
-import { DUMMY_BLOGS, DUMMY_USERS } from "../../DummyData";
+import { useHttpClient } from "../../shared/hooks/http-hook";
+
 import {
   blog_title_validation,
   blog_text_validation,
@@ -15,6 +16,7 @@ import Button from "../../shared/components/UIElements/Button";
 import Confirmation from "../../shared/components/UIElements/Confirmation";
 
 const EditBlog = () => {
+  const {sendRequest} = useHttpClient();
   const [Modal, open, close] = useModal("root", {
     preventScroll: true,
     focusTrapOptions: {
@@ -26,14 +28,6 @@ const EditBlog = () => {
   const navigate = useNavigate();
   let { id } = useParams();
   let { state } = useLocation();
-  // convert id param to be a number
-  id = Number(id);
-
-  const blogData = DUMMY_BLOGS.find((blog) => blog.id === id);
-  console.log(blogData);
-  useEffect(() => {
-    console.log(`/stories/${id}`);
-  }, [id]);
 
   const cancelButtonHandler = () => {
     navigate(`/stories/${id}`);
@@ -44,9 +38,10 @@ const EditBlog = () => {
   };
 
   const deleteStory = () => {
-    const indexOfEditedBlog = DUMMY_BLOGS.findIndex((blog) => blog.id === id);
-    DUMMY_BLOGS.splice(indexOfEditedBlog, 1);
-    console.log(DUMMY_BLOGS);
+    // const indexOfEditedBlog = DUMMY_BLOGS.findIndex((blog) => blog.id === id);
+    // DUMMY_BLOGS.splice(indexOfEditedBlog, 1);
+    // console.log(DUMMY_BLOGS);
+
     navigate("/stories");
   };
 
@@ -56,10 +51,10 @@ const EditBlog = () => {
     const formData = new FormData(form);
     const formJson = Object.fromEntries(formData.entries());
 
-    const indexOfEditedBlog = DUMMY_BLOGS.findIndex((blog) => blog.id === id);
+    // const indexOfEditedBlog = DUMMY_BLOGS.findIndex((blog) => blog.id === id);
 
-    DUMMY_BLOGS[indexOfEditedBlog].title = formJson.blogTitle;
-    DUMMY_BLOGS[indexOfEditedBlog].text = formJson.blogText;
+    // DUMMY_BLOGS[indexOfEditedBlog].title = formJson.blogTitle;
+    // DUMMY_BLOGS[indexOfEditedBlog].text = formJson.blogText;
     methods.reset();
     navigate(`/stories/${id}`);
   };

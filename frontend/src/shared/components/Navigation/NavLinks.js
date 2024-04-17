@@ -1,6 +1,6 @@
-import React, { useContext } from "react";
-import { NavLink } from "react-router-dom";
-import { AuthContext } from "../../context/auth-context";
+import React from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/auth-context";
 import Button from "../UIElements/Button";
 import "./NavLinks.css";
 
@@ -36,13 +36,24 @@ const links = [
   {
     title: "FAQs",
     route: "/FAQs",
-  }
+  },
 ];
 
 const NavLinks = () => {
-  const auth = useContext(AuthContext);
+  const { currentUser, logout } = useAuth();
+  const navigate = useNavigate();
   let activeClassName = "nav-links-item__active";
   let inActiveClassName = "nav-links-item";
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <ul className="nav-links">
       {links.map((link) => (
@@ -57,12 +68,11 @@ const NavLinks = () => {
           </NavLink>
         </li>
       ))}
-      {auth.isLoggedIn && (
+      {currentUser ? (
         <li>
-          <Button onClick={auth.logout}>Logout</Button>
+          <Button onClick={handleLogout}>Logout</Button>
         </li>
-      )}
-      {!auth.isLoggedIn && (
+      ) : (
         <li>
           <NavLink
             to="/login"
