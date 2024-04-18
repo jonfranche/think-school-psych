@@ -40,7 +40,7 @@ const NewBlog = () => {
     const resData = await fetch(`/api/stories/new/${currentUser.uid}`, {
       method: "POST",
       headers: {
-        Authorization: "Bearer" + currentUser.accessToken,
+        Authorization: "Bearer " + currentUser.accessToken,
       },
       body: reqData,
     });

@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	firebase "firebase.google.com/go/v4"
@@ -377,7 +378,7 @@ func (a *App) initializeRoutes() {
 
 	privateRouter := a.Router.PathPrefix("/").Subrouter()
 
-	// TODO: call auth middleware here
+	privateRouter.Use(a.authMiddleware)
 
 	privateRouter.HandleFunc("/api/stories/{id}/comment", a.createComment).Methods("POST")
 	privateRouter.HandleFunc("/api/stories/new/{userId}", a.createStory).Methods("POST")
@@ -409,35 +410,40 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.Write(response)
 }
 
-// func assignToken(uid string, a *App) (string, error) {
-// 	client, err := a.FB.Auth(context.Background())
-// 	if err != nil {
-// 		log.Printf("error getting Auth client: %v\n", err)
-// 		return "", err
-// 	}
+func (a *App) authMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		tokenString := r.Header.Get("Authorization")
+		if tokenString == "" {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
 
-// 	token, err := client.CustomToken(context.Background(), uid)
-// 	if err != nil {
-// 		log.Printf("error minting custom token: %v\n", err)
-// 		return "", err
-// 	}
+		tokenString = strings.Replace(tokenString, "Bearer ", "", 1)
 
-// 	return token, nil
-// }
+		decodedToken, err := verifyToken(tokenString, a)
+		if err != nil {
+			return
+		}
 
-// func verifyToken(tokenId string, a *App) (string, error) {
-// 	client, err := a.FB.Auth(context.Background())
-// 	if err != nil {
-// 		log.Printf("error getting Auth client %v\n", err)
-// 		return "", err
-// 	}
+		ctx := context.WithValue(r.Context(), "uid", decodedToken)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
 
-// 	token, err := client.VerifyIDTokenAndCheckRevoked(context.Background(), tokenId)
-// 	if err != nil {
-// 		log.Printf("error verifying ID %v\n", err)
-// 		return "", err
-// 	}
+// Verify the firebase token that is received in header from frontend
+func verifyToken(tokenId string, a *App) (string, error) {
+	client, err := a.FB.Auth(context.Background())
+	if err != nil {
+		log.Printf("error getting Auth client %v\n", err)
+		return "", err
+	}
 
-// 	// return decoded uid
-// 	return token.UID, nil
-// }
+	token, err := client.VerifyIDTokenAndCheckRevoked(context.Background(), tokenId)
+	if err != nil {
+		log.Printf("error verifying ID %v\n", err)
+		return "", err
+	}
+
+	// return decoded uid
+	return token.UID, nil
+}
