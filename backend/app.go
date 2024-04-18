@@ -13,7 +13,6 @@ import (
 	firebase "firebase.google.com/go/v4"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
-	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/rs/cors"
 	"google.golang.org/api/option"
@@ -21,18 +20,11 @@ import (
 
 type App struct {
 	Router *mux.Router
-	DB *sql.DB
-	FB *firebase.App
+	DB     *sql.DB
+	FB     *firebase.App
 }
 
-func init() {
-	err := godotenv.Load("../env/backend.env")
-	if err != nil {
-		log.Fatal(".env file couldn't be loaded")
-	}
-}
-
-func(a *App) Initialize(user, password, port, host, dbname string) {
+func (a *App) Initialize(user, password, port, host, dbname string) {
 	log.Println("Connecting Database on port: " + port + "...")
 	connectionString :=
 		fmt.Sprintf("user=%s password=%s port=%s host=%s dbname=%s sslmode=disable", user, password, port, host, dbname)
@@ -72,7 +64,7 @@ func (a *App) getStory(w http.ResponseWriter, r *http.Request) {
 	id := vars["id"]
 
 	// validate that id is a uuid
-	if (!validateUUID(id, w)) {
+	if !validateUUID(id, w) {
 		return
 	}
 
@@ -99,9 +91,9 @@ func (a *App) getStory(w http.ResponseWriter, r *http.Request) {
 }
 
 func (a *App) getStories(w http.ResponseWriter, r *http.Request) {
-	// This handler uses the count and start parameters from the querystring 
+	// This handler uses the count and start parameters from the querystring
 	// to fetch count number of products, starting at position start in the database.
-	// By default, start is set to 0 and count is set to 10. If these parameters 
+	// By default, start is set to 0 and count is set to 10. If these parameters
 	// aren’t provided, this handler will respond with the first 10 products.
 
 	count, _ := strconv.Atoi(r.FormValue("count"))
@@ -178,7 +170,7 @@ func (a *App) createStory(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
 	var u user
-	
+
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&u); err != nil {
 		log.Printf("HTTP Status: %d. Error creating user with invalid request payload", 400)
@@ -220,7 +212,7 @@ func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
 
 // func (a *App) loginUser(w http.ResponseWriter, r *http.Request) {
 // 	var u user
-	
+
 // 	decoder := json.NewDecoder(r.Body)
 // 	if err := decoder.Decode(&u); err != nil {
 // 		log.Printf("Http Status: %d. Error logging in user with invalid request payload", 400)
@@ -253,7 +245,7 @@ func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
 // 	}
 
 // 	// create new token
-// 	token, err := assignToken(existingUser.ID, a); 
+// 	token, err := assignToken(existingUser.ID, a);
 // 	if err != nil {
 // 		log.Printf("HTTP Status: %d. Error assigning JWT", 500)
 // 		respondWithError(w, http.StatusInternalServerError, err.Error())
@@ -271,7 +263,7 @@ func (a *App) updateStory(w http.ResponseWriter, r *http.Request) {
 	id := vars["id"]
 
 	// validate that id is a uuid
-	if (!validateUUID(id, w)) {
+	if !validateUUID(id, w) {
 		return
 	}
 
@@ -308,7 +300,7 @@ func (a *App) deleteStory(w http.ResponseWriter, r *http.Request) {
 	// TODO: add authorization
 
 	// validate that id is a uuid
-	if (!validateUUID(id, w)) {
+	if !validateUUID(id, w) {
 		return
 	}
 
@@ -333,7 +325,7 @@ func (a *App) createComment(w http.ResponseWriter, r *http.Request) {
 	storyId := vars["id"]
 
 	// validate that id is a uuid
-	if (!validateUUID(storyId, w)) {
+	if !validateUUID(storyId, w) {
 		return
 	}
 
@@ -346,7 +338,7 @@ func (a *App) createComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	defer r.Body.Close()
-	
+
 	c.ID = uuid.NewString()
 	c.Date = time.Now()
 
@@ -375,7 +367,7 @@ func (a *App) getComments(w http.ResponseWriter, r *http.Request) {
 	respondWithJSON(w, http.StatusOK, comments)
 	log.Printf("HTTP Status: %d. Successfully retrieved comments", 200)
 }
- 
+
 func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/api/signup", a.createUser).Methods("POST")
 	// a.Router.HandleFunc("/api/login", a.loginUser).Methods("POST")
@@ -386,7 +378,7 @@ func (a *App) initializeRoutes() {
 	privateRouter := a.Router.PathPrefix("/").Subrouter()
 
 	// TODO: call auth middleware here
-	
+
 	privateRouter.HandleFunc("/api/stories/{id}/comment", a.createComment).Methods("POST")
 	privateRouter.HandleFunc("/api/stories/new/{userId}", a.createStory).Methods("POST")
 	privateRouter.HandleFunc("/api/stories/{id}", a.updateStory).Methods("PATCH")

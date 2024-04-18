@@ -9,7 +9,7 @@ import "./YourStories.css";
 const YourStories = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { currentUser } = useAuth();
+  // const { currentUser } = useAuth();
 
   useEffect(() => {
     const getData = () => {
@@ -19,7 +19,6 @@ const YourStories = () => {
           return respData;
         })
         .then((response) => {
-          console.log(response);
           setData(response);
         })
         .catch((err) => {
@@ -37,12 +36,13 @@ const YourStories = () => {
     <React.Fragment>
       <div className="your-stories">
         <h2>Your Stories</h2>
-        {currentUser && (
-          <Button link={true} to="new">
-            Share Your Story
-          </Button>
-        )}
+        <Button link={true} to="new">
+          Share Your Story
+        </Button>
         {!loading && <h4>Loading...</h4>}
+        {loading && data.length === 0 && (
+          <p>No stories yet. Consider posting your own!</p>
+        )}
         {loading && (
           <div className="your-stories-blogs">
             {data.map((blog) => (
