@@ -1,10 +1,10 @@
-import React, { useContext } from "react";
+import React from "react";
 
 import { useNavigate } from "react-router-dom";
 import { useForm, FormProvider } from "react-hook-form";
 import Input from "../../shared/components/Input/Input";
 import Button from "../../shared/components/UIElements/Button";
-import { AuthContext } from "../../shared/context/auth-context";
+import { useAuth } from "../../shared/context/auth-context";
 
 import {
   blog_text_validation,
@@ -13,9 +13,9 @@ import {
 import "./NewBlog.css";
 
 const NewBlog = () => {
+  const { currentUser } = useAuth();
   const methods = useForm();
   const navigate = useNavigate();
-  const auth = useContext(AuthContext);
 
   const cancelButtonHandler = () => {
     navigate("/stories");
@@ -34,22 +34,22 @@ const NewBlog = () => {
 
     let reqData = JSON.stringify(newBlog);
 
-    console.log(auth.userId)
+    console.log(currentUser.uid);
     console.log(reqData);
 
-    const resData = await fetch(`/api/stories/new/${auth.userId}`, {
+    const resData = await fetch(`/api/stories/new/${currentUser.uid}`, {
       method: "POST",
       headers: {
-        Authorization: "Bearer" + auth.token
+        Authorization: "Bearer " + currentUser.accessToken,
       },
-      body: reqData
-    })
+      body: reqData,
+    });
 
-    console.log(resData)
+    console.log(resData);
 
     setTimeout(function () {
       navigate("/stories");
-    }, 1000)
+    }, 1000);
   };
 
   return (
@@ -59,10 +59,15 @@ const NewBlog = () => {
         Cancel
       </button>
       <FormProvider {...methods}>
-        <form className="blog-form" onSubmit={methods.handleSubmit(submitHandler)}>
+        <form
+          className="blog-form"
+          onSubmit={methods.handleSubmit(submitHandler)}
+        >
           <Input {...blog_title_validation} className="blog-title-input" />
           <Input {...blog_text_validation} className="blog-text-input" />
-          <Button type="submit" submit={true}>Share</Button>
+          <Button type="submit" submit={true}>
+            Share
+          </Button>
         </form>
       </FormProvider>
     </div>

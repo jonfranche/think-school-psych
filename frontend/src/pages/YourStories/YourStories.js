@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 
 import Blog from "./components/Blog";
-import { AuthContext } from "../../shared/context/auth-context";
+import { useAuth } from "../../shared/context/auth-context";
 import Button from "../../shared/components/UIElements/Button";
 
 import "./YourStories.css";
@@ -9,7 +9,7 @@ import "./YourStories.css";
 const YourStories = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const auth = useContext(AuthContext);
+  // const { currentUser } = useAuth();
 
   useEffect(() => {
     const getData = () => {
@@ -19,7 +19,6 @@ const YourStories = () => {
           return respData;
         })
         .then((response) => {
-          console.log(response)
           setData(response);
         })
         .catch((err) => {
@@ -37,12 +36,13 @@ const YourStories = () => {
     <React.Fragment>
       <div className="your-stories">
         <h2>Your Stories</h2>
-        {auth.isLoggedIn && (
-          <Button link={true} to="new">
-            Share Your Story
-          </Button>
-        )}
+        <Button link={true} to="new">
+          Share Your Story
+        </Button>
         {!loading && <h4>Loading...</h4>}
+        {loading && data.length === 0 && (
+          <p>No stories yet. Consider posting your own!</p>
+        )}
         {loading && (
           <div className="your-stories-blogs">
             {data.map((blog) => (

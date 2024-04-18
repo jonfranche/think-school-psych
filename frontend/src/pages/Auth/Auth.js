@@ -1,9 +1,9 @@
-import React, { useContext } from "react";
+import React from "react";
 
 import { useForm, FormProvider } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../shared/context/auth-context";
-import { useHttpClient } from "../../shared/hooks/http-hook";
+import { firebaseAuth } from "../../firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import Input from "../../shared/components/Input/Input";
 import Button from "../../shared/components/UIElements/Button";
 import {
@@ -15,8 +15,9 @@ import "./Auth.css";
 
 const Auth = (props) => {
   const navigate = useNavigate();
-  const auth = useContext(AuthContext);
-  const { sendRequest } = useHttpClient();
+  // TODO: Delete the following comment once firebase integration is done
+  // const auth = useContext(AuthContext);
+  // const { sendRequest } = useHttpClient();
   const methods = useForm();
 
   const submitHandler = async (data, e) => {
@@ -26,22 +27,39 @@ const Auth = (props) => {
       const formData = new FormData(form);
       const formJson = Object.fromEntries(formData.entries());
 
-      const responseData = await sendRequest(
-        "http://localhost:8010/api/login",
-        "POST",
-        JSON.stringify(formJson),
-        {
-          "Content-Type": "application/json",
-        }
-      );
+      // TODO: Delete the following comment once firebase integration is done
+      // const responseData = await sendRequest(
+      //   "http://localhost:8010/api/login",
+      //   "POST",
+      //   JSON.stringify(formJson),
+      //   {
+      //     "Content-Type": "application/json",
+      //   }
+      // );
+
+      signInWithEmailAndPassword(
+        firebaseAuth,
+        formJson.email,
+        formJson.password
+      )
+        .then(() => {
+          navigate("/");
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(`${errorCode} + ${errorMessage}`);
+        });
+
       methods.reset();
-      auth.login(responseData.id, responseData.token);
       // add success message here
       setTimeout(function () {
         // function code goes here
         navigate("/");
       }, 1000);
-    } catch (err) {}
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

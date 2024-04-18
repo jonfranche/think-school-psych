@@ -1,8 +1,9 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../shared/context/auth-context";
 
+import { firebaseAuth } from "../../firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import Input from "../../shared/components/Input/Input";
 import Button from "../../shared/components/UIElements/Button";
 import "./Auth.css";
@@ -16,7 +17,6 @@ import {
 const Signup = () => {
   const navigate = useNavigate();
   const methods = useForm();
-  const auth = useContext(AuthContext);
 
   const submitHandler = async (data, e) => {
     e.preventDefault();
@@ -27,19 +27,42 @@ const Signup = () => {
         password: data.password,
       };
 
+      const user = await createUserWithEmailAndPassword(
+        firebaseAuth,
+        newUser.email,
+        newUser.password
+      )
+        .then((userCredential) => {
+          const user = userCredential.user;
+          return user;
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(`${errorCode} + ${errorMessage}`);
+        });
+
+      const reqData = {
+        username: newUser.username,
+        id: user.uid,
+        email: user.email
+      }
+
+      // TODO: Create error handling 
       const responseData = await fetch("http://localhost:8010/api/signup", {
         method: "POST",
         mode: "cors",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(newUser),
-      });
+        body: JSON.stringify(reqData)
+      })
+
       methods.reset();
-      auth.login(responseData.userId, responseData.token);
       navigate("/");
     } catch (err) {
       // TODO: add error handling for this function
+      console.log(err);
     }
   };
 
