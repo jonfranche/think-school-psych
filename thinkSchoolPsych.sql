@@ -12,8 +12,7 @@ CREATE TABLE users(
     id VARCHAR(30) NOT NULL,
     username VARCHAR(30) NOT NULL UNIQUE,
     joindate DATE NOT NULL,
-    email VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(60) NOT NULL
+    email VARCHAR(50) NOT NULL UNIQUE
 );
 
 CREATE TABLE comments(
