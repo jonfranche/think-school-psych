@@ -338,6 +338,7 @@ func (a *App) createComment(w http.ResponseWriter, r *http.Request) {
 
 	defer r.Body.Close()
 
+	c.StoryID = storyId
 	c.ID = uuid.NewString()
 	c.Date = time.Now()
 

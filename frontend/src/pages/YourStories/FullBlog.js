@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import Button from "../../shared/components/UIElements/Button";
 import Comment from "./components/Comment";
@@ -10,9 +10,11 @@ import "./FullBlog.css";
 
 const FullBlog = (props) => {
   const [blogData, setBlogData] = useState();
+  const [commentData, setCommentData] = useState();
   const [loading, setLoading] = useState(false);
   const [showNewComment, setShowNewComment] = useState(false);
   const { currentUser } = useAuth();
+  const navigator = useNavigate();
   let { id } = useParams();
 
   useEffect(() => {
@@ -30,17 +32,37 @@ const FullBlog = (props) => {
         });
     };
 
+    const getComments = () => {
+      return fetch(`/api/stories/${id}/comments`, { methods: "GET" })
+        .then((response) => {
+          const respData = response.json();
+          return respData;
+        })
+        .then((response) => {
+          console.log(response);
+          setCommentData(response);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
     setTimeout(() => {
       getBlogData();
       setLoading(true);
     }, 1000);
+
+    setTimeout(() => {
+      getComments();
+    }, 500);
   }, []);
 
   const addCommentButtonHandler = () => {
+    if (currentUser === null) {
+      navigator("/login");
+    }
     setShowNewComment(!showNewComment);
   };
-
-  // TODO: add comments amounts to resopnse data
 
   return (
     <React.Fragment>
@@ -58,7 +80,7 @@ const FullBlog = (props) => {
             <p>{blogData.text}</p>
           </div>
           <div className="full-blog-footer">
-            <span>0 Comments</span>
+            <span>{commentData.length} Comments</span>
             {currentUser && currentUser.uid === blogData.userID && (
               <Button
                 link={true}
@@ -83,12 +105,18 @@ const FullBlog = (props) => {
                 visible={showNewComment}
                 setVisible={addCommentButtonHandler}
                 blogId={blogData.id}
-                userId={blogData.userID}
               />
             )}
-            {/* {blogData.commentsIds.map((comment) => (
-             <Comment key={comment} id={comment} blogId={blogData.id}/>
-           ))} */}
+            {commentData.map((comment) => (
+              <Comment
+                key={comment.id}
+                id={comment.id}
+                blogId={comment.storyID}
+                userId={comment.userID}
+                commentDate={comment.date}
+                commentText={comment.text}
+              />
+            ))}
           </div>
         </div>
       )}
