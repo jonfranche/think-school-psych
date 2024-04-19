@@ -34,7 +34,7 @@ const Blog = (props) => {
         <Button link={true} to={`${props.id}#comment-section`}>
           {props.commentsIds.length + " Comments"}
         </Button> */}
-        {currentUser.uid === props.userID && (
+        {currentUser && currentUser.uid === props.userID && (
           <Button
             link={true}
             to={`edit/${props.id}`}

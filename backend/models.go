@@ -30,8 +30,8 @@ type comment struct {
 }
 
 func (s *story) getStory(db *sql.DB) error {
-	return db.QueryRow("SELECT stories.title, stories.date, users.username, stories.text "+
-		"FROM stories JOIN users ON stories.userid = users.pk WHERE stories.id=$1", s.ID).Scan(&s.Title, &s.Date, &s.UserID, &s.Text)
+	return db.QueryRow("SELECT stories.title, stories.date, users.username, users.id, stories.text "+
+		"FROM stories JOIN users ON stories.userid = users.pk WHERE stories.id=$1", s.ID).Scan(&s.Title, &s.Date, &s.Username, &s.UserID, &s.Text)
 }
 
 func (s *story) updateStory(db *sql.DB) error {

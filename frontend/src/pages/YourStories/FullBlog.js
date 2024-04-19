@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import Button from "../../shared/components/UIElements/Button";
 import Comment from "./components/Comment";
 import NewComment from "./components/NewComment";
+import { useAuth } from "../../shared/context/auth-context";
 
 import "./FullBlog.css";
 
@@ -11,8 +12,8 @@ const FullBlog = (props) => {
   const [blogData, setBlogData] = useState();
   const [loading, setLoading] = useState(false);
   const [showNewComment, setShowNewComment] = useState(false);
+  const { currentUser } = useAuth();
   let { id } = useParams();
-  // convert id param to be a number
 
   useEffect(() => {
     const getBlogData = () => {
@@ -49,7 +50,7 @@ const FullBlog = (props) => {
           <div className="full-blog-header">
             <h3>{blogData.title}</h3>
             <div className="full-blog-header-sub-title">
-              <span>{"by " + blogData.userID}</span>
+              <span>{"by " + blogData.username}</span>
               <span>{" " + new Date(blogData.date).toLocaleDateString()}</span>
             </div>
           </div>
@@ -58,13 +59,15 @@ const FullBlog = (props) => {
           </div>
           <div className="full-blog-footer">
             <span>0 Comments</span>
-            <Button
-              link={true}
-              to={`../stories/edit/${id}`}
-              state={{ title: blogData.title, text: blogData.text }}
-            >
-              Edit Story
-            </Button>
+            {currentUser && currentUser.uid === blogData.userID && (
+              <Button
+                link={true}
+                to={`../stories/edit/${id}`}
+                state={{ title: blogData.title, text: blogData.text }}
+              >
+                Edit Story
+              </Button>
+            )}
             {!showNewComment && (
               <button
                 className="full-blog-footer__add-comment"
@@ -94,4 +97,3 @@ const FullBlog = (props) => {
 };
 
 export default FullBlog;
-
