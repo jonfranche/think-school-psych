@@ -1,4 +1,4 @@
-CREATE TABLE stories(
+CREATE TABLE IF NOT EXISTS stories(
     pk BIGSERIAL NOT NULL PRIMARY KEY,
     id uuid DEFAULT gen_random_uuid(),
     title VARCHAR(150) NOT NULL,
@@ -7,7 +7,7 @@ CREATE TABLE stories(
     text TEXT NOT NULL
 );
 
-CREATE TABLE users(
+CREATE TABLE IF NOT EXISTS users(
     pk BIGSERIAL NOT NULL PRIMARY KEY,
     id VARCHAR(30) NOT NULL,
     username VARCHAR(30) NOT NULL UNIQUE,
@@ -15,7 +15,7 @@ CREATE TABLE users(
     email VARCHAR(50) NOT NULL UNIQUE
 );
 
-CREATE TABLE comments(
+CREATE TABLE IF NOT EXISTS comments(
     pk BIGSERIAL NOT NULL PRIMARY KEY,
     id uuid NOT NULL,
     userpk INT NOT NULL,

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 
 import Blog from "./components/Blog";
-import { useAuth } from "../../shared/context/auth-context";
 import Button from "../../shared/components/UIElements/Button";
 
 import "./YourStories.css";
@@ -9,7 +8,6 @@ import "./YourStories.css";
 const YourStories = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
-  // const { currentUser } = useAuth();
 
   useEffect(() => {
     const getData = () => {
@@ -41,7 +39,7 @@ const YourStories = () => {
         </Button>
         {!loading && <h4>Loading...</h4>}
         {loading && data.length === 0 && (
-          <p>No stories yet. Consider posting your own!</p>
+          <p>No stories yet. Consider sharing your own!</p>
         )}
         {loading && (
           <div className="your-stories-blogs">
@@ -51,6 +49,7 @@ const YourStories = () => {
                 id={blog.id}
                 date={blog.date}
                 userID={blog.userID}
+                username={blog.username}
                 title={blog.title}
                 text={blog.text}
               />

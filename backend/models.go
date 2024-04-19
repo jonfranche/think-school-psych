@@ -6,30 +6,31 @@ import (
 )
 
 type story struct {
-	ID string `json:"id"`
-	Title string `json:"title"`
-	Date time.Time `json:"date"`
-	UserID string `json:"userID"`
-	Text string `json:"text"`
+	ID       string    `json:"id"`
+	Title    string    `json:"title"`
+	Date     time.Time `json:"date"`
+	UserID   string    `json:"userID"`
+	Username string    `json:"username"`
+	Text     string    `json:"text"`
 }
 
 type user struct {
-	ID string `json:"id"`
+	ID       string    `json:"id"`
 	JoinDate time.Time `json:"joinDate"`
-	Username string `json:"username"`
-	Email string `json:"email"`
+	Username string    `json:"username"`
+	Email    string    `json:"email"`
 }
 
 type comment struct {
-	ID string `json:"id"`
-	Date time.Time `json:"date"`
-	UserID string `json:"userID"`
-	StoryID string `json:"storyID"`
-	Text string `json:"text"`
+	ID      string    `json:"id"`
+	Date    time.Time `json:"date"`
+	UserID  string    `json:"userID"`
+	StoryID string    `json:"storyID"`
+	Text    string    `json:"text"`
 }
 
 func (s *story) getStory(db *sql.DB) error {
-	return db.QueryRow("SELECT stories.title, stories.date, users.username, stories.text " +
+	return db.QueryRow("SELECT stories.title, stories.date, users.username, stories.text "+
 		"FROM stories JOIN users ON stories.userid = users.pk WHERE stories.id=$1", s.ID).Scan(&s.Title, &s.Date, &s.UserID, &s.Text)
 }
 
@@ -60,7 +61,8 @@ func (s *story) createStory(db *sql.DB) error {
 
 func getStories(db *sql.DB, start, count int) ([]story, error) {
 	rows, err := db.Query(
-		"SELECT id, title, date, userID, text FROM stories ORDER BY date DESC LIMIT $1 OFFSET $2",
+		"SELECT stories.id, stories.title, stories.date, users.username, users.id, stories.text "+
+			"FROM stories JOIN users ON stories.userid = users.pk ORDER BY date DESC LIMIT $1 OFFSET $2",
 		count, start)
 
 	if err != nil {
@@ -73,10 +75,9 @@ func getStories(db *sql.DB, start, count int) ([]story, error) {
 
 	for rows.Next() {
 		var s story
-		if err := rows.Scan(&s.ID, &s.Title, &s.Date, &s.UserID, &s.Text); err != nil {
+		if err := rows.Scan(&s.ID, &s.Title, &s.Date, &s.Username, &s.UserID, &s.Text); err != nil {
 			return nil, err
 		}
-		db.QueryRow("SELECT username FROM users WHERE pk=$1", s.UserID).Scan(&s.UserID)
 		stories = append(stories, s)
 	}
 
@@ -132,13 +133,15 @@ func getUsers(db *sql.DB) ([]user, error) {
 func (c *comment) createComment(db *sql.DB) error {
 	// get user id
 	var upk int
-	err := db.QueryRow("SELECT pk FROM users WHERE id=$1", c.UserID).Scan(&upk); if err != nil {
+	err := db.QueryRow("SELECT pk FROM users WHERE id=$1", c.UserID).Scan(&upk)
+	if err != nil {
 		return err
 	}
 
 	// get story id
 	var spk int
-	err = db.QueryRow("SELECT pk FROM stories WHERE id=$1", c.StoryID).Scan(&spk); if err != nil {
+	err = db.QueryRow("SELECT pk FROM stories WHERE id=$1", c.StoryID).Scan(&spk)
+	if err != nil {
 		return err
 	}
 
@@ -159,17 +162,17 @@ func getCommentsByStoryId(db *sql.DB, storyId string) ([]comment, error) {
 	db.QueryRow("SELECT pk FROM stories WHERE id=$1", storyId).Scan(&storyPk)
 
 	rows, err := db.Query(
-		"SELECT comments.id, comments.date, comments.text, users.username, stories.id " + 
-		"FROM comments " +
-		"JOIN users ON comments.userpk = users.pk " +
-		"JOIN stories ON comments.storypk = $1 ORDER BY comments.date DESC", storyPk)
+		"SELECT comments.id, comments.date, comments.text, users.username, stories.id "+
+			"FROM comments "+
+			"JOIN users ON comments.userpk = users.pk "+
+			"JOIN stories ON comments.storypk = $1 ORDER BY comments.date DESC", storyPk)
 
 	if err != nil {
 		return nil, err
 	}
 
 	defer rows.Close()
-	
+
 	comments := []comment{}
 
 	for rows.Next() {
@@ -185,27 +188,27 @@ func getCommentsByStoryId(db *sql.DB, storyId string) ([]comment, error) {
 
 // var Stories = []Story {
 // 	{
-// 		ID: "1", 
-// 		Date: time.Date(2022, 6, 12, 0, 0, 0, 0, time.Local), 
-// 		UserID: "1", 
-// 		CommentIDs: []string{"1", "2", "3"}, 
-// 		Title: "Lorem Ipsum Dolor", 
+// 		ID: "1",
+// 		Date: time.Date(2022, 6, 12, 0, 0, 0, 0, time.Local),
+// 		UserID: "1",
+// 		CommentIDs: []string{"1", "2", "3"},
+// 		Title: "Lorem Ipsum Dolor",
 // 		Text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
 // 	},
 // 	{
-// 		ID: "2", 
-// 		Date: time.Date(2022, 11, 3, 0, 0, 0, 0, time.Local), 
-// 		UserID: "1", 
-// 		CommentIDs: []string{"4", "5"}, 
-// 		Title: "Dummy Blog Title", 
+// 		ID: "2",
+// 		Date: time.Date(2022, 11, 3, 0, 0, 0, 0, time.Local),
+// 		UserID: "1",
+// 		CommentIDs: []string{"4", "5"},
+// 		Title: "Dummy Blog Title",
 // 		Text: "This is placeholder text to test the blog functionality. This blog was made by user 1. It has 2 comments.",
 // 	},
 // }
 
 // var Users = []User {
 // 	{
-// 		ID: "1", 
-// 		JoinDate: time.Date(2022, 6, 11, 0, 0, 0, 0, time.Local), 
+// 		ID: "1",
+// 		JoinDate: time.Date(2022, 6, 11, 0, 0, 0, 0, time.Local),
 // 		Name: "fakeuser1",
 // 		Email: "fakeuser1@test.com",
 // 		Password: "password123",

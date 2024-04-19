@@ -1,10 +1,13 @@
 import React from "react";
 
 import Button from "../../../shared/components/UIElements/Button";
+import { useAuth } from "../../../shared/context/auth-context";
 
 import "./Blog.css";
 
 const Blog = (props) => {
+  const { currentUser } = useAuth();
+
   const limitBlog = () => {
     if (props.text.length > 1000) {
       return props.text.slice(0, 1000) + "...";
@@ -12,14 +15,14 @@ const Blog = (props) => {
     return props.text;
   };
 
-  let date = new Date(props.date).toLocaleDateString()
-  console.log(props.userID);
+  let date = new Date(props.date).toLocaleDateString();
+
   return (
     <div className="your-stories-blog">
       <div className="your-stories-blog-header">
         <h3>{props.title}</h3>
         <div className="your-stories-blog-header-sub-title">
-          <span>{"by " + props.userID}</span>
+          <span>{"by " + props.username}</span>
           <span>{" " + date}</span>
         </div>
       </div>
@@ -31,15 +34,17 @@ const Blog = (props) => {
         <Button link={true} to={`${props.id}#comment-section`}>
           {props.commentsIds.length + " Comments"}
         </Button> */}
-        <Button
-          link={true}
-          to={`edit/${props.id}`}
-          state={{ title: props.title, text: props.text }}
-        >
-          Edit Story
-        </Button>
+        {currentUser.uid === props.userID && (
+          <Button
+            link={true}
+            to={`edit/${props.id}`}
+            state={{ title: props.title, text: props.text }}
+          >
+            Edit Story
+          </Button>
+        )}
         {props.text.length > 1000 && (
-          <Button link={true} to={`id/${props.id}`} >
+          <Button link={true} to={`id/${props.id}`}>
             View Full Story
           </Button>
         )}
