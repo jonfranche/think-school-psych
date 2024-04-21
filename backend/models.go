@@ -36,8 +36,8 @@ func (s *story) getStory(db *sql.DB) error {
 
 func (s *story) updateStory(db *sql.DB) error {
 	_, err :=
-		db.Exec("UPDATE stories SET title=$1, date=$2, userID=$3, text=$4 WHERE id=$5",
-			s.Title, s.Date, s.UserID, s.Text)
+		db.Exec("UPDATE stories SET title=$1, text=$2 WHERE id=$3",
+			s.Title, s.Text, s.ID)
 	return err
 }
 

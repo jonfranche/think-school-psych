@@ -34,9 +34,6 @@ const NewBlog = () => {
 
     let reqData = JSON.stringify(newBlog);
 
-    console.log(currentUser.uid);
-    console.log(reqData);
-
     const resData = await fetch(`/api/stories/new/${currentUser.uid}`, {
       method: "POST",
       headers: {

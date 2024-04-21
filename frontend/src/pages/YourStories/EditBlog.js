@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useForm, FormProvider } from "react-hook-form";
 import { useModal } from "react-hooks-use-modal";
 
-import { useHttpClient } from "../../shared/hooks/http-hook";
+import { useAuth } from "../../shared/context/auth-context";
 
 import {
   blog_title_validation,
@@ -16,7 +16,7 @@ import Button from "../../shared/components/UIElements/Button";
 import Confirmation from "../../shared/components/UIElements/Confirmation";
 
 const EditBlog = () => {
-  const {sendRequest} = useHttpClient();
+  const { currentUser } = useAuth();
   const [Modal, open, close] = useModal("root", {
     preventScroll: true,
     focusTrapOptions: {
@@ -30,7 +30,7 @@ const EditBlog = () => {
   let { state } = useLocation();
 
   const cancelButtonHandler = () => {
-    navigate(`/stories/${id}`);
+    navigate(`/stories/id/${id}`);
   };
 
   const deleteButtonHandler = () => {
@@ -45,18 +45,29 @@ const EditBlog = () => {
     navigate("/stories");
   };
 
-  const submitHandler = (data, event) => {
+  const submitHandler = async (data, event) => {
     event.preventDefault();
     const form = event.target;
     const formData = new FormData(form);
     const formJson = Object.fromEntries(formData.entries());
 
-    // const indexOfEditedBlog = DUMMY_BLOGS.findIndex((blog) => blog.id === id);
+    const editedBlog = {
+      title: formJson.blogTitle,
+      text: formJson.blogText,
+    };
 
-    // DUMMY_BLOGS[indexOfEditedBlog].title = formJson.blogTitle;
-    // DUMMY_BLOGS[indexOfEditedBlog].text = formJson.blogText;
+    let reqData = JSON.stringify(editedBlog);
+
+    const resData = await fetch(`/api/stories/${id}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: "Bearer " + currentUser.accessToken,
+      },
+      body: reqData,
+    });
+
     methods.reset();
-    navigate(`/stories/${id}`);
+    navigate(`/stories/id/${id}`);
   };
 
   return (
