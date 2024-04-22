@@ -368,6 +368,35 @@ func (a *App) getComments(w http.ResponseWriter, r *http.Request) {
 	log.Printf("HTTP Status: %d. Successfully retrieved comments", 200)
 }
 
+func (a *App) updateComment(w http.ResponseWriter, r *http.Request) {
+	var c comment
+	commentId := mux.Vars(r)["id"]
+
+	if !validateUUID(commentId, w) {
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&c); err != nil {
+		log.Printf("HTTP Status: %d. Error when updating comment", 400)
+		respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	c.ID = commentId
+	defer r.Body.Close()
+
+	if err := c.updateCommentById(a.DB); err != nil {
+		log.Printf("HTTP Status: %d. Error updating comment", 500)
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	// TODO: improve response JSON so that it sends actual result
+	respondWithJSON(w, http.StatusOK, map[string]string{"result": "Comment Update Successful"})
+	log.Printf("HTTP Status: %d. Successfully updated comment with ID: %s", 200, c.ID)
+}
+
 func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/api/signup", a.createUser).Methods("POST")
 	// a.Router.HandleFunc("/api/login", a.loginUser).Methods("POST")
@@ -383,6 +412,7 @@ func (a *App) initializeRoutes() {
 	privateRouter.HandleFunc("/api/stories/new/{userId}", a.createStory).Methods("POST")
 	privateRouter.HandleFunc("/api/stories/{id}", a.updateStory).Methods("PATCH")
 	privateRouter.HandleFunc("/api/stories/{id}", a.deleteStory).Methods("DELETE")
+	privateRouter.HandleFunc("/api/stories/comment/{id}", a.updateComment).Methods("PATCH")
 	privateRouter.HandleFunc("/api/users", a.getUsers).Methods("GET")
 }
 
@@ -421,6 +451,7 @@ func (a *App) authMiddleware(next http.Handler) http.Handler {
 
 		decodedToken, err := verifyToken(tokenString, a)
 		if err != nil {
+			respondWithError(w, http.StatusForbidden, "Token is invalid")
 			return
 		}
 

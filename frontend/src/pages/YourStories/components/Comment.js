@@ -8,11 +8,14 @@ import { edit_comment_validation } from "../../../util/inputValidation";
 import "./Comment.css";
 import Button from "../../../shared/components/UIElements/Button";
 import Confirmation from "../../../shared/components/UIElements/Confirmation";
+import { useAuth } from "../../../shared/context/auth-context";
 
 const Comment = (props) => {
+  const [commentText, setCommentText] = useState(props.commentText) 
   const navigate = useNavigate();
   const methods = useForm();
   const [editMode, setEditMode] = useState(false);
+  const { currentUser } = useAuth();
 
   const [Modal, open, close] = useModal("root", {
     preventScroll: true,
@@ -44,11 +47,32 @@ const Comment = (props) => {
     navigate(`/stories/${props.blogId}`);
   };
 
-  const submitHandler = (data, e) => {
+  const submitHandler = async (data, e) => {
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
     const formJson = Object.fromEntries(formData.entries());
+
+    const editedComment = {
+      userId: props.currentUser,
+      text: formJson.comment,
+    };
+
+    const reqData = JSON.stringify(editedComment);
+
+    // TODO: export this to a http hook
+    const resData = await fetch(`/api/stories/comment/${props.id}`, {
+      method: "PATCH",
+      headers: {
+        Authorization: "Bearer " + currentUser.accessToken,
+      },
+      body: reqData,
+    });
+
+    // TODO: make modal message for this
+    console.log(resData);
+    setCommentText(editedComment.text);
+
     setEditMode(false);
     methods.reset();
   };

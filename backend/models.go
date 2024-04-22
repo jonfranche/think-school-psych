@@ -187,6 +187,13 @@ func getCommentsByStoryId(db *sql.DB, storyId string) ([]comment, error) {
 	return comments, nil
 }
 
+func (c *comment) updateCommentById(db *sql.DB) error {
+	_, err :=
+		db.Exec("UPDATE comments SET text=$1 WHERE id=$2",
+			c.Text, c.ID)
+	return err
+}
+
 // var Stories = []Story {
 // 	{
 // 		ID: "1",
