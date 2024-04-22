@@ -59,14 +59,16 @@ const Comment = (props) => {
     <div className="comment">
       <div className="comment-header">
         <span>
-          <b>{props.userId}</b>
+          <b>{props.username}</b>
         </span>
         <span>{date}</span>
       </div>
       {!editMode && (
         <div className="comment-body">
           <p>{props.commentText}</p>
-          <Button onClick={setEditModeHandler}>Edit Comment</Button>
+          {props.currentUser === props.userId && (
+            <Button onClick={setEditModeHandler}>Edit Comment</Button>
+          )}
         </div>
       )}
       {editMode && (

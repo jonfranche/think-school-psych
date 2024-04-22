@@ -22,11 +22,12 @@ type user struct {
 }
 
 type comment struct {
-	ID      string    `json:"id"`
-	Date    time.Time `json:"date"`
-	UserID  string    `json:"userID"`
-	StoryID string    `json:"storyID"`
-	Text    string    `json:"text"`
+	ID       string    `json:"id"`
+	Date     time.Time `json:"date"`
+	UserID   string    `json:"userID"`
+	Username string    `json:"username"`
+	StoryID  string    `json:"storyID"`
+	Text     string    `json:"text"`
 }
 
 func (s *story) getStory(db *sql.DB) error {
@@ -162,7 +163,7 @@ func getCommentsByStoryId(db *sql.DB, storyId string) ([]comment, error) {
 	db.QueryRow("SELECT pk FROM stories WHERE id=$1", storyId).Scan(&storyPk)
 
 	rows, err := db.Query(
-		"SELECT comments.id, comments.date, comments.text, users.username, stories.id "+
+		"SELECT comments.id, comments.date, comments.text, users.id, users.username, stories.id "+
 			"FROM comments "+
 			"JOIN users ON comments.userpk = users.pk "+
 			"JOIN stories ON comments.storypk = $1 ORDER BY comments.date DESC", storyPk)
@@ -177,7 +178,7 @@ func getCommentsByStoryId(db *sql.DB, storyId string) ([]comment, error) {
 
 	for rows.Next() {
 		var c comment
-		if err := rows.Scan(&c.ID, &c.Date, &c.Text, &c.UserID, &c.StoryID); err != nil {
+		if err := rows.Scan(&c.ID, &c.Date, &c.Text, &c.UserID, &c.Username, &c.StoryID); err != nil {
 			return nil, err
 		}
 		comments = append(comments, c)

@@ -113,8 +113,10 @@ const FullBlog = (props) => {
                 id={comment.id}
                 blogId={comment.storyID}
                 userId={comment.userID}
+                username={comment.username}
                 commentDate={comment.date}
                 commentText={comment.text}
+                currentUser={currentUser.uid}
               />
             ))}
           </div>
