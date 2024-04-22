@@ -194,6 +194,12 @@ func (c *comment) updateCommentById(db *sql.DB) error {
 	return err
 }
 
+func (c *comment) deleteCommentById(db *sql.DB) error {
+	_, err := db.Exec("DELETE FROM comments WHERE id=$1", c.ID)
+
+	return err
+}
+
 // var Stories = []Story {
 // 	{
 // 		ID: "1",

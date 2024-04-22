@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 import { useModal } from "react-hooks-use-modal";
 
 import Input from "../../../shared/components/Input/Input";
@@ -11,8 +10,6 @@ import Confirmation from "../../../shared/components/UIElements/Confirmation";
 import { useAuth } from "../../../shared/context/auth-context";
 
 const Comment = (props) => {
-  const [commentText, setCommentText] = useState(props.commentText) 
-  const navigate = useNavigate();
   const methods = useForm();
   const [editMode, setEditMode] = useState(false);
   const { currentUser } = useAuth();
@@ -33,18 +30,17 @@ const Comment = (props) => {
     setEditMode(true);
   };
 
-  const deleteCommentHandler = () => {
-    // First delete the comment in the Comments array
-    // DUMMY_COMMENTS.splice(commentDataIndex, 1);
+  const deleteCommentHandler = async () => {
+    const resData = await fetch(`/api/stories/comment/${props.id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + currentUser.accessToken,
+      },
+    });
 
-    // Next delete the reference to the comment in the Blog array
-    // let blogIndex = DUMMY_BLOGS.findIndex((blog) => blog.id === props.blogId);
-    // let commentIndexInBlog = DUMMY_BLOGS[blogIndex].commentsIds.findIndex(
-    //   (i) => i === commentData.id
-    // );
-    // DUMMY_BLOGS[blogIndex].commentsIds.splice(commentIndexInBlog, 1);
-
-    navigate(`/stories/${props.blogId}`);
+    console.log(resData);
+    close();
+    props.update()
   };
 
   const submitHandler = async (data, e) => {
@@ -71,10 +67,9 @@ const Comment = (props) => {
 
     // TODO: make modal message for this
     console.log(resData);
-    setCommentText(editedComment.text);
-
     setEditMode(false);
     methods.reset();
+    props.update()
   };
 
   let date = new Date(props.commentDate).toLocaleDateString();

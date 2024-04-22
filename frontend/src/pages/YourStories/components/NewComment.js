@@ -1,6 +1,5 @@
 import React from "react";
 import { useForm, FormProvider } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
 
 import Input from "../../../shared/components/Input/Input";
 import Button from "../../../shared/components/UIElements/Button";
@@ -11,7 +10,6 @@ import "./NewComment.css";
 
 const NewComment = (props) => {
   const { currentUser } = useAuth();
-  const navigator = useNavigate();
   const methods = useForm();
 
   const cancelButtonHandler = (e) => {
@@ -40,8 +38,10 @@ const NewComment = (props) => {
       body: reqData,
     });
 
+    console.log(resData)
+
     props.setVisible();
-    navigator(`/stories/id/${props.blogId}`);
+    props.update();
   };
 
   return (

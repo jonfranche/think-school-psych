@@ -314,7 +314,7 @@ func (a *App) deleteStory(w http.ResponseWriter, r *http.Request) {
 
 	// send a response that creation operation was successful
 	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
-	log.Printf("HTTP Status: %d. Successfully deleted story with ID: %s", 20, s.ID)
+	log.Printf("HTTP Status: %d. Successfully deleted story with ID: %s", 200, s.ID)
 }
 
 func (a *App) createComment(w http.ResponseWriter, r *http.Request) {
@@ -397,6 +397,26 @@ func (a *App) updateComment(w http.ResponseWriter, r *http.Request) {
 	log.Printf("HTTP Status: %d. Successfully updated comment with ID: %s", 200, c.ID)
 }
 
+func (a *App) deleteComment(w http.ResponseWriter, r *http.Request) {
+	var c comment
+	commentId := mux.Vars(r)["id"]
+
+	if !validateUUID(commentId, w) {
+		return
+	}
+
+	c.ID = commentId
+
+	if err := c.deleteCommentById(a.DB); err != nil {
+		log.Printf("HTTP Status: %d. Error deleting comment", 500)
+		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	respondWithJSON(w, http.StatusOK, map[string]string{"result": "Comment Deletion Successful"})
+	log.Printf("HTTP Status: %d. Successfully deleted story with ID: %s", 200, c.ID)
+}
+
 func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/api/signup", a.createUser).Methods("POST")
 	// a.Router.HandleFunc("/api/login", a.loginUser).Methods("POST")
@@ -413,6 +433,7 @@ func (a *App) initializeRoutes() {
 	privateRouter.HandleFunc("/api/stories/{id}", a.updateStory).Methods("PATCH")
 	privateRouter.HandleFunc("/api/stories/{id}", a.deleteStory).Methods("DELETE")
 	privateRouter.HandleFunc("/api/stories/comment/{id}", a.updateComment).Methods("PATCH")
+	privateRouter.HandleFunc("/api/stories/comment/{id}", a.deleteComment).Methods("DELETE")
 	privateRouter.HandleFunc("/api/users", a.getUsers).Methods("GET")
 }
 

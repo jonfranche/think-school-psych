@@ -10,6 +10,7 @@ import "./FullBlog.css";
 
 const FullBlog = (props) => {
   const [blogData, setBlogData] = useState();
+  const [update, setUpdate] = useState(false);
   const [commentData, setCommentData] = useState();
   const [loading, setLoading] = useState(false);
   const [showNewComment, setShowNewComment] = useState(false);
@@ -39,7 +40,6 @@ const FullBlog = (props) => {
           return respData;
         })
         .then((response) => {
-          console.log(response);
           setCommentData(response);
         })
         .catch((err) => {
@@ -55,7 +55,9 @@ const FullBlog = (props) => {
     setTimeout(() => {
       getComments();
     }, 500);
-  }, []);
+
+    setUpdate(false);
+  }, [update]);
 
   const addCommentButtonHandler = () => {
     if (currentUser === null) {
@@ -63,6 +65,10 @@ const FullBlog = (props) => {
     }
     setShowNewComment(!showNewComment);
   };
+
+  const updateHandler = () => {
+    setUpdate(true);
+  }
 
   return (
     <React.Fragment>
@@ -105,6 +111,7 @@ const FullBlog = (props) => {
                 visible={showNewComment}
                 setVisible={addCommentButtonHandler}
                 blogId={blogData.id}
+                update={updateHandler}
               />
             )}
             {commentData.map((comment) => (
@@ -117,6 +124,7 @@ const FullBlog = (props) => {
                 commentDate={comment.date}
                 commentText={comment.text}
                 currentUser={currentUser.uid}
+                update={updateHandler}
               />
             ))}
           </div>
