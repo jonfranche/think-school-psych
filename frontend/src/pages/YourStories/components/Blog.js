@@ -30,10 +30,9 @@ const Blog = (props) => {
         <p>{limitBlog()}</p>
       </div>
       <div className="your-stories-blog-footer">
-        {/* TODO: Uncomment this once comments are implemented in backend
-        <Button link={true} to={`${props.id}#comment-section`}>
-          {props.commentsIds.length + " Comments"}
-        </Button> */}
+        <Button link={true} to={`/stories/id/${props.id}#comment-section`}>
+          {props.commentAmount + " Comments"}
+        </Button>
         {currentUser && currentUser.uid === props.userID && (
           <Button
             link={true}

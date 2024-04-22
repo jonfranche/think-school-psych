@@ -6,12 +6,13 @@ import (
 )
 
 type story struct {
-	ID       string    `json:"id"`
-	Title    string    `json:"title"`
-	Date     time.Time `json:"date"`
-	UserID   string    `json:"userID"`
-	Username string    `json:"username"`
-	Text     string    `json:"text"`
+	ID            string    `json:"id"`
+	Title         string    `json:"title"`
+	Date          time.Time `json:"date"`
+	UserID        string    `json:"userID"`
+	Username      string    `json:"username"`
+	Text          string    `json:"text"`
+	CommentAmount int       `json:"commentAmount"`
 }
 
 type user struct {
@@ -62,8 +63,11 @@ func (s *story) createStory(db *sql.DB) error {
 
 func getStories(db *sql.DB, start, count int) ([]story, error) {
 	rows, err := db.Query(
-		"SELECT stories.id, stories.title, stories.date, users.username, users.id, stories.text "+
-			"FROM stories JOIN users ON stories.userid = users.pk ORDER BY date DESC LIMIT $1 OFFSET $2",
+		"SELECT stories.id, stories.title, stories.date, users.username, users.id, stories.text, COUNT(comments.storypk) "+
+			"FROM stories JOIN users ON stories.userid = users.pk "+
+			"JOIN comments ON stories.pk = comments.storypk "+
+			"GROUP BY stories.id, stories.title, stories.date, users.username, users.id, stories.text "+
+			"ORDER BY date DESC LIMIT $1 OFFSET $2",
 		count, start)
 
 	if err != nil {
@@ -76,7 +80,7 @@ func getStories(db *sql.DB, start, count int) ([]story, error) {
 
 	for rows.Next() {
 		var s story
-		if err := rows.Scan(&s.ID, &s.Title, &s.Date, &s.Username, &s.UserID, &s.Text); err != nil {
+		if err := rows.Scan(&s.ID, &s.Title, &s.Date, &s.Username, &s.UserID, &s.Text, &s.CommentAmount); err != nil {
 			return nil, err
 		}
 		stories = append(stories, s)
@@ -96,14 +100,6 @@ func (u *user) createUser(db *sql.DB) error {
 
 	return nil
 }
-
-// func (s *story) getUserUidById(db *sql.DB) error {
-// 	return db.QueryRow("SELECT id FROM users WHERE pk=$1", s.UserID).Scan(&s.UserID)
-// }
-
-// func (u *user) getUserPasswordByEmail(db *sql.DB) error {
-// 	return db.QueryRow("SELECT id, password FROM users WHERE email=$1", u.Email).Scan(&u.ID, &u.Password)
-// }
 
 func (u *user) getUserIdByUid(db *sql.DB) error {
 	return db.QueryRow("SELECT pk FROM users WHERE id=$1", u.ID).Scan(&u.ID)
@@ -199,77 +195,3 @@ func (c *comment) deleteCommentById(db *sql.DB) error {
 
 	return err
 }
-
-// var Stories = []Story {
-// 	{
-// 		ID: "1",
-// 		Date: time.Date(2022, 6, 12, 0, 0, 0, 0, time.Local),
-// 		UserID: "1",
-// 		CommentIDs: []string{"1", "2", "3"},
-// 		Title: "Lorem Ipsum Dolor",
-// 		Text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-// 	},
-// 	{
-// 		ID: "2",
-// 		Date: time.Date(2022, 11, 3, 0, 0, 0, 0, time.Local),
-// 		UserID: "1",
-// 		CommentIDs: []string{"4", "5"},
-// 		Title: "Dummy Blog Title",
-// 		Text: "This is placeholder text to test the blog functionality. This blog was made by user 1. It has 2 comments.",
-// 	},
-// }
-
-// var Users = []User {
-// 	{
-// 		ID: "1",
-// 		JoinDate: time.Date(2022, 6, 11, 0, 0, 0, 0, time.Local),
-// 		Name: "fakeuser1",
-// 		Email: "fakeuser1@test.com",
-// 		Password: "password123",
-// 	},
-// 	{
-// 		ID: "2",
-// 		JoinDate: time.Date(2022, 7, 20, 0, 0, 0, 0, time.Local),
-// 		Name: "testuser2",
-// 		Email: "testuser2@test.com",
-// 		Password: "password123",
-// 	},
-// }
-
-// var Comments = []Comment {
-// 	{
-// 		ID: "1",
-// 		Date: time.Date(2022, 7, 20, 0, 0, 0, 0, time.Local),
-// 		UserID: "2",
-// 		BlogID: "1",
-// 		Text: "Wow great post!",
-// 	  },
-// 	  {
-// 		ID: "2",
-// 		Date: time.Date(2022, 7, 21, 0, 0, 0, 0, time.Local),
-// 		UserID: "1",
-// 		BlogID: "1",
-// 		Text: "Thanks, testuser2!",
-// 	  },
-// 	  {
-// 		ID: "3",
-// 		Date: time.Date(2022, 7, 21, 0, 0, 0, 0, time.Local),
-// 		UserID: "2",
-// 		BlogID: "1",
-// 		Text: "You're welcome!",
-// 	  },
-// 	  {
-// 		ID: "4",
-// 		Date: time.Date(2022, 11, 3, 0, 0, 0, 0, time.Local),
-// 		UserID: "2",
-// 		BlogID: "2",
-// 		Text: "Another well written blog, fakeuser1.",
-// 	  },
-// 	  {
-// 		ID: "5",
-// 		Date: time.Date(2022, 11, 4, 0, 0, 0, 0, time.Local),
-// 		UserID: "1",
-// 		BlogID: "2",
-// 		Text: "Thanks so much, testuser2!",
-// 	  },
-// }

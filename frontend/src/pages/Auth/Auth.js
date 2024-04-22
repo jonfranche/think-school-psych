@@ -15,9 +15,6 @@ import "./Auth.css";
 
 const Auth = (props) => {
   const navigate = useNavigate();
-  // TODO: Delete the following comment once firebase integration is done
-  // const auth = useContext(AuthContext);
-  // const { sendRequest } = useHttpClient();
   const methods = useForm();
 
   const submitHandler = async (data, e) => {
@@ -26,16 +23,6 @@ const Auth = (props) => {
       const form = e.target;
       const formData = new FormData(form);
       const formJson = Object.fromEntries(formData.entries());
-
-      // TODO: Delete the following comment once firebase integration is done
-      // const responseData = await sendRequest(
-      //   "http://localhost:8010/api/login",
-      //   "POST",
-      //   JSON.stringify(formJson),
-      //   {
-      //     "Content-Type": "application/json",
-      //   }
-      // );
 
       signInWithEmailAndPassword(
         firebaseAuth,

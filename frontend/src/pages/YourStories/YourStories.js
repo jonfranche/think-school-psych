@@ -52,6 +52,7 @@ const YourStories = () => {
                 username={blog.username}
                 title={blog.title}
                 text={blog.text}
+                commentAmount={blog.commentAmount}
               />
             ))}
           </div>
