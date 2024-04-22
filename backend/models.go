@@ -65,7 +65,7 @@ func getStories(db *sql.DB, start, count int) ([]story, error) {
 	rows, err := db.Query(
 		"SELECT stories.id, stories.title, stories.date, users.username, users.id, stories.text, COUNT(comments.storypk) "+
 			"FROM stories JOIN users ON stories.userid = users.pk "+
-			"JOIN comments ON stories.pk = comments.storypk "+
+			"LEFT JOIN comments ON stories.pk = comments.storypk "+
 			"GROUP BY stories.id, stories.title, stories.date, users.username, users.id, stories.text "+
 			"ORDER BY date DESC LIMIT $1 OFFSET $2",
 		count, start)
