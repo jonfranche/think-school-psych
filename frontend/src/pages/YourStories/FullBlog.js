@@ -49,11 +49,11 @@ const FullBlog = (props) => {
 
     setTimeout(() => {
       getBlogData();
-      setLoading(true);
     }, 1000);
 
     setTimeout(() => {
       getComments();
+      setLoading(true);
     }, 500);
 
     setUpdate(false);
@@ -68,7 +68,7 @@ const FullBlog = (props) => {
 
   const updateHandler = () => {
     setUpdate(true);
-  }
+  };
 
   return (
     <React.Fragment>
