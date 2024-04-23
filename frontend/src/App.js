@@ -1,5 +1,10 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 
 import BehavioralInterventions from "./pages/BehavioralInterventions/BehavioralInterventions";
 import FAQs from "./pages/FAQs/FAQs";
@@ -15,6 +20,7 @@ import NewBlog from "./pages/YourStories/NewBlog";
 import EditBlog from "./pages/YourStories/EditBlog";
 import Auth from "./pages/Auth/Auth";
 import Signup from "./pages/Auth/Signup";
+import NotFound from "./pages/NotFound/NotFound";
 import { RequireAuth } from "./util/RequireAuth";
 import { AuthProvider } from "./shared/context/auth-context";
 
@@ -61,7 +67,9 @@ const App = () => {
             <Route path="/FAQs" element={<FAQs />} />
             <Route path="/login" element={<Auth />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/404" element={<NotFound />} />
             <Route path="/" exact element={<Home />} />
+            <Route path="*" element={<Navigate to="/404" replace />} />
           </Routes>
         </main>
       </Router>
