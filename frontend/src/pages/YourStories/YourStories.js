@@ -2,33 +2,30 @@ import React, { useState, useEffect } from "react";
 
 import Blog from "./components/Blog";
 import Button from "../../shared/components/UIElements/Button";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 
 import "./YourStories.css";
 
 const YourStories = () => {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   useEffect(() => {
-    const getData = () => {
-      return fetch("/api/stories", { method: "GET" })
-        .then((response) => {
-          const respData = response.json();
-          return respData;
-        })
-        .then((response) => {
-          setData(response);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    const getData = async () => {
+      try {
+        const response = await sendRequest("/api/stories");
+        setData(response);
+      } catch (err) {}
     };
-
     setTimeout(() => {
       getData();
-      setLoading(true);
     }, 1000);
   }, []);
+
+  // const errorHandler = () => {
+  //   console.log(error);
+  //   clearError
+  // }
 
   return (
     <React.Fragment>
@@ -37,11 +34,12 @@ const YourStories = () => {
         <Button link={true} to="new">
           Share Your Story
         </Button>
-        {!loading && <h4>Loading...</h4>}
-        {loading && data.length === 0 && (
+        {isLoading && <h4>Loading...</h4>}
+        {/* {error && <h4>{error}</h4>} */}
+        {!isLoading && data.length === 0 && !error && (
           <p>No stories yet. Consider sharing your own!</p>
         )}
-        {loading && (
+        {!isLoading && (
           <div className="your-stories-blogs">
             {data.map((blog) => (
               <Blog

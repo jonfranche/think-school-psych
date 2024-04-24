@@ -296,8 +296,6 @@ func (a *App) deleteStory(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id := vars["id"]
 
-	// TODO: add authorization
-
 	// validate that id is a uuid
 	if !validateUUID(id, w) {
 		return
@@ -313,7 +311,7 @@ func (a *App) deleteStory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// send a response that creation operation was successful
-	respondWithJSON(w, http.StatusOK, map[string]string{"result": "success"})
+	respondWithJSON(w, http.StatusOK, map[string]string{"message": "success"})
 	log.Printf("HTTP Status: %d. Successfully deleted story with ID: %s", 200, s.ID)
 }
 

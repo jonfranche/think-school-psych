@@ -13,11 +13,11 @@ import {
 
 import "./Auth.css";
 
-const Auth = (props) => {
+const Auth = () => {
   const navigate = useNavigate();
   const methods = useForm();
 
-  const submitHandler = async (data, e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
     try {
       const form = e.target;

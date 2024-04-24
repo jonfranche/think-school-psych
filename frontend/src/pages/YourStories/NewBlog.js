@@ -5,6 +5,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import Input from "../../shared/components/Input/Input";
 import Button from "../../shared/components/UIElements/Button";
 import { useAuth } from "../../shared/context/auth-context";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 
 import {
   blog_text_validation,
@@ -14,6 +15,7 @@ import "./NewBlog.css";
 
 const NewBlog = () => {
   const { currentUser } = useAuth();
+  const { sendRequest } = useHttpClient();
   const methods = useForm();
   const navigate = useNavigate();
 
@@ -34,15 +36,16 @@ const NewBlog = () => {
 
     let reqData = JSON.stringify(newBlog);
 
-    const resData = await fetch(`/api/stories/new/${currentUser.uid}`, {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + currentUser.accessToken,
-      },
-      body: reqData,
-    });
-
-    console.log(resData);
+    try {
+      const response = await sendRequest(
+        `/api/stories/new/${currentUser.uid}`,
+        "POST",
+        reqData,
+        {
+          Authorization: "Bearer " + currentUser.accessToken,
+        }
+      );
+    } catch (err) {}
 
     setTimeout(function () {
       navigate("/stories");

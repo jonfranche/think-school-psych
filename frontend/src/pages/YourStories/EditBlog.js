@@ -4,6 +4,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { useModal } from "react-hooks-use-modal";
 
 import { useAuth } from "../../shared/context/auth-context";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 
 import {
   blog_title_validation,
@@ -17,6 +18,7 @@ import Confirmation from "../../shared/components/UIElements/Confirmation";
 
 const EditBlog = () => {
   const { currentUser } = useAuth();
+  const { sendRequest } = useHttpClient();
   const [Modal, open, close] = useModal("root", {
     preventScroll: true,
     focusTrapOptions: {
@@ -37,15 +39,17 @@ const EditBlog = () => {
     open();
   };
 
-  const deleteStory = () => {
-    // const indexOfEditedBlog = DUMMY_BLOGS.findIndex((blog) => blog.id === id);
-    // DUMMY_BLOGS.splice(indexOfEditedBlog, 1);
-    // console.log(DUMMY_BLOGS);
-
+  const deleteStory = async () => {
+    try {
+      const response = await sendRequest(`/api/stories/${id}`, "DELETE", null, {
+        Authorization: "Bearer " + currentUser.accessToken,
+      });
+    } catch (err) {}
+    close();
     navigate("/stories");
   };
 
-  const submitHandler = async (data, event) => {
+  const submitHandler = async (event) => {
     event.preventDefault();
     const form = event.target;
     const formData = new FormData(form);
@@ -58,13 +62,14 @@ const EditBlog = () => {
 
     let reqData = JSON.stringify(editedBlog);
 
-    const resData = await fetch(`/api/stories/${id}`, {
-      method: "PATCH",
-      headers: {
-        Authorization: "Bearer " + currentUser.accessToken,
-      },
-      body: reqData,
-    });
+    try {
+      const response = await sendRequest(
+        `/api/stories/${id}`,
+        "PATCH",
+        reqData,
+        { Authorization: "Bearer " + currentUser.accessToken }
+      );
+    } catch (err) {}
 
     methods.reset();
     navigate(`/stories/id/${id}`);

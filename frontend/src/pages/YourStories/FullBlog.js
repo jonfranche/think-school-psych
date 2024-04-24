@@ -5,6 +5,7 @@ import Button from "../../shared/components/UIElements/Button";
 import Comment from "./components/Comment";
 import NewComment from "./components/NewComment";
 import { useAuth } from "../../shared/context/auth-context";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 
 import "./FullBlog.css";
 
@@ -12,39 +13,25 @@ const FullBlog = (props) => {
   const [blogData, setBlogData] = useState();
   const [update, setUpdate] = useState(false);
   const [commentData, setCommentData] = useState();
-  const [loading, setLoading] = useState(false);
   const [showNewComment, setShowNewComment] = useState(false);
   const { currentUser } = useAuth();
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const navigator = useNavigate();
   let { id } = useParams();
 
   useEffect(() => {
-    const getBlogData = () => {
-      return fetch(`/api/stories/${id}`, { method: "GET" })
-        .then((response) => {
-          const respData = response.json();
-          return respData;
-        })
-        .then((response) => {
-          setBlogData(response);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    const getBlogData = async () => {
+      try {
+        const response = await sendRequest(`/api/stories/${id}`);
+        setBlogData(response);
+      } catch (err) {}
     };
 
-    const getComments = () => {
-      return fetch(`/api/stories/${id}/comments`, { methods: "GET" })
-        .then((response) => {
-          const respData = response.json();
-          return respData;
-        })
-        .then((response) => {
-          setCommentData(response);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    const getComments = async () => {
+      try {
+        const response = await sendRequest(`/api/stories/${id}/comments`);
+        setCommentData(response);
+      } catch(err) {}
     };
 
     setTimeout(() => {
@@ -53,7 +40,6 @@ const FullBlog = (props) => {
 
     setTimeout(() => {
       getComments();
-      setLoading(true);
     }, 500);
 
     setUpdate(false);
@@ -72,7 +58,7 @@ const FullBlog = (props) => {
 
   return (
     <React.Fragment>
-      {!loading && <h4>Loading...</h4>}
+      {isLoading && <h4>Loading...</h4>}
       {blogData && (
         <div className="full-blog">
           <div className="full-blog-header">

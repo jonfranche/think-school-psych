@@ -1,14 +1,19 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect } from "react";
 
 export const useHttpClient = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();
 
+  // cancel http request if user leaves the page before request has been completed
+  // useRef creates a piece of data that will not be reinitialized or changed after
+  // sendRequest runs again
   const activeHttpRequests = useRef([]);
 
+  // useCallback makes sure there are no duplicate calls to this function
   const sendRequest = useCallback(
-    async (url, method = 'GET', body = null, headers = {}) => {
+    async (url, method = "GET", body = null, headers = {}) => {
       setIsLoading(true);
+
       const httpAbortCtrl = new AbortController();
       activeHttpRequests.current.push(httpAbortCtrl);
 
@@ -17,38 +22,38 @@ export const useHttpClient = () => {
           method,
           body,
           headers,
-          signal: httpAbortCtrl.signal
+          signal: httpAbortCtrl.signal,
         });
 
         const responseData = await response.json();
-
+        
+        // Clear the abort controllers taht belong to request that just completed
         activeHttpRequests.current = activeHttpRequests.current.filter(
           reqCtrl => reqCtrl !== httpAbortCtrl
         );
-
         if (!response.ok) {
-          throw new Error(responseData.message);
+          throw new Error(responseData.error);
         }
-
         setIsLoading(false);
         return responseData;
       } catch (err) {
-        setError(err.message);
+        setError(err.error);
         setIsLoading(false);
+        console.log(error);
         throw err;
       }
-    },
-    []
+      setIsLoading(false);
+    }
   );
 
   const clearError = () => {
     setError(null);
   };
 
+  //clean up logic when a component unmounts
   useEffect(() => {
     return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      activeHttpRequests.current.forEach(abortCtrl => abortCtrl.abort());
+      activeHttpRequests.current.forEach((abortCtrl) => abortCtrl.abort());
     };
   }, []);
 
