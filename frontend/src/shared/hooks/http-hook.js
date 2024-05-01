@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 
 export const useHttpClient = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState();
 
   // cancel http request if user leaves the page before request has been completed
@@ -12,7 +12,7 @@ export const useHttpClient = () => {
   // useCallback makes sure there are no duplicate calls to this function
   const sendRequest = useCallback(
     async (url, method = "GET", body = null, headers = {}) => {
-      setIsLoading(true);
+      // setIsLoading(true);
 
       const httpAbortCtrl = new AbortController();
       activeHttpRequests.current.push(httpAbortCtrl);
@@ -42,7 +42,6 @@ export const useHttpClient = () => {
         console.log(error);
         throw err;
       }
-      setIsLoading(false);
     }
   );
 

@@ -4,6 +4,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import Input from "../../../shared/components/Input/Input";
 import Button from "../../../shared/components/UIElements/Button";
 import { useAuth } from "../../../shared/context/auth-context";
+import { useHttpClient } from "../../../shared/hooks/http-hook";
 
 import { comment_validation } from "../../../util/inputValidation";
 import "./NewComment.css";
@@ -11,6 +12,7 @@ import "./NewComment.css";
 const NewComment = (props) => {
   const { currentUser } = useAuth();
   const methods = useForm();
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   const cancelButtonHandler = (e) => {
     e.preventDefault();
@@ -30,15 +32,14 @@ const NewComment = (props) => {
 
     let reqData = JSON.stringify(newComment);
 
-    const resData = await fetch(`/api/stories/${props.blogId}/comment`, {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + currentUser.accessToken,
-      },
-      body: reqData,
-    });
+    const response = await sendRequest(
+      `/api/stories/${props.blogId}/comment`,
+      "POST",
+      reqData,
+      { Authorization: "Bearer " + currentUser.accessToken }
+    );
 
-    console.log(resData)
+    console.log(response);
 
     props.setVisible();
     props.update();

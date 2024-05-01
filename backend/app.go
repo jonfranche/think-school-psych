@@ -163,7 +163,7 @@ func (a *App) createStory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// send a response that creation operation was successful
-	respondWithJSON(w, http.StatusCreated, s)
+	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "Story Creation Successful"})
 	log.Printf("HTTP Status: %d. Successfully created story", 201)
 }
 
@@ -287,7 +287,7 @@ func (a *App) updateStory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// send a response that creation operation was successful
-	respondWithJSON(w, http.StatusOK, s)
+	respondWithJSON(w, http.StatusOK, map[string]string{"result": "Story Update Successful"})
 	log.Printf("HTTP Status: %d. Successfully updated story with ID: %s", 200, s.ID)
 }
 
@@ -311,7 +311,7 @@ func (a *App) deleteStory(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// send a response that creation operation was successful
-	respondWithJSON(w, http.StatusOK, map[string]string{"message": "success"})
+	respondWithJSON(w, http.StatusOK, map[string]string{"result": "Story Deletion Successful"})
 	log.Printf("HTTP Status: %d. Successfully deleted story with ID: %s", 200, s.ID)
 }
 
@@ -348,7 +348,7 @@ func (a *App) createComment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// send response that creation operation was successful
-	respondWithJSON(w, http.StatusCreated, c.ID)
+	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "Comment Creation Successful"})
 	log.Printf("HTTP Status: %d. Successfully created comment", 201)
 }
 

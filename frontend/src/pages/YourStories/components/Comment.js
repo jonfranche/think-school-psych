@@ -8,11 +8,13 @@ import "./Comment.css";
 import Button from "../../../shared/components/UIElements/Button";
 import Confirmation from "../../../shared/components/UIElements/Confirmation";
 import { useAuth } from "../../../shared/context/auth-context";
+import { useHttpClient } from "../../../shared/hooks/http-hook";
 
 const Comment = (props) => {
   const methods = useForm();
   const [editMode, setEditMode] = useState(false);
   const { currentUser } = useAuth();
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   const [Modal, open, close] = useModal("root", {
     preventScroll: true,
@@ -31,16 +33,19 @@ const Comment = (props) => {
   };
 
   const deleteCommentHandler = async () => {
-    const resData = await fetch(`/api/stories/comment/${props.id}`, {
-      method: "DELETE",
-      headers: {
+    const response = await sendRequest(
+      `/api/stories/comment/${props.id}`,
+      "DELETE",
+      null,
+      {
         Authorization: "Bearer " + currentUser.accessToken,
-      },
-    });
+      }
+    );
 
-    console.log(resData);
+    // TODO: make modal message for this
+    console.log(response);
     close();
-    props.update()
+    props.update();
   };
 
   const submitHandler = async (data, e) => {
@@ -56,20 +61,20 @@ const Comment = (props) => {
 
     const reqData = JSON.stringify(editedComment);
 
-    // TODO: export this to a http hook
-    const resData = await fetch(`/api/stories/comment/${props.id}`, {
-      method: "PATCH",
-      headers: {
+    const response = await sendRequest(
+      `/api/stories/comment/${props.id}`,
+      "PATCH",
+      reqData,
+      {
         Authorization: "Bearer " + currentUser.accessToken,
-      },
-      body: reqData,
-    });
+      }
+    );
 
     // TODO: make modal message for this
-    console.log(resData);
+    console.log(response);
     setEditMode(false);
     methods.reset();
-    props.update()
+    props.update();
   };
 
   let date = new Date(props.commentDate).toLocaleDateString();
