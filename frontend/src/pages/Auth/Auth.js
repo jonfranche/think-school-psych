@@ -17,7 +17,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const methods = useForm();
 
-  const submitHandler = async (e) => {
+  const submitHandler = async (data, e) => {
     e.preventDefault();
     try {
       const form = e.target;
