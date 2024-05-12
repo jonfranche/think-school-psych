@@ -42,6 +42,7 @@ const Comment = (props) => {
       }
     );
 
+    console.log(error);
     // TODO: make modal message for this
     console.log(response);
     close();

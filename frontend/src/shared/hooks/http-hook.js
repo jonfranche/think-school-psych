@@ -26,12 +26,13 @@ export const useHttpClient = () => {
         });
 
         const responseData = await response.json();
-        
+
         // Clear the abort controllers taht belong to request that just completed
         activeHttpRequests.current = activeHttpRequests.current.filter(
-          reqCtrl => reqCtrl !== httpAbortCtrl
+          (reqCtrl) => reqCtrl !== httpAbortCtrl
         );
         if (!response.ok) {
+          // TODO: change this to redirect to an error page
           throw new Error(responseData.error);
         }
         setIsLoading(false);
@@ -39,10 +40,10 @@ export const useHttpClient = () => {
       } catch (err) {
         setError(err.error);
         setIsLoading(false);
-        console.log(error);
         throw err;
       }
-    }
+    },
+    []
   );
 
   const clearError = () => {

@@ -21,6 +21,7 @@ import EditBlog from "./pages/YourStories/EditBlog";
 import Auth from "./pages/Auth/Auth";
 import Signup from "./pages/Auth/Signup";
 import NotFound from "./pages/NotFound/NotFound";
+import Error from "./pages/Error/Error"
 import { RequireAuth } from "./util/RequireAuth";
 import { AuthProvider } from "./shared/context/auth-context";
 
