@@ -45,25 +45,21 @@ const Signup = () => {
       const reqData = {
         username: newUser.username,
         id: user.uid,
-        email: user.email
-      }
+        email: user.email,
+      };
 
-      // TODO: Create error handling 
       const responseData = await fetch("http://localhost:8010/api/signup", {
         method: "POST",
         mode: "cors",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(reqData)
-      })
+        body: JSON.stringify(reqData),
+      });
 
       methods.reset();
       navigate("/");
-    } catch (err) {
-      // TODO: add error handling for this function
-      console.log(err);
-    }
+    } catch (err) {}
   };
 
   return (

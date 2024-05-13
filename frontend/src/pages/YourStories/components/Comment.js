@@ -68,8 +68,6 @@ const Comment = (props) => {
       }
     );
 
-    // TODO: make modal message for this
-    console.log(response);
     setEditMode(false);
     methods.reset();
     props.update();

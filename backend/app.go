@@ -152,9 +152,6 @@ func (a *App) createStory(w http.ResponseWriter, r *http.Request) {
 	s.Date = time.Now()
 	s.UserID = id
 
-	// TODO: uncomment next line after uuid is implemented in backend
-	// log.Println("Created Story with ID: " + s.ID)
-
 	// call the createStory method in models to insert the data into database
 	if err := s.createStory(a.DB); err != nil {
 		log.Printf("HTTP Status: %d. Error creating story", 500)
@@ -164,7 +161,7 @@ func (a *App) createStory(w http.ResponseWriter, r *http.Request) {
 
 	// send a response that creation operation was successful
 	respondWithJSON(w, http.StatusCreated, map[string]string{"result": "Story Creation Successful"})
-	log.Printf("HTTP Status: %d. Successfully created story", 201)
+	log.Printf("HTTP Status: %d. Successfully created story with id: %s", 201, s.ID)
 }
 
 func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
@@ -411,8 +408,7 @@ func (a *App) deleteComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// respondWithJSON(w, http.StatusOK, map[string]string{"result": "Comment Deletion Successful"})
-	respondWithError(w, http.StatusBadRequest, "Invalid request payload")
+	respondWithJSON(w, http.StatusOK, map[string]string{"result": "Comment Deletion Successful"})
 	log.Printf("HTTP Status: %d. Successfully deleted story with ID: %s", 200, c.ID)
 }
 
