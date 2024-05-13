@@ -42,8 +42,6 @@ const Comment = (props) => {
       }
     );
 
-    // TODO: make modal message for this
-    console.log(response);
     close();
     props.update();
   };

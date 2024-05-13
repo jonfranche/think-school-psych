@@ -411,7 +411,8 @@ func (a *App) deleteComment(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondWithJSON(w, http.StatusOK, map[string]string{"result": "Comment Deletion Successful"})
+	// respondWithJSON(w, http.StatusOK, map[string]string{"result": "Comment Deletion Successful"})
+	respondWithError(w, http.StatusBadRequest, "Invalid request payload")
 	log.Printf("HTTP Status: %d. Successfully deleted story with ID: %s", 200, c.ID)
 }
 

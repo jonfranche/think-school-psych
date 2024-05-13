@@ -21,6 +21,7 @@ import EditBlog from "./pages/YourStories/EditBlog";
 import Auth from "./pages/Auth/Auth";
 import Signup from "./pages/Auth/Signup";
 import NotFound from "./pages/NotFound/NotFound";
+import Error from "./pages/Error/Error";
 import { RequireAuth } from "./util/RequireAuth";
 import { AuthProvider } from "./shared/context/auth-context";
 
@@ -67,6 +68,7 @@ const App = () => {
             <Route path="/FAQs" element={<FAQs />} />
             <Route path="/login" element={<Auth />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/error" element={<Error />} />
             <Route path="/404" element={<NotFound />} />
             <Route path="/" exact element={<Home />} />
             <Route path="*" element={<Navigate to="/404" replace />} />

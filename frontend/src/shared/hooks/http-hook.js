@@ -1,8 +1,10 @@
 import { useState, useCallback, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const useHttpClient = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState();
+  const navigator = useNavigate();
 
   // cancel http request if user leaves the page before request has been completed
   // useRef creates a piece of data that will not be reinitialized or changed after
@@ -26,23 +28,27 @@ export const useHttpClient = () => {
         });
 
         const responseData = await response.json();
-        
+
         // Clear the abort controllers taht belong to request that just completed
         activeHttpRequests.current = activeHttpRequests.current.filter(
-          reqCtrl => reqCtrl !== httpAbortCtrl
+          (reqCtrl) => reqCtrl !== httpAbortCtrl
         );
         if (!response.ok) {
-          throw new Error(responseData.error);
+          navigator("/error", {
+            relative: false,
+            state: { message: responseData.error, code: response.status },
+          });
+          return;
         }
         setIsLoading(false);
         return responseData;
       } catch (err) {
         setError(err.error);
         setIsLoading(false);
-        console.log(error);
         throw err;
       }
-    }
+    },
+    []
   );
 
   const clearError = () => {
