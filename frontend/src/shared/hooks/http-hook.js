@@ -1,8 +1,10 @@
 import { useState, useCallback, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export const useHttpClient = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState();
+  const navigator = useNavigate();
 
   // cancel http request if user leaves the page before request has been completed
   // useRef creates a piece of data that will not be reinitialized or changed after
@@ -32,8 +34,11 @@ export const useHttpClient = () => {
           (reqCtrl) => reqCtrl !== httpAbortCtrl
         );
         if (!response.ok) {
-          // TODO: change this to redirect to an error page
-          throw new Error(responseData.error);
+          navigator("/error", {
+            relative: false,
+            state: { message: responseData.error, code: response.status },
+          });
+          return;
         }
         setIsLoading(false);
         return responseData;
