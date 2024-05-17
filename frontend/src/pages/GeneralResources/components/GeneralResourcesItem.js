@@ -1,28 +1,39 @@
 import React from "react";
 
+import { useHttpClient } from "../../../shared/hooks/http-hook";
+
 import Button from "../../../shared/components/UIElements/Button";
 
 import "./GeneralResourcesItem.css";
 
-import Asperger from "../../../static/downloadables/Asperger Syndrome PPT.pdf";
-import Parent from "../../../static/downloadables/Parent Handbook California.pdf";
-import Prader from "../../../static/downloadables/Prader Willi Syndrome PPT.pdf";
-import Filipino from "../../../static/downloadables/Filipino Culture The Negative And The Positive PPT.pptx";
-
-const setFile = (title) => {
-  if (title === "Asperger Syndrome PPT") return Asperger;
-  if (title === "Parent Handbook California") return Parent;
-  if (title === "Prader Willi Syndrome PPT") return Prader;
-  if (title === "Filipino Culture The Negative And The Positive PPT")
-    return Filipino;
-};
-
 const GeneralResourcesItem = (props) => {
-  const file = setFile(props.title);
+  const { sendRequest } = useHttpClient();
+
+  function removeWhiteSpace(str) {
+    let newStr = "";
+    for (let i = 0; i < str.length; i++) {
+      if (str[i] === " ") continue;
+      newStr = newStr + str[i];
+    }
+    return newStr;
+  }
+
+  async function downloadButtonHandler() {
+    const filename = removeWhiteSpace(file);
+    console.log("button pressed");
+    try {
+      console.log("request sent");
+      console.log(filename);
+      // TODO: change response from json to blob in http-hook
+      const response = await sendRequest(`/api/resources/${filename}`)
+    } catch (err) {}
+  }
+
+  const file = props.title;
   return (
     <div className="general-resources-item">
       <span>{props.title}</span>
-      <Button download={true} href={file}>Download</Button>
+      <button onClick={downloadButtonHandler}>Download</button>
     </div>
   );
 };

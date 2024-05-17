@@ -27,6 +27,8 @@ export const useHttpClient = () => {
           signal: httpAbortCtrl.signal,
         });
 
+        console.log(response);
+
         const responseData = await response.json();
 
         // Clear the abort controllers taht belong to request that just completed

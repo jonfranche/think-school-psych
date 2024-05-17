@@ -15,7 +15,7 @@ const FullBlog = (props) => {
   const [commentData, setCommentData] = useState();
   const [showNewComment, setShowNewComment] = useState(false);
   const { currentUser } = useAuth();
-  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const { isLoading, sendRequest} = useHttpClient();
   const navigator = useNavigate();
   let { id } = useParams();
 
