@@ -26,10 +26,24 @@ export const useHttpClient = () => {
           headers,
           signal: httpAbortCtrl.signal,
         });
+        // TODO: make an if statement to check whether the response is blob or json
+        console.log(response.headers);
 
-        console.log(response);
+        const contentType = response.headers.get("Content-Type");
 
-        const responseData = await response.json();
+        console.log(contentType);
+
+        let responseData;
+
+        if (contentType === "application/pdf") {
+          const responseBlob = await response.blob();
+
+          console.log(responseBlob);
+          // await URL.createObjectURL(responseBlob);
+          responseData = responseBlob;
+        } else {
+          responseData = await response.json();
+        }
 
         // Clear the abort controllers taht belong to request that just completed
         activeHttpRequests.current = activeHttpRequests.current.filter(

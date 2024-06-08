@@ -26,6 +26,8 @@ const GeneralResourcesItem = (props) => {
       console.log(filename);
       // TODO: change response from json to blob in http-hook
       const response = await sendRequest(`/api/resources/${filename}`)
+
+      const objectURL = URL.createObjectURL(response)
     } catch (err) {}
   }
 
