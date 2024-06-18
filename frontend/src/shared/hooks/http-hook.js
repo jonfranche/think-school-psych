@@ -39,8 +39,23 @@ export const useHttpClient = () => {
           const responseBlob = await response.blob();
 
           console.log(responseBlob);
-          // await URL.createObjectURL(responseBlob);
           responseData = responseBlob;
+          const blob = new Blob([responseBlob], { type: "application/pdf" });
+          const url = URL.createObjectURL(blob);
+          window.open(url, "_blank");
+          return;
+        } else if (
+          contentType ===
+          "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+        ) {
+          const responseBlob = await response.blob();
+
+          console.log(responseBlob);
+          responseData = responseBlob;
+          const blob = new Blob([responseBlob], { type: "application/vnd.openxmlformats-officedocument.presentationml.presentation" });
+          const url = URL.createObjectURL(blob);
+          window.open(url, "_blank");
+          return;
         } else {
           responseData = await response.json();
         }

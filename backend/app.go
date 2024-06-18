@@ -415,7 +415,8 @@ func (a *App) deleteComment(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) getFile(w http.ResponseWriter, r *http.Request) {
 	var filename string = mux.Vars(r)["filename"]
-	var path string = "./static/" + filename + ".pdf"
+	var fileType string = mux.Vars(r)["type"]
+	var path string = "./static/" + filename + "." + fileType
 
 	log.Printf("Received request to send file: %s", path)
 
@@ -425,7 +426,12 @@ func (a *App) getFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-type", "application/pdf")
+	if fileType == "pptx" {
+		w.Header().Set("Content-type", "application/vnd.openxmlformats-officedocument.presentationml.presentation")
+	} else {
+		w.Header().Set("Content-type", "application/pdf")
+	}
+
 	http.ServeFile(w, r, path)
 	log.Printf("HTTP Status: %d. Successfully sent file: %s", 200, filename)
 }
@@ -436,7 +442,7 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/api/stories/{id}", a.getStory).Methods("GET")
 	a.Router.HandleFunc("/api/stories", a.getStories).Methods("GET")
 	a.Router.HandleFunc("/api/stories/{id}/comments", a.getComments).Methods("GET")
-	a.Router.HandleFunc("/api/resources/{filename}", a.getFile).Methods("GET")
+	a.Router.HandleFunc("/api/resources/{filename}/{type}", a.getFile).Methods("GET")
 
 	privateRouter := a.Router.PathPrefix("/").Subrouter()
 

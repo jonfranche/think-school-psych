@@ -20,14 +20,13 @@ const GeneralResourcesItem = (props) => {
 
   async function downloadButtonHandler() {
     const filename = removeWhiteSpace(file);
-    console.log("button pressed");
+    const fileType = props.fileType;
+    console.log("file type = " + fileType);
     try {
-      console.log("request sent");
       console.log(filename);
-      // TODO: change response from json to blob in http-hook
-      const response = await sendRequest(`/api/resources/${filename}`)
-
-      const objectURL = URL.createObjectURL(response)
+      const response = await sendRequest(
+        `/api/resources/${filename}/${fileType}`
+      );
     } catch (err) {}
   }
 
