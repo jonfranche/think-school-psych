@@ -21,12 +21,16 @@ const GeneralResourcesItem = (props) => {
   async function downloadButtonHandler() {
     const filename = removeWhiteSpace(file);
     const fileType = props.fileType;
-    console.log("file type = " + fileType);
     try {
-      console.log(filename);
       const response = await sendRequest(
         `/api/resources/${filename}/${fileType}`
       );
+
+      let blobFile = new File([response], `${filename}.${fileType}`, {
+        type: "pdf",
+      });
+      const url = URL.createObjectURL(blobFile);
+      window.open(url, "_blank");
     } catch (err) {}
   }
 

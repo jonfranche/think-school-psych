@@ -26,36 +26,13 @@ export const useHttpClient = () => {
           headers,
           signal: httpAbortCtrl.signal,
         });
-        // TODO: make an if statement to check whether the response is blob or json
-        console.log(response.headers);
 
         const contentType = response.headers.get("Content-Type");
 
-        console.log(contentType);
-
         let responseData;
 
-        if (contentType === "application/pdf") {
-          const responseBlob = await response.blob();
-
-          console.log(responseBlob);
-          responseData = responseBlob;
-          const blob = new Blob([responseBlob], { type: "application/pdf" });
-          const url = URL.createObjectURL(blob);
-          window.open(url, "_blank");
-          return;
-        } else if (
-          contentType ===
-          "application/vnd.openxmlformats-officedocument.presentationml.presentation"
-        ) {
-          const responseBlob = await response.blob();
-
-          console.log(responseBlob);
-          responseData = responseBlob;
-          const blob = new Blob([responseBlob], { type: "application/vnd.openxmlformats-officedocument.presentationml.presentation" });
-          const url = URL.createObjectURL(blob);
-          window.open(url, "_blank");
-          return;
+        if (method === "GET" && contentType !== "application/json") {
+          responseData = await response.blob();
         } else {
           responseData = await response.json();
         }
