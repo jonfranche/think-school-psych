@@ -8,21 +8,25 @@ const ITEMS = [
   {
     id: 0,
     title: "Parent Handbook California",
+    type: "pdf",
     sectionId: 0,
   },
   {
     id: 1,
     title: "Prader Willi Syndrome PPT",
+    type: "pdf",
     sectionId: 1,
   },
   {
     id: 2,
     title: "Asperger Syndrome PPT",
+    type: "pdf",
     sectionId: 1,
   },
   {
     id: 3,
     title: "Filipino Culture The Negative And The Positive PPT",
+    type: "pptx",
     sectionId: 2,
   },
 ];
@@ -38,6 +42,7 @@ const GeneralResourcesSection = (props) => {
             key={loadedItem.id}
             id={loadedItem.id}
             title={loadedItem.title}
+            fileType={loadedItem.type}
             />
         ))}
       </div>

@@ -14,7 +14,7 @@ const Comment = (props) => {
   const methods = useForm();
   const [editMode, setEditMode] = useState(false);
   const { currentUser } = useAuth();
-  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const { sendRequest } = useHttpClient();
 
   const [Modal, open, close] = useModal("root", {
     preventScroll: true,

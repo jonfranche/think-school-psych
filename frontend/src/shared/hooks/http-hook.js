@@ -27,7 +27,15 @@ export const useHttpClient = () => {
           signal: httpAbortCtrl.signal,
         });
 
-        const responseData = await response.json();
+        const contentType = response.headers.get("Content-Type");
+
+        let responseData;
+
+        if (method === "GET" && contentType !== "application/json") {
+          responseData = await response.blob();
+        } else {
+          responseData = await response.json();
+        }
 
         // Clear the abort controllers taht belong to request that just completed
         activeHttpRequests.current = activeHttpRequests.current.filter(
