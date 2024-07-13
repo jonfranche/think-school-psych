@@ -2,13 +2,13 @@ FROM golang:1.22
 
 WORKDIR /usr/src/app
 
-COPY go.mod go.sum ./
+COPY ./backend/go.mod ./backend/go.sum ./
 
 RUN go mod download && go mod verify
 
-COPY . .
+COPY ./backend .
 
-COPY ../env/postgres.env ../env/postgres.env
+COPY ./env/postgres.env /usr/src/env/postgres.env
 
 RUN go build -v -o /usr/local/bin/app ./...
 
