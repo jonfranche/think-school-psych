@@ -13,18 +13,19 @@ const links = [
     title: "General Resources",
     route: "/resources",
   },
-  {
-    title: "Jobs/Internships",
-    route: "/jobsandinternships",
-  },
-  {
-    title: "Mental Health",
-    route: "/mentalhealth",
-  },
-  {
-    title: "Behavioral Intervations",
-    route: "/behavioralinterventions",
-  },
+  // uncomment once implemented
+  // { 
+  //   title: "Jobs/Internships",
+  //   route: "/jobsandinternships",
+  // },
+  // {
+  //   title: "Mental Health",
+  //   route: "/mentalhealth",
+  // },
+  // {
+  //   title: "Behavioral Intervations",
+  //   route: "/behavioralinterventions",
+  // },
   {
     title: "Your Stories",
     route: "/stories",
