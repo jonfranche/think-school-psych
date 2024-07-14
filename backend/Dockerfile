@@ -10,6 +10,8 @@ COPY ./backend .
 
 COPY ./env/postgres.env /usr/src/env/postgres.env
 
+COPY ./env/service-account.json /usr/src/env/service-account.json
+
 RUN go build -v -o /usr/local/bin/app ./...
 
 CMD ["app"]
