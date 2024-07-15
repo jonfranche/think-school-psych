@@ -39,7 +39,8 @@ func (a *App) Initialize(user, password, port, host, dbname string) {
 	}
 
 	log.Println("Connected to database")
-	a.Router = mux.NewRouter()
+	baseRouter := mux.NewRouter()
+	a.Router = baseRouter.PathPrefix("/backend").Subrouter()
 	a.initializeRoutes()
 	log.Println("Initialization successful!")
 
