@@ -38,7 +38,7 @@ const NewBlog = () => {
 
     try {
       const response = await sendRequest(
-        `/api/stories/new/${currentUser.uid}`,
+        `http://127.0.0.1/api/stories/new/${currentUser.uid}`,
         "POST",
         reqData,
         {

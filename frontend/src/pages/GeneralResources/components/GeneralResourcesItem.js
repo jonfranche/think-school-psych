@@ -23,7 +23,7 @@ const GeneralResourcesItem = (props) => {
     const fileType = props.fileType;
     try {
       const response = await sendRequest(
-        `/api/resources/${filename}/${fileType}`
+        `http://127.0.0.1/api/resources/${filename}/${fileType}`
       );
 
       let blobFile = new File([response], `${filename}.${fileType}`, {

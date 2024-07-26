@@ -9,3 +9,5 @@ RUN npm install
 COPY . .
 
 RUN npm run build
+
+COPY .env.local ./frontend/build

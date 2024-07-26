@@ -34,7 +34,7 @@ const Comment = (props) => {
 
   const deleteCommentHandler = async () => {
     const response = await sendRequest(
-      `/api/stories/comment/${props.id}`,
+      `http://127.0.0.1/api/stories/comment/${props.id}`,
       "DELETE",
       null,
       {
@@ -60,7 +60,7 @@ const Comment = (props) => {
     const reqData = JSON.stringify(editedComment);
 
     const response = await sendRequest(
-      `/api/stories/comment/${props.id}`,
+      `http://127.0.0.1/api/stories/comment/${props.id}`,
       "PATCH",
       reqData,
       {

@@ -41,7 +41,7 @@ const EditBlog = () => {
 
   const deleteStory = async () => {
     try {
-      const response = await sendRequest(`/api/stories/${id}`, "DELETE", null, {
+      const response = await sendRequest(`http://127.0.0.1/api/stories/${id}`, "DELETE", null, {
         Authorization: "Bearer " + currentUser.accessToken,
       });
     } catch (err) {}
@@ -64,7 +64,7 @@ const EditBlog = () => {
 
     try {
       const response = await sendRequest(
-        `/api/stories/${id}`,
+        `http://127.0.0.1/api/stories/${id}`,
         "PATCH",
         reqData,
         { Authorization: "Bearer " + currentUser.accessToken }

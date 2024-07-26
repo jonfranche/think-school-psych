@@ -33,7 +33,7 @@ const NewComment = (props) => {
     let reqData = JSON.stringify(newComment);
 
     const response = await sendRequest(
-      `/api/stories/${props.blogId}/comment`,
+      `http://127.0.0.1/api/stories/${props.blogId}/comment`,
       "POST",
       reqData,
       { Authorization: "Bearer " + currentUser.accessToken }
