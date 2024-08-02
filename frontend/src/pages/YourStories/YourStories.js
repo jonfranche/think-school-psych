@@ -13,7 +13,7 @@ const YourStories = () => {
   useEffect(() => {
     const getData = async () => {
       try {
-        const response = await sendRequest("http://127.0.0.1/api/stories");
+        const response = await sendRequest("/api/stories");
         setData(response);
       } catch (err) {}
     };

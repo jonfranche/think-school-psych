@@ -22,14 +22,14 @@ const FullBlog = (props) => {
   useEffect(() => {
     const getBlogData = async () => {
       try {
-        const response = await sendRequest(`http://127.0.0.1/api/stories/${id}`);
+        const response = await sendRequest(`/api/stories/${id}`);
         setBlogData(response);
       } catch (err) {}
     };
 
     const getComments = async () => {
       try {
-        const response = await sendRequest(`http://127.0.0.1/api/stories/${id}/comments`);
+        const response = await sendRequest(`/api/stories/${id}/comments`);
         setCommentData(response);
       } catch(err) {}
     };

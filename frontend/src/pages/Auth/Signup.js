@@ -48,7 +48,7 @@ const Signup = () => {
         email: user.email,
       };
 
-      const responseData = await fetch("http://127.0.0.1/api/signup", {
+      const responseData = await fetch("/api/signup", {
         method: "POST",
         mode: "cors",
         headers: {
