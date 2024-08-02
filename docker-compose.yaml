@@ -10,15 +10,13 @@ services:
     env_file:
       - ./env/postgres.env
   backend:
-    build: 
-      context: ./
-      dockerfile: ./backend/Dockerfile
+    image: jonfranche/think-school-psych-backend
     ports: 
       - '8010:8010'
     depends_on:
       - postgres
   frontend:
-    build: ./frontend
+    image: jonfranche/think-school-psych-frontend
     volumes:
       - frontend_build:/frontend/build
   nginx:
