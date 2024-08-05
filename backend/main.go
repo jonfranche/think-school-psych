@@ -16,7 +16,7 @@ var (
 )
 
 func init() {
-	err := godotenv.Load("../env/postgres_prod.env")
+	err := godotenv.Load("../env/postgres.env")
 	if err != nil {
 		log.Fatal(".env file couldn't be loaded")
 	}
