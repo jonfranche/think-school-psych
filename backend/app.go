@@ -39,8 +39,9 @@ func (a *App) Initialize(user, password, port, host, dbname string) {
 	}
 
 	log.Println("Connected to database")
-	baseRouter := mux.NewRouter()
-	a.Router = baseRouter.PathPrefix("/backend").Subrouter()
+	a.Router = mux.NewRouter()
+	// baseRouter := mux.NewRouter()
+	// a.Router = baseRouter.PathPrefix("/backend").Subrouter()
 	a.initializeRoutes()
 	log.Println("Initialization successful!")
 
@@ -477,6 +478,7 @@ func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	response, _ := json.Marshal(payload)
 
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "localhost:8080")
 	w.WriteHeader(code)
 	w.Write(response)
 }

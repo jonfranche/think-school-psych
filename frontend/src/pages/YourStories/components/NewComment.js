@@ -39,8 +39,6 @@ const NewComment = (props) => {
       { Authorization: "Bearer " + currentUser.accessToken }
     );
 
-    console.log(response);
-
     props.setVisible();
     props.update();
   };

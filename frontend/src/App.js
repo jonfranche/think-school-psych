@@ -19,6 +19,7 @@ import FullBlog from "./pages/YourStories/FullBlog";
 import NewBlog from "./pages/YourStories/NewBlog";
 import EditBlog from "./pages/YourStories/EditBlog";
 import Auth from "./pages/Auth/Auth";
+import ResetLinkSent from "./pages/Auth/ResetLinkSent";
 import Signup from "./pages/Auth/Signup";
 import NotFound from "./pages/NotFound/NotFound";
 import Error from "./pages/Error/Error";
@@ -68,6 +69,7 @@ const App = () => {
             <Route path="/FAQs" element={<FAQs />} />
             <Route path="/login" element={<Auth />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/reset-link-sent" element={<ResetLinkSent />} />
             <Route path="/error" element={<Error />} />
             <Route path="/404" element={<NotFound />} />
             <Route path="/" exact element={<Home />} />

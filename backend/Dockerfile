@@ -1,4 +1,4 @@
-FROM golang:1.22
+FROM golang:1.22.5-alpine
 
 WORKDIR /usr/src/app
 
@@ -8,7 +8,7 @@ RUN go mod download && go mod verify
 
 COPY ./backend .
 
-COPY ./env/postgres.env /usr/src/env/postgres.env
+COPY ./env/postgres_prod.env /usr/src/env/postgres_prod.env
 
 COPY ./env/service-account.json /usr/src/env/service-account.json
 

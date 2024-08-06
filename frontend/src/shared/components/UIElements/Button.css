@@ -80,3 +80,7 @@
   border: none;
   font-size: 15px;
 }
+
+.button--reset-password {
+  margin-top: 5px;
+}
