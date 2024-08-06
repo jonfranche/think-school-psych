@@ -1,8 +1,4 @@
-import React from "react";
-
 import { useHttpClient } from "../../../shared/hooks/http-hook";
-
-import Button from "../../../shared/components/UIElements/Button";
 
 import "./GeneralResourcesItem.css";
 
@@ -21,16 +17,33 @@ const GeneralResourcesItem = (props) => {
   async function downloadButtonHandler() {
     const filename = removeWhiteSpace(file);
     const fileType = props.fileType;
+    const fileString = `${filename}.${fileType}`;
     try {
       const response = await sendRequest(
         `/api/resources/${filename}/${fileType}`
       );
 
-      let blobFile = new File([response], `${filename}.${fileType}`, {
+      let blobFile = new File([response], fileString, {
         type: "pdf",
       });
+      
       const url = URL.createObjectURL(blobFile);
-      window.open(url, "_blank");
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileString;
+
+      document.body.appendChild(link);
+
+      link.dispatchEvent(
+        new MouseEvent("click", {
+          bubbles: true,
+          cancelable: true,
+          view: window,
+        })
+      );
+
+      document.body.removeChild(link);
     } catch (err) {}
   }
 
