@@ -8,7 +8,7 @@ RUN go mod download && go mod verify
 
 COPY ./backend .
 
-COPY ./env/postgres_prod.env /usr/src/env/postgres_prod.env
+COPY ./env/postgres_dev.env /usr/src/env/postgres_dev.env
 
 COPY ./env/service-account.json /usr/src/env/service-account.json
 
