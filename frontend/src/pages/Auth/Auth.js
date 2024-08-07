@@ -20,7 +20,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const methods = useForm();
 
-  function submitHandler(data, e) {
+  async function submitHandler(e) {
     e.preventDefault();
     try {
       const form = e.target;
@@ -28,44 +28,36 @@ const Auth = () => {
       const formJson = Object.fromEntries(formData.entries());
 
       if (resetMode) {
-        sendPasswordResetEmail(firebaseAuth, formJson.email)
-          .then(() => {
-            navigate("/reset-link-sent", { state: { email: formJson.email } });
-          })
-          .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            navigate("/error", {
-              state: { code: errorCode, message: errorMessage },
-            });
-          });
+        await sendPasswordResetEmail(firebaseAuth, formJson.email);
+        setTimeout(() => {
+          navigate("/reset-link-sent", { state: { email: formJson.email } });
+        }, 1000);
 
         return;
       }
 
-      signInWithEmailAndPassword(
+      await signInWithEmailAndPassword(
         firebaseAuth,
         formJson.email,
         formJson.password
-      )
-        .then((response) => {
-          console.log(response);
-          if (response) {
-            navigate("/");
-          }
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage =
-            "Failed to log you in. Please check if your credentials were submitted correctly";
-          navigate("/error", {
-            state: { code: errorCode, message: errorMessage },
-          });
-        });
+      );
 
       methods.reset();
       // add success message here
-    } catch (err) {}
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
+    } catch (error) {
+      const errorCode = error.code;
+      let errorMessage;
+      resetMode
+        ? (errorMessage = error.Message)
+        : (errorMessage =
+            "Failed to log you in. Please check if your credentials were submitted correctly");
+      navigate("/error", {
+        state: { code: errorCode, message: errorMessage },
+      });
+    }
   }
 
   const resetModeHandler = () => {

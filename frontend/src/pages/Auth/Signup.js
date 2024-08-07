@@ -27,20 +27,13 @@ const Signup = () => {
         password: data.password,
       };
 
-      const user = await createUserWithEmailAndPassword(
+      const firebaseResponse = await createUserWithEmailAndPassword(
         firebaseAuth,
         newUser.email,
         newUser.password
-      )
-        .then((userCredential) => {
-          const user = userCredential.user;
-          return user;
-        })
-        .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
-          console.log(`${errorCode} + ${errorMessage}`);
-        });
+      );
+      
+      const user = firebaseResponse.user;
 
       const reqData = {
         username: newUser.username,
@@ -48,7 +41,7 @@ const Signup = () => {
         email: user.email,
       };
 
-      const responseData = await fetch("/api/signup", {
+      await fetch("/api/signup", {
         method: "POST",
         mode: "cors",
         headers: {
@@ -59,7 +52,16 @@ const Signup = () => {
 
       methods.reset();
       navigate("/");
-    } catch (err) {}
+    } catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      navigate("/error", {
+        state: {
+          code: errorCode,
+          message: errorMessage,
+        },
+      });
+    }
   };
 
   return (
