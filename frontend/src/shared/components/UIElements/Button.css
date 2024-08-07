@@ -1,4 +1,6 @@
 .download-button {
+  font-family: inherit;
+  font-size: inherit;
   display: flex;
   color: #000;
   height: 30px;
@@ -11,6 +13,7 @@
   align-items: center;
   padding: 0;
   margin: 0.5em;
+  border: 1px solid transparent;
 }
 
 .download-button:hover {

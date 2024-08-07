@@ -6,9 +6,9 @@ import "./Button.css";
 const Button = (props) => {
   if (props.download) {
     return (
-      <a className="download-button" href={props.href} download>
+      <button className="download-button" onClick={props.onClick}>
         {props.children}
-      </a>
+      </button>
     );
   }
 

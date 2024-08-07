@@ -1,3 +1,4 @@
+import Button from "../../../shared/components/UIElements/Button";
 import { useHttpClient } from "../../../shared/hooks/http-hook";
 
 import "./GeneralResourcesItem.css";
@@ -26,7 +27,7 @@ const GeneralResourcesItem = (props) => {
       let blobFile = new File([response], fileString, {
         type: "pdf",
       });
-      
+
       const url = URL.createObjectURL(blobFile);
 
       const link = document.createElement("a");
@@ -51,7 +52,9 @@ const GeneralResourcesItem = (props) => {
   return (
     <div className="general-resources-item">
       <span>{props.title}</span>
-      <button onClick={downloadButtonHandler}>Download</button>
+      <Button download={true} onClick={downloadButtonHandler}>
+        Download
+      </Button>
     </div>
   );
 };
