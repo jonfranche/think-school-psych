@@ -35,8 +35,9 @@ const Auth = () => {
           .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-            // TODO: make an error modal for this
-            console.log(`${errorCode} + ${errorMessage}`);
+            navigate("/error", {
+              state: { code: errorCode, message: errorMessage },
+            });
           });
 
         return;
@@ -47,22 +48,23 @@ const Auth = () => {
         formJson.email,
         formJson.password
       )
-        .then(() => {
-          navigate("/");
+        .then((response) => {
+          console.log(response);
+          if (response) {
+            navigate("/");
+          }
         })
         .catch((error) => {
           const errorCode = error.code;
-          const errorMessage = error.message;
-          // TODO: make an error modal for this
-          console.log(`${errorCode} + ${errorMessage}`);
+          const errorMessage =
+            "Failed to log you in. Please check if your credentials were submitted correctly";
+          navigate("/error", {
+            state: { code: errorCode, message: errorMessage },
+          });
         });
 
       methods.reset();
       // add success message here
-      setTimeout(function () {
-        // function code goes here
-        navigate("/");
-      }, 1000);
     } catch (err) {}
   }
 
