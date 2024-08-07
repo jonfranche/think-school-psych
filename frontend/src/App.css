@@ -12,6 +12,10 @@ body {
   height: 100%;
 }
 
+.nav-sticky + main {
+  padding-top: 60px;
+}
+
 #root {
   display: flex;
   min-height: 100%;

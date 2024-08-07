@@ -1,14 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useModal } from "react-hooks-use-modal";
-import { IconContext } from "react-icons"
+import { IconContext } from "react-icons";
 import { VscMenu } from "react-icons/vsc";
 import MainHeader from "./MainHeader";
 import NavLinks from "./NavLinks";
 import "./MainNavigation.css";
 
 const MainNavigation = () => {
-  const [Modal, open] = useModal("root", {
+  const [Modal, open, close, isOpen] = useModal("root", {
     preventScroll: true,
     focusTrapOptions: {
       clickOutsideDeactivates: true,
@@ -18,10 +18,10 @@ const MainNavigation = () => {
   return (
     <MainHeader>
       <Modal>
-        <NavLinks />
+        <NavLinks closeModal={close} isModalOpen={isOpen} />
       </Modal>
       <button className="menu-button" onClick={open}>
-        <IconContext.Provider value={{size: "2em"}}>
+        <IconContext.Provider value={{ size: "2em" }}>
           <VscMenu />
         </IconContext.Provider>
       </button>

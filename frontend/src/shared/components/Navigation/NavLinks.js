@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth-context";
 import Button from "../UIElements/Button";
@@ -14,7 +14,7 @@ const links = [
     route: "/resources",
   },
   // uncomment once implemented
-  // { 
+  // {
   //   title: "Jobs/Internships",
   //   route: "/jobsandinternships",
   // },
@@ -40,11 +40,18 @@ const links = [
   },
 ];
 
-const NavLinks = () => {
+const NavLinks = (props) => {
+  const [scroll, setScroll] = useState(false);
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
   let activeClassName = "nav-links-item__active";
   let inActiveClassName = "nav-links-item";
+
+  useEffect(() => {
+    window.addEventListener("scroll", () => {
+      setScroll(window.scrollY > 30);
+    });
+  });
 
   const handleLogout = async () => {
     try {
@@ -56,9 +63,9 @@ const NavLinks = () => {
   };
 
   return (
-    <ul className="nav-links">
+    <ul className={`nav-links ${scroll ? "nav-sticky" : ""}`}>
       {links.map((link) => (
-        <li key={link.title}>
+        <li key={link.title} onClick={props.closeModal}>
           <NavLink
             to={link.route}
             className={({ isActive }) =>
@@ -70,11 +77,11 @@ const NavLinks = () => {
         </li>
       ))}
       {currentUser ? (
-        <li>
+        <li onClick={props.closeModal}>
           <Button onClick={handleLogout}>Logout</Button>
         </li>
       ) : (
-        <li>
+        <li onClick={props.closeModal}>
           <NavLink
             to="/login"
             className={({ isActive }) =>
