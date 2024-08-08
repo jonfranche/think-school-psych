@@ -49,7 +49,7 @@ const NavLinks = (props) => {
 
   useEffect(() => {
     window.addEventListener("scroll", () => {
-      setScroll(window.scrollY > 30);
+      setScroll(window.scrollY > 60);
     });
   });
 
