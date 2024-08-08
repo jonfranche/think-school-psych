@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { firebaseAuth } from "../../firebase";
 import {
   signInWithEmailAndPassword,
@@ -19,6 +19,11 @@ const Auth = () => {
   const [resetMode, setResetMode] = useState(false);
   const navigate = useNavigate();
   const methods = useForm();
+  const location = useLocation();
+  let message;
+  if (location.state !== null) {
+    message = location.state.message;
+  }
 
   async function submitHandler(data, e) {
     e.preventDefault();
@@ -72,6 +77,7 @@ const Auth = () => {
     <>
       {!resetMode && (
         <div className="auth-container">
+          {location.state !== null && <p>{message}</p>}
           <h2>Login</h2>
           <FormProvider {...methods}>
             <form

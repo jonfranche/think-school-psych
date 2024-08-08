@@ -28,13 +28,22 @@ const YourStories = () => {
     <React.Fragment>
       <div className="your-stories">
         <h2>Your Stories</h2>
-        <Button
-          link={true}
-          to={auth.currentUser.emailVerified ? "new" : "../verify-email"}
-          state={{ reVerify: true, email: auth.currentUser.email }}
-        >
-          Share Your Story
-        </Button>
+        {auth.currentUser !== null && (
+          <Button
+            link={true}
+            to={auth.currentUser.emailVerified ? "new" : "../verify-email"}
+            state={{ reVerify: true, email: auth.currentUser.email }}
+          >
+            Share Your Story
+          </Button>
+        )}
+        {
+          auth.currentUser === null && (
+            <Button link={true} to="/login" state={{message: "You must log in first before posting a Story"}}>
+              Share Your Story
+            </Button>
+          )
+        }
         {isLoading && <h4>Loading...</h4>}
         {/* {error && <h4>{error}</h4>} */}
         {!isLoading && data.length === 0 && !error && (
