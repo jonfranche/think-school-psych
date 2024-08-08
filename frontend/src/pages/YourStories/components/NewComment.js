@@ -1,5 +1,6 @@
 import React from "react";
 import { useForm, FormProvider } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 import Input from "../../../shared/components/Input/Input";
 import Button from "../../../shared/components/UIElements/Button";
@@ -9,17 +10,18 @@ import { useHttpClient } from "../../../shared/hooks/http-hook";
 import { comment_validation } from "../../../util/inputValidation";
 import "./NewComment.css";
 
-const NewComment = (props) => {
+export default function NewComment(props) {
   const { currentUser } = useAuth();
   const methods = useForm();
-  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const { sendRequest } = useHttpClient();
+  const navigator = useNavigate();
 
-  const cancelButtonHandler = (e) => {
+  function cancelButtonHandler(e) {
     e.preventDefault();
     props.setVisible();
-  };
+  }
 
-  const submitHandler = async (data, e) => {
+  async function submitHandler(data, e) {
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
@@ -31,17 +33,25 @@ const NewComment = (props) => {
     };
 
     let reqData = JSON.stringify(newComment);
-
-    const response = await sendRequest(
-      `/api/stories/${props.blogId}/comment`,
-      "POST",
-      reqData,
-      { Authorization: "Bearer " + currentUser.accessToken }
-    );
+    try {
+      await sendRequest(
+        `/api/stories/${props.blogId}/comment`,
+        "POST",
+        reqData,
+        { Authorization: "Bearer " + currentUser.accessToken }
+      );
+    } catch (error) {
+      navigator("/error", {
+        state: {
+          code: 500,
+          message: "Something went wrong. Unable to post your commment.",
+        },
+      });
+    }
 
     props.setVisible();
     props.update();
-  };
+  }
 
   return (
     <FormProvider {...methods}>
@@ -61,6 +71,4 @@ const NewComment = (props) => {
       </form>
     </FormProvider>
   );
-};
-
-export default NewComment;
+}

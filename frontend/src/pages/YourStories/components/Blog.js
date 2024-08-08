@@ -5,7 +5,7 @@ import { useAuth } from "../../../shared/context/auth-context";
 
 import "./Blog.css";
 
-const Blog = (props) => {
+export default function Blog(props) {
   const { currentUser } = useAuth();
 
   const limitBlog = () => {
@@ -50,6 +50,4 @@ const Blog = (props) => {
       </div>
     </div>
   );
-};
-
-export default Blog;
+}

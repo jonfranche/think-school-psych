@@ -9,30 +9,30 @@ import { useHttpClient } from "../../shared/hooks/http-hook";
 
 import "./FullBlog.css";
 
-const FullBlog = (props) => {
+export default function FullBlog(props) {
   const [blogData, setBlogData] = useState();
   const [update, setUpdate] = useState(false);
   const [commentData, setCommentData] = useState();
   const [showNewComment, setShowNewComment] = useState(false);
   const { currentUser } = useAuth();
-  const { isLoading, sendRequest} = useHttpClient();
+  const { isLoading, sendRequest } = useHttpClient();
   const navigator = useNavigate();
   let { id } = useParams();
 
   useEffect(() => {
-    const getBlogData = async () => {
+    async function getBlogData() {
       try {
         const response = await sendRequest(`/api/stories/${id}`);
         setBlogData(response);
       } catch (err) {}
-    };
+    }
 
-    const getComments = async () => {
+    async function getComments() {
       try {
         const response = await sendRequest(`/api/stories/${id}/comments`);
         setCommentData(response);
-      } catch(err) {}
-    };
+      } catch (err) {}
+    }
 
     setTimeout(() => {
       getBlogData();
@@ -45,16 +45,22 @@ const FullBlog = (props) => {
     setUpdate(false);
   }, [update]);
 
-  const addCommentButtonHandler = () => {
+  function addCommentButtonHandler() {
     if (currentUser === null) {
       navigator("/login");
     }
-    setShowNewComment(!showNewComment);
-  };
+    if (!currentUser.emailVerified) {
+      navigator("../verify-email", {
+        state: { reVerify: true, email: currentUser.email },
+      });
+    }
 
-  const updateHandler = () => {
+    setShowNewComment(!showNewComment);
+  }
+
+  function updateHandler() {
     setUpdate(true);
-  };
+  }
 
   return (
     <React.Fragment>
@@ -118,6 +124,4 @@ const FullBlog = (props) => {
       )}
     </React.Fragment>
   );
-};
-
-export default FullBlog;
+}

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { useModal } from "react-hooks-use-modal";
 
 import Input from "../../../shared/components/Input/Input";
@@ -10,12 +11,12 @@ import Confirmation from "../../../shared/components/UIElements/Confirmation";
 import { useAuth } from "../../../shared/context/auth-context";
 import { useHttpClient } from "../../../shared/hooks/http-hook";
 
-const Comment = (props) => {
+export default function Comment(props) {
   const methods = useForm();
   const [editMode, setEditMode] = useState(false);
   const { currentUser } = useAuth();
   const { sendRequest } = useHttpClient();
-
+  const navigator = useNavigate();
   const [Modal, open, close] = useModal("root", {
     preventScroll: true,
     focusTrapOptions: {
@@ -32,21 +33,25 @@ const Comment = (props) => {
     setEditMode(true);
   };
 
-  const deleteCommentHandler = async () => {
-    const response = await sendRequest(
-      `/api/stories/comment/${props.id}`,
-      "DELETE",
-      null,
-      {
+  async function deleteCommentHandler() {
+    try {
+      await sendRequest(`/api/stories/comment/${props.id}`, "DELETE", null, {
         Authorization: "Bearer " + currentUser.accessToken,
-      }
-    );
+      });
+    } catch (error) {
+      navigator("/error", {
+        state: {
+          code: 500,
+          message: "Something went wrong. Could not delete your comment.",
+        },
+      });
+    }
 
     close();
     props.update();
-  };
+  }
 
-  const submitHandler = async (data, e) => {
+  async function submitHandler(data, e) {
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
@@ -59,19 +64,23 @@ const Comment = (props) => {
 
     const reqData = JSON.stringify(editedComment);
 
-    const response = await sendRequest(
-      `/api/stories/comment/${props.id}`,
-      "PATCH",
-      reqData,
-      {
+    try {
+      await sendRequest(`/api/stories/comment/${props.id}`, "PATCH", reqData, {
         Authorization: "Bearer " + currentUser.accessToken,
-      }
-    );
+      });
+    } catch (error) {
+      navigator("/error", {
+        state: {
+          code: 500,
+          message: "Something went wrong. Could not edit your comment.",
+        },
+      });
+    }
 
     setEditMode(false);
     methods.reset();
     props.update();
-  };
+  }
 
   let date = new Date(props.commentDate).toLocaleDateString();
 
@@ -124,6 +133,4 @@ const Comment = (props) => {
       )}
     </div>
   );
-};
-
-export default Comment;
+}
