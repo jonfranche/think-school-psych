@@ -3,7 +3,10 @@ import { useForm, FormProvider } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import { firebaseAuth } from "../../firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
 import Input from "../../shared/components/Input/Input";
 import Button from "../../shared/components/UIElements/Button";
 import "./Auth.css";
@@ -32,7 +35,7 @@ const Signup = () => {
         newUser.email,
         newUser.password
       );
-      
+
       const user = firebaseResponse.user;
 
       const reqData = {
@@ -51,7 +54,11 @@ const Signup = () => {
       });
 
       methods.reset();
-      navigate("/");
+
+      await sendEmailVerification(firebaseAuth.currentUser);
+      navigate("/verify-email", {
+        state: { email: firebaseAuth.currentUser.email },
+      });
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;

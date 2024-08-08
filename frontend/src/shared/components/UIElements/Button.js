@@ -12,6 +12,12 @@ const Button = (props) => {
     );
   }
 
+  if (props.reverify) {
+    return (<button className="reverify-button" onClick={props.onClick}>
+      {props.children}
+    </button>)
+  }
+
   if (props.link) {
     return (
       <Link

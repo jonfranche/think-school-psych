@@ -1,4 +1,4 @@
-import React from "react";
+import { useState, useEffect } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { useForm, FormProvider } from "react-hook-form";
@@ -37,7 +37,7 @@ const NewBlog = () => {
     let reqData = JSON.stringify(newBlog);
 
     try {
-      const response = await sendRequest(
+      await sendRequest(
         `/api/stories/new/${currentUser.uid}`,
         "POST",
         reqData,

@@ -21,6 +21,23 @@
   text-shadow: 1px 1px 2px #000;
 }
 
+.reverify-button {
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+  color: #5e74f0;
+  border: 1px solid transparent;
+  background-color: #fff;
+  text-decoration-line: underline;
+}
+
+.reverify-button:hover {
+  color: #fff;
+  background-color: #f0d6ce;
+  border-radius: 10px;
+}
+
 .link-button {
   margin: 1em;
   padding: 0.25em 0.75em;

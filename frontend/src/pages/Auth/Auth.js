@@ -20,7 +20,7 @@ const Auth = () => {
   const navigate = useNavigate();
   const methods = useForm();
 
-  async function submitHandler(e) {
+  async function submitHandler(data, e) {
     e.preventDefault();
     try {
       const form = e.target;

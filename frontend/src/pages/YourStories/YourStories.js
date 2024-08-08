@@ -3,12 +3,14 @@ import React, { useState, useEffect } from "react";
 import Blog from "./components/Blog";
 import Button from "../../shared/components/UIElements/Button";
 import { useHttpClient } from "../../shared/hooks/http-hook";
+import { getAuth } from "firebase/auth";
 
 import "./YourStories.css";
 
 const YourStories = () => {
   const [data, setData] = useState([]);
-  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const { isLoading, error, sendRequest } = useHttpClient();
+  const auth = getAuth();
 
   useEffect(() => {
     const getData = async () => {
@@ -22,16 +24,15 @@ const YourStories = () => {
     }, 1000);
   }, []);
 
-  // const errorHandler = () => {
-  //   console.log(error);
-  //   clearError
-  // }
-
   return (
     <React.Fragment>
       <div className="your-stories">
         <h2>Your Stories</h2>
-        <Button link={true} to="new">
+        <Button
+          link={true}
+          to={auth.currentUser.emailVerified ? "new" : "../verify-email"}
+          state={{ reVerify: true, email: auth.currentUser.email }}
+        >
           Share Your Story
         </Button>
         {isLoading && <h4>Loading...</h4>}
