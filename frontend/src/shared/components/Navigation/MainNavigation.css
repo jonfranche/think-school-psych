@@ -25,6 +25,10 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    font-size: 14px;
+    position: fixed;
+    top: 0;
+    width: 100%;
   }
   .main-header h1 {
     margin: 0.1em;
