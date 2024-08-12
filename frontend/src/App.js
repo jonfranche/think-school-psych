@@ -22,6 +22,7 @@ import Auth from "./pages/Auth/Auth";
 import VerifyEmail from "./pages/Auth/VerifyEmail";
 import ResetLinkSent from "./pages/Auth/ResetLinkSent";
 import Signup from "./pages/Auth/Signup";
+import EmailAction from "./pages/Auth/EmailAction";
 import NotFound from "./pages/NotFound/NotFound";
 import Error from "./pages/Error/Error";
 import { RequireAuth } from "./util/RequireAuth";
@@ -73,6 +74,7 @@ const App = () => {
             <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/reset-link-sent" element={<ResetLinkSent />} />
             <Route path="/error" element={<Error />} />
+            <Route path="/email-action" element={<EmailAction />} />
             <Route path="/404" element={<NotFound />} />
             <Route path="/" exact element={<Home />} />
             <Route path="*" element={<Navigate to="/404" replace />} />
