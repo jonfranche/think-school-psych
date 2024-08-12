@@ -15,7 +15,7 @@ import {
 
 import "./Auth.css";
 
-const Auth = () => {
+export default function Auth() {
   const [resetMode, setResetMode] = useState(false);
   const navigate = useNavigate();
   const methods = useForm();
@@ -126,5 +126,3 @@ const Auth = () => {
     </>
   );
 };
-
-export default Auth;

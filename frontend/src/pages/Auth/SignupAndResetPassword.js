@@ -1,11 +1,12 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { firebaseAuth } from "../../firebase";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  confirmPasswordReset,
 } from "firebase/auth";
 import Input from "../../shared/components/Input/Input";
 import Button from "../../shared/components/UIElements/Button";
@@ -17,12 +18,47 @@ import {
   password_validation,
 } from "../../util/inputValidation";
 
-const Signup = () => {
+export default function SignupAndResetPassword() {
+  const [resetMode, setResetMode] = useState(false);
+  const location = useLocation();
   const navigate = useNavigate();
   const methods = useForm();
 
-  const submitHandler = async (data, e) => {
+  useEffect(() => {
+    if (location.state !== null) {
+      setResetMode(true);
+    }
+  }, [location.state]);
+
+  async function submitHandler(data, e) {
     e.preventDefault();
+    if (resetMode) {
+      const newPassword = data.password;
+
+      try {
+        await confirmPasswordReset(
+          firebaseAuth,
+          location.state.code,
+          newPassword
+        );
+        methods.reset();
+        navigate("/login", {
+          state: {
+            message: "Password reset successful, you may now login in again.",
+          },
+        });
+      } catch (error) {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        navigate("/error", {
+          state: {
+            code: errorCode,
+            message: errorMessage,
+          },
+        });
+      }
+      return;
+    }
     try {
       const newUser = {
         username: data.username,
@@ -69,18 +105,22 @@ const Signup = () => {
         },
       });
     }
-  };
+  }
 
   return (
     <div className="auth-container">
-      <h2>Sign Up</h2>
+      <h2>{resetMode ? "Reset Password" : "Sign Up"}</h2>
       <FormProvider {...methods}>
         <form
           className="login-form"
           onSubmit={methods.handleSubmit(submitHandler)}
         >
-          <Input {...email_validation} />
-          <Input {...username_validation} />
+          {!resetMode && (
+            <>
+              <Input {...email_validation} />
+              <Input {...username_validation} />
+            </>
+          )}
           <Input {...password_validation} />
           <Input name="confirm-password" label="Confirm Password" />
           <p className="password-rules">Your password must :</p>
@@ -98,6 +138,4 @@ const Signup = () => {
       </FormProvider>
     </div>
   );
-};
-
-export default Signup;
+}

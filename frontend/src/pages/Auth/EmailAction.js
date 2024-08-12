@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { firebaseAuth } from "../../firebase";
-import { checkActionCode, applyActionCode } from "firebase/auth";
+import {
+  applyActionCode,
+  verifyPasswordResetCode,
+} from "firebase/auth";
 import Button from "../../shared/components/UIElements/Button";
 
 export default function EmailAction() {
@@ -18,8 +21,8 @@ export default function EmailAction() {
       setTitle("Email Verification");
       VerifyEmailHandler();
     } else if (searchParams.get("mode") === "resetPassword") {
-      setTitle("Password Reset");
-      setMessage("test");
+      setTitle("Resetting Password");
+      ResetPasswordHandler();
     } else {
       navigate("/");
     }
@@ -39,6 +42,19 @@ export default function EmailAction() {
         "Code is invalid or expired. Please verify your email address again."
       );
       setVerificationFailed(true);
+    }
+  }
+
+  async function ResetPasswordHandler() {
+    try {
+      const accountEmail = await verifyPasswordResetCode(auth, actionCode);
+      navigate("/reset-password", {
+        state: { email: accountEmail, code: actionCode },
+      });
+    } catch (error) {
+      setMessage(
+        "Sorry, the period to reset your password has expired. Please go back to the login page to reset your password."
+      );
     }
   }
 
