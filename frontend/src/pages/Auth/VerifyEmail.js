@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getAuth, sendEmailVerification } from "firebase/auth";
 import Button from "../../shared/components/UIElements/Button";
