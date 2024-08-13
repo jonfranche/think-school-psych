@@ -3,3 +3,4 @@ env/service-account_dev.json
 env/service-account_prod.json
 env/.env.local
 certbot/
+env/prod.env.local

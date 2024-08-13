@@ -46,7 +46,7 @@ func (a *App) Initialize(user, password, port, host, dbname string) {
 	log.Println("Initialization successful!")
 
 	// import firebase service account
-	opt := option.WithCredentialsFile("../env/service-account_dev.json")
+	opt := option.WithCredentialsFile("../env/service-account_prod.json")
 
 	// create new firebase instance
 	fb, err := firebase.NewApp(context.Background(), nil, opt)
