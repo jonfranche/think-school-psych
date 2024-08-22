@@ -1,7 +1,12 @@
+import React from "react";
 import { useLocation, Navigate } from "react-router-dom";
 import { useAuth } from "../shared/context/auth-context";
 
-export function RequireAuth({children}) {
+type RequireAuthProps = {
+    children: React.ReactElement;
+}
+
+export function RequireAuth({children}: RequireAuthProps) {
     const {currentUser } = useAuth();
     let location = useLocation();
 
