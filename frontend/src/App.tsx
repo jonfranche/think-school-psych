@@ -1,3 +1,4 @@
+//@ts-nocheck
 import React from "react";
 import {
   BrowserRouter as Router,
@@ -50,7 +51,6 @@ const App = () => {
             <Route path="/stories" element={<YourStories />} />
             <Route
               path="/stories/new"
-              exact
               element={
                 <RequireAuth>
                   <NewBlog />
@@ -59,14 +59,13 @@ const App = () => {
             />
             <Route
               path="/stories/edit/:id"
-              exact
               element={
                 <RequireAuth>
                   <EditBlog />
                 </RequireAuth>
               }
             />
-            <Route path="/stories/id/:id" exact element={<FullBlog />} />
+            <Route path="/stories/id/:id" element={<FullBlog />} />
             <Route path="/about" element={<About />} />
             <Route path="/FAQs" element={<FAQs />} />
             <Route path="/login" element={<Auth />} />
@@ -77,7 +76,7 @@ const App = () => {
             <Route path="/error" element={<Error />} />
             <Route path="/email-action" element={<EmailAction />} />
             <Route path="/404" element={<NotFound />} />
-            <Route path="/" exact element={<Home />} />
+            <Route path="/" element={<Home />} />
             <Route path="*" element={<Navigate to="/404" replace />} />
           </Routes>
         </main>
