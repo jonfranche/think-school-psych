@@ -1,5 +1,5 @@
-import React from "react";
-import { useForm, FormProvider } from "react-hook-form";
+import React, { SyntheticEvent } from "react";
+import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import Input from "../../../shared/components/Input/Input";
@@ -10,36 +10,48 @@ import { useHttpClient } from "../../../shared/hooks/http-hook";
 import { comment_validation } from "../../../util/inputValidation";
 import "./NewComment.css";
 
-export default function NewComment(props) {
+type NewCommentProps = {
+  blogId: string;
+  setVisible: () => {};
+  update: () => {};
+};
+
+type FormData = {
+  comment: string;
+};
+
+export default function NewComment({
+  blogId,
+  setVisible,
+  update,
+}: NewCommentProps) {
   const { currentUser } = useAuth();
-  const methods = useForm();
+  const methods = useForm<FormData>();
   const { sendRequest } = useHttpClient();
   const navigator = useNavigate();
 
-  function cancelButtonHandler(e) {
+  function cancelButtonHandler(e: SyntheticEvent<Element, Event>) {
     e.preventDefault();
-    props.setVisible();
+    setVisible();
   }
 
-  async function submitHandler(data, e) {
-    e.preventDefault();
-    const form = e.target;
-    const formData = new FormData(form);
-    const formJson = Object.fromEntries(formData.entries());
-
-    const newComment = {
-      userID: currentUser.uid,
-      text: formJson.comment,
-    };
-
-    let reqData = JSON.stringify(newComment);
+  const submitHandler: SubmitHandler<FormData> = async (data, event) => {
     try {
-      await sendRequest(
-        `/api/stories/${props.blogId}/comment`,
-        "POST",
-        reqData,
-        { Authorization: "Bearer " + currentUser.accessToken }
-      );
+      event?.preventDefault();
+      if (currentUser) {
+        const newComment = {
+          userID: currentUser.uid,
+          text: data.comment,
+        };
+        let reqData = JSON.stringify(newComment);
+
+        await sendRequest(`/api/stories/${blogId}/comment`, "POST", reqData, {
+          Authorization: "Bearer " + currentUser?.getIdToken,
+        });
+      } else throw new Error("You are not logged in.");
+
+      setVisible();
+      update();
     } catch (error) {
       navigator("/error", {
         state: {
@@ -48,10 +60,7 @@ export default function NewComment(props) {
         },
       });
     }
-
-    props.setVisible();
-    props.update();
-  }
+  };
 
   return (
     <FormProvider {...methods}>
