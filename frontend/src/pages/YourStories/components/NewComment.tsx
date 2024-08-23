@@ -53,12 +53,16 @@ export default function NewComment({
       setVisible();
       update();
     } catch (error) {
-      navigator("/error", {
-        state: {
-          code: 500,
-          message: "Something went wrong. Unable to post your commment.",
-        },
-      });
+      if (error instanceof Error) {
+        navigator("/error", { state: { code: 403, message: error.message } });
+      } else {
+        navigator("/error", {
+          state: {
+            code: 500,
+            message: "Something went wrong. Unable to post your commment.",
+          },
+        });
+      }
     }
   };
 

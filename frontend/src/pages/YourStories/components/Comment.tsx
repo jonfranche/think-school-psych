@@ -65,12 +65,16 @@ export default function Comment({
         throw new Error("You are not logged in");
       }
     } catch (error) {
-      navigator("/error", {
-        state: {
-          code: 500,
-          message: "Something went wrong. Could not delete your comment.",
-        },
-      });
+      if (error instanceof Error) {
+        navigator("/error", { state: { code: 403, message: error.message } });
+      } else {
+        navigator("/error", {
+          state: {
+            code: 500,
+            message: "Something went wrong. Unable to post your commment.",
+          },
+        });
+      }
     }
 
     close();
