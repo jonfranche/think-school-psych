@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { getAuth, signOut } from "firebase/auth";
+
 import { useAuth } from "../../context/auth-context";
 import Button from "../UIElements/Button";
 import "./NavLinks.css";
@@ -40,9 +42,15 @@ const links = [
   },
 ];
 
-const NavLinks = (props) => {
+type NavLinksProps = {
+  closeModal?: () => void;
+  isModalOpen?: boolean;
+}
+
+function NavLinks({closeModal}: NavLinksProps) {
   const [scroll, setScroll] = useState(false);
-  const { currentUser, logout } = useAuth();
+  const auth = getAuth();
+  const { currentUser } = useAuth();
   const navigate = useNavigate();
   let activeClassName = "nav-links-item__active";
   let inActiveClassName = "nav-links-item";
@@ -53,9 +61,9 @@ const NavLinks = (props) => {
     });
   });
 
-  const handleLogout = async () => {
+  async function handleLogout() {
     try {
-      await logout();
+      await signOut(auth);
       navigate("/");
     } catch (err) {
       console.log(err);
@@ -65,7 +73,7 @@ const NavLinks = (props) => {
   return (
     <ul className={`nav-links ${scroll ? "nav-sticky" : ""}`}>
       {links.map((link) => (
-        <li key={link.title} onClick={props.closeModal}>
+        <li key={link.title} onClick={closeModal}>
           <NavLink
             to={link.route}
             className={({ isActive }) =>
@@ -77,11 +85,11 @@ const NavLinks = (props) => {
         </li>
       ))}
       {currentUser ? (
-        <li onClick={props.closeModal}>
+        <li onClick={closeModal}>
           <Button onClick={handleLogout}>Logout</Button>
         </li>
       ) : (
-        <li onClick={props.closeModal}>
+        <li onClick={closeModal}>
           <NavLink
             to="/login"
             className={({ isActive }) =>
