@@ -5,7 +5,7 @@ import { useAuth } from "../../../shared/context/auth-context";
 
 import "./Blog.css";
 
-type BlogProps = {
+export type BlogProps = {
   id: string;
   title: string;
   text: string;

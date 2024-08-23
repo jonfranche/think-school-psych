@@ -12,8 +12,8 @@ import "./NewComment.css";
 
 type NewCommentProps = {
   blogId: string;
-  setVisible: () => {};
-  update: () => {};
+  setVisible: () => void;
+  update: () => void;
 };
 
 type FormData = {

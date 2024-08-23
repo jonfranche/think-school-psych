@@ -13,10 +13,11 @@ import { useHttpClient } from "../../../shared/hooks/http-hook";
 
 type CommentProps = {
   id: string;
+  blogId: string;
   userId: string;
   username: string;
-  update: () => {};
-  currentUserId: string;
+  update: () => void;
+  currentUserId: string | undefined;
   commentDate: Date;
   commentText: string;
 };
@@ -27,6 +28,7 @@ type FormData = {
 
 export default function Comment({
   id,
+  blogId,
   userId,
   username,
   update,
