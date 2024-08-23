@@ -42,6 +42,6 @@
     ]
   },
   "devDependencies": {
-    "typescript": "^5.5.4"
+    "typescript": "^4"
   }
 }
