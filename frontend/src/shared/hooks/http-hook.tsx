@@ -12,7 +12,12 @@ export const useHttpClient = () => {
 
   // useCallback makes sure there are no duplicate calls to this function
   const sendRequest = useCallback(
-    async (url: string, method = "GET", body?:string, headers?: {}) => {
+    async (
+      url: string,
+      method = "GET",
+      body: string | null = null,
+      headers?: {}
+    ) => {
       // setIsLoading(true);
       const httpAbortCtrl = new AbortController();
       activeHttpRequests.current.push(httpAbortCtrl);
@@ -57,7 +62,9 @@ export const useHttpClient = () => {
   //clean up logic when a component unmounts
   useEffect(() => {
     return () => {
-      activeHttpRequests.current.forEach((abortCtrl: AbortController) => abortCtrl.abort());
+      activeHttpRequests.current.forEach((abortCtrl: AbortController) =>
+        abortCtrl.abort()
+      );
     };
   }, []);
 

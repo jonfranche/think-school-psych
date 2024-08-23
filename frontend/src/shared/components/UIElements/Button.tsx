@@ -1,4 +1,4 @@
-import React from "react";
+import React, { SyntheticEvent } from "react";
 import { Link } from "react-router-dom";
 
 import "./Button.css";
@@ -12,7 +12,7 @@ type ButtonProps = {
   submit?: boolean;
   type?: "submit" | "button" | "reset";
   disabled?: boolean;
-  onClick?: () => {};
+  onClick?: (() => {}) | ((e: SyntheticEvent<Element, Event>) => void);
   children?: React.ReactNode;
   to?: string;
   state?: {};
