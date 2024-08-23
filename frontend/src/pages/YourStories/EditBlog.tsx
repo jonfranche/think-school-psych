@@ -1,6 +1,6 @@
 import React from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
 import { useModal } from "react-hooks-use-modal";
 
 import { useAuth } from "../../shared/context/auth-context";
@@ -16,7 +16,12 @@ import Input from "../../shared/components/Input/Input";
 import Button from "../../shared/components/UIElements/Button";
 import Confirmation from "../../shared/components/UIElements/Confirmation";
 
-const EditBlog = () => {
+type FormData = {
+  title: string;
+  text: string;
+};
+
+function EditBlog() {
   const { currentUser } = useAuth();
   const { sendRequest } = useHttpClient();
   const [Modal, open, close] = useModal("root", {
@@ -26,7 +31,7 @@ const EditBlog = () => {
     },
   });
 
-  const methods = useForm();
+  const methods = useForm<FormData>();
   const navigate = useNavigate();
   let { id } = useParams();
   let { state } = useLocation();
@@ -41,35 +46,38 @@ const EditBlog = () => {
 
   const deleteStory = async () => {
     try {
-      const response = await sendRequest(`/api/stories/${id}`, "DELETE", null, {
-        Authorization: "Bearer " + currentUser.accessToken,
-      });
-    } catch (err) {}
-    close();
-    navigate("/stories");
+      if (currentUser) {
+        await sendRequest(`/api/stories/${id}`, "DELETE", null, {
+          Authorization: "Bearer " + currentUser.getIdToken,
+        });
+        close();
+        navigate("/stories");
+      } else throw new Error("You are not logged in.");
+    } catch (err) {
+      if (err instanceof Error)
+        navigate("/error", { state: { code: "403", message: err.message } });
+    }
   };
 
-  const submitHandler = async (data, event) => {
-    event.preventDefault();
-    const form = event.target;
-    const formData = new FormData(form);
-    const formJson = Object.fromEntries(formData.entries());
-
-    const editedBlog = {
-      title: formJson.blogTitle,
-      text: formJson.blogText,
-    };
-
-    let reqData = JSON.stringify(editedBlog);
-
+  const submitHandler: SubmitHandler<FormData> = async (data, event) => {
     try {
-      const response = await sendRequest(
-        `/api/stories/${id}`,
-        "PATCH",
-        reqData,
-        { Authorization: "Bearer " + currentUser.accessToken }
-      );
-    } catch (err) {}
+      event?.preventDefault();
+      if (currentUser) {
+        const editedBlog = {
+          title: data.title,
+          text: data.text,
+        };
+
+        let reqData = JSON.stringify(editedBlog);
+
+        await sendRequest(`/api/stories/${id}`, "PATCH", reqData, {
+          Authorization: "Bearer " + currentUser.getIdToken,
+        });
+      } else throw new Error("You are not logged in.");
+    } catch (err) {
+      if (err instanceof Error)
+        navigate("/error", { state: { code: "403", message: err.message } });
+    }
 
     methods.reset();
     navigate(`/stories/id/${id}`);
@@ -107,6 +115,6 @@ const EditBlog = () => {
       </FormProvider>
     </div>
   );
-};
+}
 
 export default EditBlog;
