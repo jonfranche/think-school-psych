@@ -16,6 +16,7 @@ type ButtonProps = {
   children?: React.ReactNode;
   to?: string;
   state?: {};
+  className?: string;
 };
 
 function Button({
