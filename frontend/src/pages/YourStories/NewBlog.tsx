@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import React from "react";
 
 import { useNavigate } from "react-router-dom";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
 import Input from "../../shared/components/Input/Input";
 import Button from "../../shared/components/UIElements/Button";
 import { useAuth } from "../../shared/context/auth-context";
@@ -13,43 +13,49 @@ import {
 } from "../../util/inputValidation";
 import "./NewBlog.css";
 
+type FormData = {
+  title: string;
+  text: string;
+};
+
 const NewBlog = () => {
   const { currentUser } = useAuth();
   const { sendRequest } = useHttpClient();
-  const methods = useForm();
+  const methods = useForm<FormData>();
   const navigate = useNavigate();
 
   const cancelButtonHandler = () => {
     navigate("/stories");
   };
 
-  const submitHandler = async (data, event) => {
-    event.preventDefault();
-    const form = event.target;
-    const formData = new FormData(form);
-    const formJson = Object.fromEntries(formData.entries());
-
-    const newBlog = {
-      title: formJson.blogTitle,
-      text: formJson.blogText,
-    };
-
-    let reqData = JSON.stringify(newBlog);
-
+  const submitHandler: SubmitHandler<FormData> = async (data, event) => {
+    event?.preventDefault();
     try {
-      await sendRequest(
-        `/api/stories/new/${currentUser.uid}`,
-        "POST",
-        reqData,
-        {
-          Authorization: "Bearer " + currentUser.accessToken,
-        }
-      );
-    } catch (err) {}
+      const newBlog = {
+        title: data.title,
+        text: data.text,
+      };
 
-    setTimeout(function () {
-      navigate("/stories");
-    }, 1000);
+      let reqData = JSON.stringify(newBlog);
+      if (currentUser) {
+        await sendRequest(
+          `/api/stories/new/${currentUser.uid}`,
+          "POST",
+          reqData,
+          {
+            Authorization: "Bearer " + currentUser.getIdToken,
+          }
+        );
+      } else throw new Error("You are not logged in.");
+
+      setTimeout(function () {
+        navigate("/stories");
+      }, 1000);
+    } catch (err) {
+      if (err instanceof Error) {
+        navigate("/error", { state: { code: "403", message: err.message } });
+      }
+    }
   };
 
   return (

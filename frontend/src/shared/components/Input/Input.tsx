@@ -12,6 +12,7 @@ type InputProps = {
   placeholder?: string;
   defaultValue?: string | number | readonly string[];
   validation?: {};
+  className?: string;
 };
 
 
@@ -28,6 +29,7 @@ function Input({
   validation,
   placeholder,
   defaultValue,
+  className,
 }: InputProps) {
   const {
     register,
