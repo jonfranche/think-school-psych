@@ -17,8 +17,8 @@ import Button from "../../shared/components/UIElements/Button";
 import Confirmation from "../../shared/components/UIElements/Confirmation";
 
 type FormData = {
-  title: string;
-  text: string;
+  blogTitle: string;
+  blogText: string;
 };
 
 function EditBlog() {
@@ -47,8 +47,9 @@ function EditBlog() {
   const deleteStory = async () => {
     try {
       if (currentUser) {
+        const userIdToken = await currentUser.getIdToken();
         await sendRequest(`/api/stories/${id}`, "DELETE", null, {
-          Authorization: "Bearer " + currentUser.getIdToken,
+          Authorization: "Bearer " + userIdToken,
         });
         close();
         navigate("/stories");
@@ -64,14 +65,14 @@ function EditBlog() {
       event?.preventDefault();
       if (currentUser) {
         const editedBlog = {
-          title: data.title,
-          text: data.text,
+          title: data.blogTitle,
+          text: data.blogText,
         };
 
         let reqData = JSON.stringify(editedBlog);
-
+        const userIdToken = await currentUser.getIdToken();
         await sendRequest(`/api/stories/${id}`, "PATCH", reqData, {
-          Authorization: "Bearer " + currentUser.getIdToken,
+          Authorization: "Bearer " + userIdToken,
         });
       } else throw new Error("You are not logged in.");
     } catch (err) {

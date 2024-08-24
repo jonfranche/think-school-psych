@@ -45,8 +45,9 @@ export default function NewComment({
         };
         let reqData = JSON.stringify(newComment);
 
+        const userIdToken = await currentUser.getIdToken();
         await sendRequest(`/api/stories/${blogId}/comment`, "POST", reqData, {
-          Authorization: "Bearer " + currentUser?.getIdToken,
+          Authorization: "Bearer " + userIdToken,
         });
       } else throw new Error("You are not logged in.");
 

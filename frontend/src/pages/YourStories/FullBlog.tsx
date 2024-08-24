@@ -65,7 +65,7 @@ export default function FullBlog() {
 
   function addCommentButtonHandler() {
     try {
-      if (currentUser && !currentUser.emailVerified) {
+      if (currentUser && currentUser.emailVerified) {
         setShowNewComment(!showNewComment);
       } else if (currentUser === null)
         throw new Error("You must log in before commenting");

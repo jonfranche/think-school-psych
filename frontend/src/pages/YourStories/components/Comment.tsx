@@ -60,8 +60,9 @@ export default function Comment({
   async function deleteCommentHandler() {
     try {
       if (currentUser) {
+        const userIdToken = await currentUser.getIdToken();
         await sendRequest(`/api/stories/comment/${id}`, "DELETE", null, {
-          Authorization: "Bearer " + currentUser.getIdToken,
+          Authorization: "Bearer " + userIdToken,
         });
       } else {
         throw new Error("You are not logged in");
@@ -93,9 +94,9 @@ export default function Comment({
         };
 
         const reqData = JSON.stringify(editedComment);
-
+        const userIdToken = await currentUser.getIdToken();
         await sendRequest(`/api/stories/comment/${id}`, "PATCH", reqData, {
-          Authorization: "Bearer " + currentUser.getIdToken,
+          Authorization: "Bearer " + userIdToken,
         });
       } else throw new Error();
     } catch (error) {

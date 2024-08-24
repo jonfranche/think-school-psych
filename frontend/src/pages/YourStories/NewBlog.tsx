@@ -14,8 +14,8 @@ import {
 import "./NewBlog.css";
 
 type FormData = {
-  title: string;
-  text: string;
+  blogTitle: string;
+  blogText: string;
 };
 
 const NewBlog = () => {
@@ -32,18 +32,19 @@ const NewBlog = () => {
     event?.preventDefault();
     try {
       const newBlog = {
-        title: data.title,
-        text: data.text,
+        title: data.blogTitle,
+        text: data.blogText,
       };
 
       let reqData = JSON.stringify(newBlog);
       if (currentUser) {
+        const userIdToken = await currentUser.getIdToken();
         await sendRequest(
           `/api/stories/new/${currentUser.uid}`,
           "POST",
           reqData,
           {
-            Authorization: "Bearer " + currentUser.getIdToken,
+            Authorization: "Bearer " + userIdToken,
           }
         );
       } else throw new Error("You are not logged in.");
