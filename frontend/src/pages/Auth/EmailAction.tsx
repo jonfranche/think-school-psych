@@ -36,6 +36,7 @@ export default function EmailAction() {
         setIsLoading(false);
         setTimeout(() => {
           navigate("/", { replace: true });
+          window.location.reload();
         }, 5000);
       } else throw new Error("actionCode is null");
     } catch (error) {
