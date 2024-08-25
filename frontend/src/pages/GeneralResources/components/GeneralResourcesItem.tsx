@@ -1,12 +1,18 @@
+import React from "react";
 import Button from "../../../shared/components/UIElements/Button";
 import { useHttpClient } from "../../../shared/hooks/http-hook";
 
 import "./GeneralResourcesItem.css";
 
-const GeneralResourcesItem = (props) => {
+type GeneralResourcesItemProps = {
+  fileType: string;
+  title: string;
+}
+
+const GeneralResourcesItem = ({fileType, title}: GeneralResourcesItemProps) => {
   const { sendRequest } = useHttpClient();
 
-  function removeWhiteSpace(str) {
+  function removeWhiteSpace(str: string) {
     let newStr = "";
     for (let i = 0; i < str.length; i++) {
       if (str[i] === " ") continue;
@@ -17,7 +23,6 @@ const GeneralResourcesItem = (props) => {
 
   async function downloadButtonHandler() {
     const filename = removeWhiteSpace(file);
-    const fileType = props.fileType;
     const fileString = `${filename}.${fileType}`;
     try {
       const response = await sendRequest(
@@ -48,10 +53,10 @@ const GeneralResourcesItem = (props) => {
     } catch (err) {}
   }
 
-  const file = props.title;
+  const file = title;
   return (
     <div className="general-resources-item">
-      <span>{props.title}</span>
+      <span>{title}</span>
       <Button download={true} onClick={downloadButtonHandler}>
         Download
       </Button>

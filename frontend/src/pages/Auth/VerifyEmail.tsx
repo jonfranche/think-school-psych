@@ -1,3 +1,4 @@
+import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getAuth, sendEmailVerification } from "firebase/auth";
 import Button from "../../shared/components/UIElements/Button";
@@ -6,18 +7,24 @@ export default function Email() {
   const auth = getAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const reVerify = location.state.reVerify;
-  const email = location.state.email;
+  const reVerify: boolean = location.state.reVerify;
+  const email: string = location.state.email;
 
   async function sendVerifcationButtonHandler() {
     try {
-      await sendEmailVerification(auth.currentUser);
-      navigate("/verify-email", {
-        state: { email: auth.currentUser.email },
-      });
+      if (auth.currentUser) {
+        await sendEmailVerification(auth.currentUser);
+        navigate("/verify-email", {
+          state: { email: auth.currentUser.email },
+        });
+      } else throw new Error("currentUser is null");
     } catch (error) {
-      const errorCode = error.code;
-      const errorMessage = error.message;
+      let errorCode = "500";
+      let errorMessage = "An error occurred, please try again later";
+      if (error instanceof Error && error.message == "currentUser is null") {
+        errorCode = "403";
+        errorMessage = "You are not signed in. Please log in.";
+      }
       navigate("/error", {
         state: {
           code: errorCode,
@@ -47,8 +54,8 @@ export default function Email() {
             <Button reverify={true} onClick={sendVerifcationButtonHandler}>
               Click this link to send a verifcation to the email address:{" "}
               {email}.
-            </Button> If it does not appear in your Inbox, please check your Spam
-            folder.
+            </Button>{" "}
+            If it does not appear in your Inbox, please check your Spam folder.
           </p>
         </>
       )}

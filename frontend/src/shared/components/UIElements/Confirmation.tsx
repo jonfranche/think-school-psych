@@ -7,7 +7,7 @@ import "./Confirmation.css";
 type ConfirmationProps = {
   message: string;
   yesButtonHandler: () => {};
-  noButtonHandler: () => {};
+  noButtonHandler: (() => {}) | (() => void);
 };
 
 function Confirmation({

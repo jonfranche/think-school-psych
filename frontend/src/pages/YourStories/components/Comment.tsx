@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useModal } from "react-hooks-use-modal";
 
@@ -11,8 +11,32 @@ import Confirmation from "../../../shared/components/UIElements/Confirmation";
 import { useAuth } from "../../../shared/context/auth-context";
 import { useHttpClient } from "../../../shared/hooks/http-hook";
 
-export default function Comment(props) {
-  const methods = useForm();
+type CommentProps = {
+  id: string;
+  blogId: string;
+  userId: string;
+  username: string;
+  update: () => void;
+  currentUserId: string | undefined;
+  commentDate: Date;
+  commentText: string;
+};
+
+type FormData = {
+  comment: string;
+};
+
+export default function Comment({
+  id,
+  blogId,
+  userId,
+  username,
+  update,
+  currentUserId,
+  commentDate,
+  commentText,
+}: CommentProps) {
+  const methods = useForm<FormData>();
   const [editMode, setEditMode] = useState(false);
   const { currentUser } = useAuth();
   const { sendRequest } = useHttpClient();
@@ -35,39 +59,46 @@ export default function Comment(props) {
 
   async function deleteCommentHandler() {
     try {
-      await sendRequest(`/api/stories/comment/${props.id}`, "DELETE", null, {
-        Authorization: "Bearer " + currentUser.accessToken,
-      });
+      if (currentUser) {
+        const userIdToken = await currentUser.getIdToken();
+        await sendRequest(`/api/stories/comment/${id}`, "DELETE", null, {
+          Authorization: "Bearer " + userIdToken,
+        });
+      } else {
+        throw new Error("You are not logged in");
+      }
     } catch (error) {
-      navigator("/error", {
-        state: {
-          code: 500,
-          message: "Something went wrong. Could not delete your comment.",
-        },
-      });
+      if (error instanceof Error) {
+        navigator("/error", { state: { code: 403, message: error.message } });
+      } else {
+        navigator("/error", {
+          state: {
+            code: 500,
+            message: "Something went wrong. Unable to post your commment.",
+          },
+        });
+      }
     }
 
     close();
-    props.update();
+    update();
   }
 
-  async function submitHandler(data, e) {
-    e.preventDefault();
-    const form = e.target;
-    const formData = new FormData(form);
-    const formJson = Object.fromEntries(formData.entries());
-
-    const editedComment = {
-      userId: props.currentUser,
-      text: formJson.comment,
-    };
-
-    const reqData = JSON.stringify(editedComment);
-
+  const submitHandler: SubmitHandler<FormData> = async (data, event) => {
     try {
-      await sendRequest(`/api/stories/comment/${props.id}`, "PATCH", reqData, {
-        Authorization: "Bearer " + currentUser.accessToken,
-      });
+      event?.preventDefault();
+      if (currentUser) {
+        const editedComment = {
+          userId: currentUserId,
+          text: data.comment,
+        };
+
+        const reqData = JSON.stringify(editedComment);
+        const userIdToken = await currentUser.getIdToken();
+        await sendRequest(`/api/stories/comment/${id}`, "PATCH", reqData, {
+          Authorization: "Bearer " + userIdToken,
+        });
+      } else throw new Error();
     } catch (error) {
       navigator("/error", {
         state: {
@@ -79,23 +110,23 @@ export default function Comment(props) {
 
     setEditMode(false);
     methods.reset();
-    props.update();
-  }
+    update();
+  };
 
-  let date = new Date(props.commentDate).toLocaleDateString();
+  let date = new Date(commentDate).toLocaleDateString();
 
   return (
     <div className="comment">
       <div className="comment-header">
         <span>
-          <b>{props.username}</b>
+          <b>{username}</b>
         </span>
         <span>{date}</span>
       </div>
       {!editMode && (
         <div className="comment-body">
-          <p>{props.commentText}</p>
-          {props.currentUser === props.userId && (
+          <p>{commentText}</p>
+          {currentUserId === userId && (
             <Button onClick={setEditModeHandler}>Edit Comment</Button>
           )}
         </div>
@@ -121,10 +152,7 @@ export default function Comment(props) {
             className="comment-form"
             onSubmit={methods.handleSubmit(submitHandler)}
           >
-            <Input
-              {...edit_comment_validation}
-              defaultValue={props.commentText}
-            />
+            <Input {...edit_comment_validation} defaultValue={commentText} />
             <Button type="submit" submit={true}>
               Submit
             </Button>

@@ -9,10 +9,28 @@ import { useHttpClient } from "../../shared/hooks/http-hook";
 
 import "./FullBlog.css";
 
-export default function FullBlog(props) {
-  const [blogData, setBlogData] = useState();
+type Blog = {
+  id: string;
+  title: string;
+  text: string;
+  date: Date;
+  userID: string;
+  username: string;
+};
+
+type Comment = {
+  id: string;
+  storyID: string;
+  userID: string;
+  username: string;
+  date: Date;
+  text: string;
+};
+
+export default function FullBlog() {
+  const [blogData, setBlogData] = useState<Blog>();
   const [update, setUpdate] = useState(false);
-  const [commentData, setCommentData] = useState();
+  const [commentData, setCommentData] = useState<Comment[]>([]);
   const [showNewComment, setShowNewComment] = useState(false);
   const { currentUser } = useAuth();
   const { isLoading, sendRequest } = useHttpClient();
@@ -46,16 +64,24 @@ export default function FullBlog(props) {
   }, [update]);
 
   function addCommentButtonHandler() {
-    if (currentUser === null) {
-      navigator("/login");
+    try {
+      if (currentUser && currentUser.emailVerified) {
+        setShowNewComment(!showNewComment);
+      } else if (currentUser === null)
+        throw new Error("You must log in before commenting");
+      else if (!currentUser.emailVerified) throw new Error("reverify");
+    } catch (err) {
+      if (
+        err instanceof Error &&
+        err.message === "You must log in before commenting"
+      ) {
+        navigator("/login", { state: { message: err.message } });
+      } else if (err instanceof Error && err.message === "reverify") {
+        navigator("/verify-email", {
+          state: { reVerify: true, email: currentUser?.email },
+        });
+      }
     }
-    if (!currentUser.emailVerified) {
-      navigator("../verify-email", {
-        state: { reVerify: true, email: currentUser.email },
-      });
-    }
-
-    setShowNewComment(!showNewComment);
   }
 
   function updateHandler() {
@@ -100,7 +126,6 @@ export default function FullBlog(props) {
           <div className="comments" id="comment-section">
             {showNewComment && (
               <NewComment
-                visible={showNewComment}
                 setVisible={addCommentButtonHandler}
                 blogId={blogData.id}
                 update={updateHandler}
@@ -115,7 +140,7 @@ export default function FullBlog(props) {
                 username={comment.username}
                 commentDate={comment.date}
                 commentText={comment.text}
-                currentUser={currentUser.uid}
+                currentUserId={currentUser?.uid}
                 update={updateHandler}
               />
             ))}

@@ -31,16 +31,20 @@ const ITEMS = [
   },
 ];
 
-const GeneralResourcesSection = (props) => {
-  const loadedItems = ITEMS.filter((item) => item.sectionId === props.id);
+type GeneralResourcesSectionProps = {
+  id: number;
+  title: string;
+}
+
+function GeneralResourcesSection({title, id}: GeneralResourcesSectionProps) {
+  const loadedItems = ITEMS.filter((item) => item.sectionId === id);
   return (
     <div className="general-resources-section">
-      <h3>{props.title}</h3>
+      <h3>{title}</h3>
       <div className="general-resources-section-items">
         {loadedItems.map((loadedItem) => (
             <GeneralResourcesItem
             key={loadedItem.id}
-            id={loadedItem.id}
             title={loadedItem.title}
             fileType={loadedItem.type}
             />
