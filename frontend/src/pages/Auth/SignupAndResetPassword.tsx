@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
-import { useForm, FormProvider } from "react-hook-form";
+import React, { useState, useEffect } from "react";
+import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import { firebaseAuth } from "../../firebase";
+import { FirebaseError } from "firebase/app";
 import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
@@ -18,11 +19,17 @@ import {
   password_validation,
 } from "../../util/inputValidation";
 
+type FormData = {
+  username: string;
+  email: string;
+  password: string;
+};
+
 export default function SignupAndResetPassword() {
   const [resetMode, setResetMode] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const methods = useForm();
+  const methods = useForm<FormData>();
 
   useEffect(() => {
     if (location.state !== null) {
@@ -30,8 +37,8 @@ export default function SignupAndResetPassword() {
     }
   }, [location.state]);
 
-  async function submitHandler(data, e) {
-    e.preventDefault();
+  const submitHandler: SubmitHandler<FormData> = async (data, event) => {
+    event?.preventDefault();
     if (resetMode) {
       const newPassword = data.password;
 
@@ -48,8 +55,12 @@ export default function SignupAndResetPassword() {
           },
         });
       } catch (error) {
-        const errorCode = error.code;
-        const errorMessage = error.message;
+        let errorCode = "500";
+        let errorMessage = "Something went wrong. Please try again later.";
+        if (error instanceof FirebaseError) {
+          errorCode = error.code;
+          errorMessage = error.message;
+        }
         navigate("/error", {
           state: {
             code: errorCode,
@@ -90,14 +101,19 @@ export default function SignupAndResetPassword() {
       });
 
       methods.reset();
-
-      await sendEmailVerification(firebaseAuth.currentUser);
-      navigate("/verify-email", {
-        state: { email: firebaseAuth.currentUser.email },
-      });
+      if (firebaseAuth.currentUser) {
+        await sendEmailVerification(firebaseAuth.currentUser);
+        navigate("/verify-email", {
+          state: { email: firebaseAuth.currentUser.email },
+        });
+      } else throw new Error("no user found");
     } catch (error) {
-      const errorCode = error.code;
-      const errorMessage = error.message;
+      let errorCode = "500";
+      let errorMessage = "Something went wrong. Please try again.";
+      if (error instanceof FirebaseError) {
+        errorCode = error.code;
+        errorMessage = error.message;
+      }
       navigate("/error", {
         state: {
           code: errorCode,
@@ -105,7 +121,7 @@ export default function SignupAndResetPassword() {
         },
       });
     }
-  }
+  };
 
   return (
     <div className="auth-container">
