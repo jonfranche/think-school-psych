@@ -21,7 +21,7 @@ export default function Email() {
     } catch (error) {
       let errorCode = "500";
       let errorMessage = "An error occurred, please try again later";
-      if (error instanceof Error && error.message == "currentUser is null") {
+      if (error instanceof Error && error.message === "currentUser is null") {
         errorCode = "403";
         errorMessage = "You are not signed in. Please log in.";
       }

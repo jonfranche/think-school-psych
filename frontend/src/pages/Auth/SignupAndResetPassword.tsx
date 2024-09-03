@@ -39,6 +39,8 @@ export default function SignupAndResetPassword() {
 
   const submitHandler: SubmitHandler<FormData> = async (data, event) => {
     event?.preventDefault();
+
+    // This is the submit to firebase flow if the user is resetting their password
     if (resetMode) {
       const newPassword = data.password;
 
@@ -70,6 +72,8 @@ export default function SignupAndResetPassword() {
       }
       return;
     }
+
+    // this is the submit flow if the user is creating a new account.
     try {
       const newUser = {
         username: data.username,
