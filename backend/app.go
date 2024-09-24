@@ -13,8 +13,10 @@ import (
 	"time"
 
 	firebase "firebase.google.com/go/v4"
+	"firebase.google.com/go/v4/auth"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/jonfranche/thinkschoolpsych/backend/generate"
 	_ "github.com/lib/pq"
 	"github.com/rs/cors"
 	"google.golang.org/api/option"
@@ -117,6 +119,7 @@ func (a *App) getStories(w http.ResponseWriter, r *http.Request) {
 
 	respondWithJSON(w, http.StatusOK, stories)
 	log.Printf("HTTP Status: %d. Successfully retrieved story", 200)
+	generate.Name()
 }
 
 func (a *App) getUsers(w http.ResponseWriter, r *http.Request) {
@@ -181,28 +184,13 @@ func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 	u.JoinDate = time.Now()
 
-	// pwStr := []byte(u.Password)
-
-	// pw, err := bcrypt.GenerateFromPassword(pwStr, 12)
-	// if err != nil {
-	// 	log.Printf("HTTP Status: %d. Error encrypting password", 500)
-	// 	respondWithError(w, http.StatusInternalServerError, err.Error())
-	// }
-
-	// u.Password = string(pw)
-
 	if err := u.createUser(a.DB); err != nil {
 		log.Printf("HTTP Status: %d. Error occurred when creating user", 500)
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	// create jwt
-	// token, err := assignToken(u.ID, a)
-	// if err != nil {
-	// 	log.Printf("HTTP Status: %d. Error assigning JWT", 500)
-	// 	respondWithError(w, http.StatusInternalServerError, err.Error())
-	// }
+	updateUsername(u.ID, a)
 
 	payload := map[string]string{"id": u.ID, "email": u.Email}
 	respondWithJSON(w, http.StatusOK, payload)
@@ -520,4 +508,24 @@ func verifyToken(tokenId string, a *App) (string, error) {
 
 	// return decoded uid
 	return token.UID, nil
+}
+
+func updateUsername(uid string, a *App) (string, error) {
+	client, err := a.FB.Auth(context.Background())
+	if err != nil {
+		log.Printf("error getting Auth client %v\n", err)
+		return "", err
+	}
+	name := generate.Name()
+	params := (&auth.UserToUpdate{}).DisplayName(name)
+
+	_, err = client.UpdateUser(context.Background(), uid, params)
+	if err != nil {
+        log.Fatalf("error updating user: %v\n", err)
+		return "", err
+	}
+
+	log.Printf("Assigned user %s with displayname: %s\n", uid, name)
+
+	return name, nil
 }
