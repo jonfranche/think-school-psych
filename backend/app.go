@@ -13,7 +13,6 @@ import (
 	"time"
 
 	firebase "firebase.google.com/go/v4"
-	"firebase.google.com/go/v4/auth"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/jonfranche/thinkschoolpsych/backend/generate"
@@ -189,8 +188,6 @@ func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
-
-	updateUsername(u.ID, a)
 
 	payload := map[string]string{"id": u.ID, "email": u.Email}
 	respondWithJSON(w, http.StatusOK, payload)
@@ -426,8 +423,25 @@ func (a *App) getFile(w http.ResponseWriter, r *http.Request) {
 	log.Printf("HTTP Status: %d. Successfully sent file: %s", 200, filename)
 }
 
+func (a *App) createUsername(w http.ResponseWriter, r *http.Request) {
+	// call generate name function
+	name := generate.Name()
+	var u user
+	u.Username = name
+	usernameInDb, _ := u.checkIfUsernameInDb(a.DB)
+	// while loop to check if generated name is in DB
+	for (usernameInDb) {
+		u.Username = name
+		usernameInDb, _ = u.checkIfUsernameInDb(a.DB)
+	}
+
+	// respond with JSON with generated name
+	respondWithError(w, http.StatusOK, u.Username)
+}
+
 func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/api/signup", a.createUser).Methods("POST")
+	a.Router.HandleFunc("/api/generate-username", a.createUsername).Methods("GET")
 	// a.Router.HandleFunc("/api/login", a.loginUser).Methods("POST")
 	a.Router.HandleFunc("/api/stories/{id}", a.getStory).Methods("GET")
 	a.Router.HandleFunc("/api/stories", a.getStories).Methods("GET")
@@ -508,24 +522,4 @@ func verifyToken(tokenId string, a *App) (string, error) {
 
 	// return decoded uid
 	return token.UID, nil
-}
-
-func updateUsername(uid string, a *App) (string, error) {
-	client, err := a.FB.Auth(context.Background())
-	if err != nil {
-		log.Printf("error getting Auth client %v\n", err)
-		return "", err
-	}
-	name := generate.Name()
-	params := (&auth.UserToUpdate{}).DisplayName(name)
-
-	_, err = client.UpdateUser(context.Background(), uid, params)
-	if err != nil {
-        log.Fatalf("error updating user: %v\n", err)
-		return "", err
-	}
-
-	log.Printf("Assigned user %s with displayname: %s\n", uid, name)
-
-	return name, nil
 }

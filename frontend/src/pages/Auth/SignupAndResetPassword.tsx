@@ -11,6 +11,7 @@ import {
 } from "firebase/auth";
 import Input from "../../shared/components/Input/Input";
 import Button from "../../shared/components/UIElements/Button";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 import "./Auth.css";
 
 import {
@@ -27,6 +28,7 @@ type FormData = {
 
 export default function SignupAndResetPassword() {
   const [resetMode, setResetMode] = useState(false);
+  const {isLoading, sendRequest} = useHttpClient();
   const location = useLocation();
   const navigate = useNavigate();
   const methods = useForm<FormData>();
@@ -36,6 +38,18 @@ export default function SignupAndResetPassword() {
       setResetMode(true);
     }
   }, [location.state]);
+
+  async function generateUsername(): Promise<string> {
+    let responseData
+    try {
+       responseData = await sendRequest(`/api/generate-username`)
+    }
+    catch (err) {
+      console.log("an error occurred");
+    }
+
+    return responseData;
+  }
 
   const submitHandler: SubmitHandler<FormData> = async (data, event) => {
     event?.preventDefault();
@@ -75,8 +89,11 @@ export default function SignupAndResetPassword() {
 
     // this is the submit flow if the user is creating a new account.
     try {
+      let name = generateUsername();
+      console.log("Name generated: " + name);
+
       const newUser = {
-        username: data.username,
+        username: name,
         email: data.email,
         password: data.password,
       };
