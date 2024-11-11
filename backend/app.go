@@ -429,14 +429,23 @@ func (a *App) createUsername(w http.ResponseWriter, r *http.Request) {
 	var u user
 	u.Username = name
 	usernameInDb, _ := u.checkIfUsernameInDb(a.DB)
-	// while loop to check if generated name is in DB
-	for (usernameInDb) {
+	i := 0
+	// while loop to check if generated name is in DB, try 10 times
+	for usernameInDb && i < 10 {
 		u.Username = name
 		usernameInDb, _ = u.checkIfUsernameInDb(a.DB)
+		i++
 	}
 
+	if i >= 10 {
+		log.Printf("Http Status: %d. Username generation exceeded 10 tries", 500)
+		respondWithError(w, 500, "Could not generate a username. Please, try again later.")
+	}
+
+	// insert username in DB
+
 	// respond with JSON with generated name
-	respondWithError(w, http.StatusOK, u.Username)
+	respondWithJSON(w, http.StatusOK, map[string]string{"name": u.Username})
 }
 
 func (a *App) initializeRoutes() {
