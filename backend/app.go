@@ -181,6 +181,22 @@ func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	defer r.Body.Close()
+
+	u.Username = generate.Name()
+	usernameInDb, _ := u.checkIfUsernameInDb(a.DB)
+	i := 0
+	// while loop to check if generated name is in DB, try 10 times
+	for usernameInDb && i < 10 {
+		u.Username = generate.Name()
+		usernameInDb, _ = u.checkIfUsernameInDb(a.DB)
+		i++
+	}
+
+	if i >= 10 {
+		log.Printf("Http Status: %d. Username generation exceeded 10 tries", 500)
+		respondWithError(w, 500, "Could not generate a username. Please, try again later.")
+	}
+
 	u.JoinDate = time.Now()
 
 	if err := u.createUser(a.DB); err != nil {
@@ -189,9 +205,9 @@ func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	payload := map[string]string{"id": u.ID, "email": u.Email}
+	payload := map[string]string{"id": u.ID, "email": u.Email, "username": u.Username}
 	respondWithJSON(w, http.StatusOK, payload)
-	log.Printf("HTTP Status: %d. Successfully created user with email: %s. ID assigned: %s", 201, u.Email, u.ID)
+	log.Printf("HTTP Status: %d. Successfully created user.\nemail: %s\nusername: %s\nID assigned: %s", 201, u.Email, u.Username, u.ID)
 }
 
 // func (a *App) loginUser(w http.ResponseWriter, r *http.Request) {
@@ -443,6 +459,9 @@ func (a *App) createUsername(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// insert username in DB
+	u.createUsername(a.DB)
+
+	// TODO: update createUser to be an  Update query not and Insert Query
 
 	// respond with JSON with generated name
 	respondWithJSON(w, http.StatusOK, map[string]string{"name": u.Username})

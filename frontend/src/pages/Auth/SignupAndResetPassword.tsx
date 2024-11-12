@@ -8,6 +8,7 @@ import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
   confirmPasswordReset,
+  updateProfile,
 } from "firebase/auth";
 import Input from "../../shared/components/Input/Input";
 import Button from "../../shared/components/UIElements/Button";
@@ -26,9 +27,15 @@ type FormData = {
   password: string;
 };
 
+type ResData = {
+  id: string;
+  email: string;
+  username: string;
+}
+
 export default function SignupAndResetPassword() {
   const [resetMode, setResetMode] = useState(false);
-  const {isLoading, sendRequest} = useHttpClient();
+  const { isLoading, sendRequest } = useHttpClient();
   const location = useLocation();
   const navigate = useNavigate();
   const methods = useForm<FormData>();
@@ -40,11 +47,10 @@ export default function SignupAndResetPassword() {
   }, [location.state]);
 
   async function generateUsername(): Promise<string> {
-    let responseData
+    let responseData;
     try {
-       responseData = await sendRequest(`/api/generate-username`)
-    }
-    catch (err) {
+      responseData = await sendRequest(`/api/generate-username`);
+    } catch (err) {
       console.log("an error occurred");
     }
 
@@ -89,11 +95,10 @@ export default function SignupAndResetPassword() {
 
     // this is the submit flow if the user is creating a new account.
     try {
-      let name = generateUsername();
-      console.log("Name generated: " + name);
+      // let name = generateUsername();
+      // console.log("Name generated: " + name);
 
       const newUser = {
-        username: name,
         email: data.email,
         password: data.password,
       };
@@ -107,19 +112,31 @@ export default function SignupAndResetPassword() {
       const user = firebaseResponse.user;
 
       const reqData = {
-        username: newUser.username,
         id: user.uid,
         email: user.email,
       };
 
-      await fetch("/api/signup", {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(reqData),
-      });
+      const resData = sendRequest(
+        "/api/signup",
+        "POST",
+        JSON.stringify(reqData),
+        { "Content-Type": "application/json" }
+      );
+
+      console.log(resData);
+
+      // await fetch("/api/signup", {
+      //   method: "POST",
+      //   mode: "cors",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify(reqData),
+      // });
+
+      // update firebase with the username generated
+      // await updateProfile(user)
+
 
       methods.reset();
       if (firebaseAuth.currentUser) {

@@ -141,6 +141,15 @@ func (u *user) checkIfUsernameInDb(db *sql.DB) (bool, error) {
 	return false, nil
 }
 
+func (u *user) createUsername(db *sql.DB) error {
+	err := db.QueryRow("INSERT INTO users(username) VALUES ($1)", u.Username).Scan(&u.Username)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (c *comment) createComment(db *sql.DB) error {
 	// get user id
 	var upk int
