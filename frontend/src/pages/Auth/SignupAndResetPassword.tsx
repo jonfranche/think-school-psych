@@ -17,7 +17,6 @@ import "./Auth.css";
 
 import {
   email_validation,
-  username_validation,
   password_validation,
 } from "../../util/inputValidation";
 
@@ -27,15 +26,9 @@ type FormData = {
   password: string;
 };
 
-type ResData = {
-  id: string;
-  email: string;
-  username: string;
-}
-
 export default function SignupAndResetPassword() {
   const [resetMode, setResetMode] = useState(false);
-  const { isLoading, sendRequest } = useHttpClient();
+  const { sendRequest } = useHttpClient();
   const location = useLocation();
   const navigate = useNavigate();
   const methods = useForm<FormData>();
@@ -45,17 +38,6 @@ export default function SignupAndResetPassword() {
       setResetMode(true);
     }
   }, [location.state]);
-
-  async function generateUsername(): Promise<string> {
-    let responseData;
-    try {
-      responseData = await sendRequest(`/api/generate-username`);
-    } catch (err) {
-      console.log("an error occurred");
-    }
-
-    return responseData;
-  }
 
   const submitHandler: SubmitHandler<FormData> = async (data, event) => {
     event?.preventDefault();
@@ -95,9 +77,6 @@ export default function SignupAndResetPassword() {
 
     // this is the submit flow if the user is creating a new account.
     try {
-      // let name = generateUsername();
-      // console.log("Name generated: " + name);
-
       const newUser = {
         email: data.email,
         password: data.password,
@@ -116,27 +95,15 @@ export default function SignupAndResetPassword() {
         email: user.email,
       };
 
-      const resData = sendRequest(
+      const resData = await sendRequest(
         "/api/signup",
         "POST",
         JSON.stringify(reqData),
         { "Content-Type": "application/json" }
       );
 
-      console.log(resData);
-
-      // await fetch("/api/signup", {
-      //   method: "POST",
-      //   mode: "cors",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify(reqData),
-      // });
-
       // update firebase with the username generated
-      // await updateProfile(user)
-
+      await updateProfile(user, {displayName: resData.username})
 
       methods.reset();
       if (firebaseAuth.currentUser) {
@@ -172,7 +139,6 @@ export default function SignupAndResetPassword() {
           {!resetMode && (
             <>
               <Input {...email_validation} />
-              <Input {...username_validation} />
             </>
           )}
           <Input {...password_validation} />

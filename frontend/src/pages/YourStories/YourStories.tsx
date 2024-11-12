@@ -16,7 +16,6 @@ const YourStories = () => {
     const getData = async () => {
       try {
         const response = await sendRequest("/api/stories");
-        console.log(response);
         setData(response);
       } catch (err) {}
     };
