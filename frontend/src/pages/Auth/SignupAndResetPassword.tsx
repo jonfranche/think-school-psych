@@ -103,13 +103,16 @@ export default function SignupAndResetPassword() {
       );
 
       // update firebase with the username generated
-      await updateProfile(user, {displayName: resData.username})
+      await updateProfile(user, { displayName: resData.username });
 
       methods.reset();
       if (firebaseAuth.currentUser) {
         await sendEmailVerification(firebaseAuth.currentUser);
         navigate("/verify-email", {
-          state: { email: firebaseAuth.currentUser.email },
+          state: {
+            email: firebaseAuth.currentUser.email,
+            username: firebaseAuth.currentUser.displayName,
+          },
         });
       } else throw new Error("no user found");
     } catch (error) {

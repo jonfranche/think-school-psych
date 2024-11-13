@@ -9,6 +9,7 @@ export default function Email() {
   const location = useLocation();
   const reVerify: boolean = location.state.reVerify;
   const email: string = location.state.email;
+  const username: string = location.state.username;
 
   async function sendVerifcationButtonHandler() {
     try {
@@ -43,6 +44,13 @@ export default function Email() {
             A verification email has been sent to {email}. Please open it to
             verify your account. If it does not appear in your Inbox, please
             check your Spam folder.
+          </p>
+          <h3>Username Generation</h3>
+          <p>
+            You have been assigned the username: <b>{username}</b>. In an effort
+            to keep all our users' identities anonymous, each is given a
+            generated username. If you would like to change your username, a
+            username regeneration feature is coming soon
           </p>
         </>
       )}
