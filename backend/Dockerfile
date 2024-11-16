@@ -12,6 +12,8 @@ COPY ./env/postgres_dev.env /usr/src/env/postgres_dev.env
 
 COPY ./env/service-account_dev.json /usr/src/env/service-account_dev.json
 
+RUN mkdir /usr/local/bin/app
+
 RUN go build -v -o /usr/local/bin/app ./...
 
 EXPOSE 8010

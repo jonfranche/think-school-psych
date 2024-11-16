@@ -4,10 +4,10 @@ WORKDIR /frontend
 
 COPY package.json .
 
-RUN npm install
+RUN npm install --verbose
 
 COPY . .
 
 RUN npm run build
 
-COPY .env.local ./frontend/build
+COPY ./src/.env.local ./frontend/build
