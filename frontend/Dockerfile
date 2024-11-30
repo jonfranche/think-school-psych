@@ -10,4 +10,4 @@ COPY . .
 
 RUN npm run build
 
-COPY ./src/.env.local ./frontend/build
+COPY .env.local ./frontend/build
