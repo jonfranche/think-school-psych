@@ -1,6 +1,8 @@
+import React from "react";
+
 import { useLocation } from "react-router-dom";
 
-export default function ResetLinkSent(props) {
+export default function ResetLinkSent() {
   const location = useLocation();
   return (
     <div>

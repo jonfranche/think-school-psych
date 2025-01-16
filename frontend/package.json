@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "private": true,
   "proxy": "http://localhost:8010",
   "dependencies": {
@@ -42,6 +42,6 @@
     ]
   },
   "devDependencies": {
-    "typescript": "^4.9.4"
+    "typescript": "^4"
   }
 }

@@ -127,6 +127,29 @@ func getUsers(db *sql.DB) ([]user, error) {
 	return users, nil
 }
 
+func (u *user) checkIfUsernameInDb(db *sql.DB) (bool, error) {
+	result, err := db.Query("SELECT * FROM users WHERE username=$1", u.Username)
+
+	if err != nil {
+		return false, err
+	}
+
+	if result == nil {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+func (u *user) createUsername(db *sql.DB) error {
+	err := db.QueryRow("INSERT INTO users(username) VALUES ($1)", u.Username).Scan(&u.Username)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (c *comment) createComment(db *sql.DB) error {
 	// get user id
 	var upk int

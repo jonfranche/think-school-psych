@@ -15,6 +15,7 @@ import (
 	firebase "firebase.google.com/go/v4"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"github.com/jonfranche/thinkschoolpsych/backend/generate"
 	_ "github.com/lib/pq"
 	"github.com/rs/cors"
 	"google.golang.org/api/option"
@@ -117,6 +118,7 @@ func (a *App) getStories(w http.ResponseWriter, r *http.Request) {
 
 	respondWithJSON(w, http.StatusOK, stories)
 	log.Printf("HTTP Status: %d. Successfully retrieved story", 200)
+	generate.Name()
 }
 
 func (a *App) getUsers(w http.ResponseWriter, r *http.Request) {
@@ -179,17 +181,23 @@ func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	defer r.Body.Close()
+
+	u.Username = generate.Name()
+	usernameInDb, _ := u.checkIfUsernameInDb(a.DB)
+	i := 0
+	// while loop to check if generated name is in DB, try 10 times
+	for usernameInDb && i < 10 {
+		u.Username = generate.Name()
+		usernameInDb, _ = u.checkIfUsernameInDb(a.DB)
+		i++
+	}
+
+	if i >= 10 {
+		log.Printf("Http Status: %d. Username generation exceeded 10 tries", 500)
+		respondWithError(w, 500, "Could not generate a username. Please, try again later.")
+	}
+
 	u.JoinDate = time.Now()
-
-	// pwStr := []byte(u.Password)
-
-	// pw, err := bcrypt.GenerateFromPassword(pwStr, 12)
-	// if err != nil {
-	// 	log.Printf("HTTP Status: %d. Error encrypting password", 500)
-	// 	respondWithError(w, http.StatusInternalServerError, err.Error())
-	// }
-
-	// u.Password = string(pw)
 
 	if err := u.createUser(a.DB); err != nil {
 		log.Printf("HTTP Status: %d. Error occurred when creating user", 500)
@@ -197,16 +205,9 @@ func (a *App) createUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// create jwt
-	// token, err := assignToken(u.ID, a)
-	// if err != nil {
-	// 	log.Printf("HTTP Status: %d. Error assigning JWT", 500)
-	// 	respondWithError(w, http.StatusInternalServerError, err.Error())
-	// }
-
-	payload := map[string]string{"id": u.ID, "email": u.Email}
+	payload := map[string]string{"id": u.ID, "email": u.Email, "username": u.Username}
 	respondWithJSON(w, http.StatusOK, payload)
-	log.Printf("HTTP Status: %d. Successfully created user with email: %s. ID assigned: %s", 201, u.Email, u.ID)
+	log.Printf("HTTP Status: %d. Successfully created user.\nemail: %s\nusername: %s\nID assigned: %s", 201, u.Email, u.Username, u.ID)
 }
 
 // func (a *App) loginUser(w http.ResponseWriter, r *http.Request) {
@@ -438,8 +439,37 @@ func (a *App) getFile(w http.ResponseWriter, r *http.Request) {
 	log.Printf("HTTP Status: %d. Successfully sent file: %s", 200, filename)
 }
 
+func (a *App) createUsername(w http.ResponseWriter, r *http.Request) {
+	// call generate name function
+	name := generate.Name()
+	var u user
+	u.Username = name
+	usernameInDb, _ := u.checkIfUsernameInDb(a.DB)
+	i := 0
+	// while loop to check if generated name is in DB, try 10 times
+	for usernameInDb && i < 10 {
+		u.Username = name
+		usernameInDb, _ = u.checkIfUsernameInDb(a.DB)
+		i++
+	}
+
+	if i >= 10 {
+		log.Printf("Http Status: %d. Username generation exceeded 10 tries", 500)
+		respondWithError(w, 500, "Could not generate a username. Please, try again later.")
+	}
+
+	// insert username in DB
+	u.createUsername(a.DB)
+
+	// TODO: update createUser to be an  Update query not and Insert Query
+
+	// respond with JSON with generated name
+	respondWithJSON(w, http.StatusOK, map[string]string{"name": u.Username})
+}
+
 func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/api/signup", a.createUser).Methods("POST")
+	a.Router.HandleFunc("/api/generate-username", a.createUsername).Methods("GET")
 	// a.Router.HandleFunc("/api/login", a.loginUser).Methods("POST")
 	a.Router.HandleFunc("/api/stories/{id}", a.getStory).Methods("GET")
 	a.Router.HandleFunc("/api/stories", a.getStories).Methods("GET")

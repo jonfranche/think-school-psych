@@ -1,4 +1,4 @@
-FROM golang:1.22.5-alpine
+FROM golang:1.23-alpine
 
 WORKDIR /usr/src/app
 
@@ -12,7 +12,7 @@ COPY ./env/postgres_prod.env /usr/src/env/postgres_prod.env
 
 COPY ./env/service-account_prod.json /usr/src/env/service-account_prod.json
 
-RUN go build -v -o /usr/local/bin/app ./...
+RUN go build -v -o /usr/local/bin/app 
 
 EXPOSE 8010
 

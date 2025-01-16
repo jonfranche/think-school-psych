@@ -3,19 +3,22 @@ import { useNavigate } from "react-router-dom";
 
 export const useHttpClient = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState();
   const navigator = useNavigate();
 
   // cancel http request if user leaves the page before request has been completed
   // useRef creates a piece of data that will not be reinitialized or changed after
   // sendRequest runs again
-  const activeHttpRequests = useRef([]);
+  const activeHttpRequests = useRef<AbortController[]>([]);
 
   // useCallback makes sure there are no duplicate calls to this function
   const sendRequest = useCallback(
-    async (url, method = "GET", body = null, headers = {}) => {
+    async (
+      url: string,
+      method = "GET",
+      body: string | null = null,
+      headers?: {}
+    ) => {
       // setIsLoading(true);
-
       const httpAbortCtrl = new AbortController();
       activeHttpRequests.current.push(httpAbortCtrl);
 
@@ -43,7 +46,6 @@ export const useHttpClient = () => {
         );
         if (!response.ok) {
           navigator("/error", {
-            relative: false,
             state: { message: responseData.error, code: response.status },
           });
           return;
@@ -51,24 +53,20 @@ export const useHttpClient = () => {
         setIsLoading(false);
         return responseData;
       } catch (err) {
-        setError(err.error);
-        setIsLoading(false);
         throw err;
       }
     },
-    []
+    [navigator]
   );
-
-  const clearError = () => {
-    setError(null);
-  };
 
   //clean up logic when a component unmounts
   useEffect(() => {
     return () => {
-      activeHttpRequests.current.forEach((abortCtrl) => abortCtrl.abort());
+      activeHttpRequests.current.forEach((abortCtrl: AbortController) =>
+        abortCtrl.abort()
+      );
     };
   }, []);
 
-  return { isLoading, error, sendRequest, clearError };
+  return { isLoading, sendRequest };
 };

@@ -4,7 +4,24 @@ import { useFormContext } from "react-hook-form";
 
 import "./Input.css";
 
-const Input = ({
+type InputProps = {
+  name: string;
+  label?: string;
+  type?: string;
+  id?: string;
+  placeholder?: string;
+  defaultValue?: string | number | readonly string[];
+  validation?: {};
+  className?: string;
+};
+
+
+type InputErrorProps = {
+  message: string;
+}
+
+
+function Input({
   name,
   label,
   type,
@@ -12,14 +29,15 @@ const Input = ({
   validation,
   placeholder,
   defaultValue,
-}) => {
+  className,
+}: InputProps) {
   const {
     register,
     watch,
     formState: { errors },
   } = useFormContext();
 
-  const inputError = Object.keys(errors)
+  const inputError: Record<any, any>= Object.keys(errors)
     .filter((key) => key.includes(name))
     .reduce((cur, key) => {
       return Object.assign(cur, { error: errors[key] });
@@ -40,7 +58,6 @@ const Input = ({
         <input
           className="input-text"
           type="password"
-          name={name}
           {...register(name, {
             required: true,
             validate: (value) => {
@@ -58,7 +75,6 @@ const Input = ({
     <input
       className="input-text"
       type={type}
-      name={name}
       placeholder={placeholder}
       defaultValue={defaultValue}
       {...register(name, validation)}
@@ -68,7 +84,6 @@ const Input = ({
   const textArea = (
     <textarea
       className="input-story"
-      name={name}
       placeholder={placeholder}
       defaultValue={defaultValue}
       {...register(name, validation)}
@@ -87,9 +102,9 @@ const Input = ({
       {type === "textarea" ? textArea : input}
     </div>
   );
-};
+}
 
-const InputError = ({ message }) => {
+function InputError({ message }: InputErrorProps) {
   return <p className="input-error">{message}</p>;
 };
 

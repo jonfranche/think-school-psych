@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useForm, FormProvider } from "react-hook-form";
+import React, { useState } from "react";
+import { useForm, FormProvider, SubmitHandler } from "react-hook-form";
 import { useNavigate, useLocation } from "react-router-dom";
 import { firebaseAuth } from "../../firebase";
 import {
@@ -14,28 +14,31 @@ import {
 } from "../../util/inputValidation";
 
 import "./Auth.css";
+import { FirebaseError } from "@firebase/util";
+
+type FormData = {
+  email: string;
+  password: string;
+}
 
 export default function Auth() {
   const [resetMode, setResetMode] = useState(false);
   const navigate = useNavigate();
-  const methods = useForm();
+  const methods = useForm<FormData>();
   const location = useLocation();
   let message;
   if (location.state !== null) {
     message = location.state.message;
   }
 
-  async function submitHandler(data, e) {
-    e.preventDefault();
+  const submitHandler: SubmitHandler<FormData> = async (data, event) => {
+    event?.preventDefault();
     try {
-      const form = e.target;
-      const formData = new FormData(form);
-      const formJson = Object.fromEntries(formData.entries());
 
       if (resetMode) {
-        await sendPasswordResetEmail(firebaseAuth, formJson.email);
+        await sendPasswordResetEmail(firebaseAuth, data.email);
         setTimeout(() => {
-          navigate("/reset-link-sent", { state: { email: formJson.email } });
+          navigate("/reset-link-sent", { state: { email: data.email } });
         }, 1000);
 
         return;
@@ -43,8 +46,8 @@ export default function Auth() {
 
       await signInWithEmailAndPassword(
         firebaseAuth,
-        formJson.email,
-        formJson.password
+        data.email,
+        data.password
       );
 
       methods.reset();
@@ -53,12 +56,15 @@ export default function Auth() {
         navigate("/");
       }, 1000);
     } catch (error) {
-      const errorCode = error.code;
-      let errorMessage;
-      resetMode
-        ? (errorMessage = error.Message)
-        : (errorMessage =
-            "Failed to log you in. Please check if your credentials were submitted correctly");
+      let errorCode = "500";
+      let errorMessage = "Something went wrong. Please try again later.";
+      if (error instanceof FirebaseError) {
+        errorCode = error.code;
+        resetMode
+          ? (errorMessage = error.message)
+          : (errorMessage =
+              "Failed to log you in. Please check if your credentials were submitted correctly");
+      }
       navigate("/error", {
         state: { code: errorCode, message: errorMessage },
       });

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-import Blog from "./components/Blog";
+import Blog, {BlogProps} from "./components/Blog";
 import Button from "../../shared/components/UIElements/Button";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import { getAuth } from "firebase/auth";
@@ -9,7 +9,7 @@ import "./YourStories.css";
 
 const YourStories = () => {
   const [data, setData] = useState([]);
-  const { isLoading, error, sendRequest } = useHttpClient();
+  const { isLoading, sendRequest } = useHttpClient();
   const auth = getAuth();
 
   useEffect(() => {
@@ -45,13 +45,12 @@ const YourStories = () => {
           )
         }
         {isLoading && <h4>Loading...</h4>}
-        {/* {error && <h4>{error}</h4>} */}
-        {!isLoading && data.length === 0 && !error && (
+        {!isLoading && data.length === 0 && (
           <p>No stories yet. Consider sharing your own!</p>
         )}
         {!isLoading && (
           <div className="your-stories-blogs">
-            {data.map((blog) => (
+            {data.map((blog: BlogProps) => (
               <Blog
                 key={blog.id}
                 id={blog.id}
